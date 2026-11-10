@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Noto_Serif_KR } from "next/font/google";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
-import { SiteFooter } from "@/components/layouts/site-footer";
-import { SiteHeader } from "@/components/layouts/site-header";
 import { site } from "@/config/site";
 
 const notoSerif = Noto_Serif_KR({
@@ -27,11 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           본문으로 건너뛰기
         </a>
-        <SiteHeader />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <SiteFooter />
+        {children}
       </body>
     </html>
   );
