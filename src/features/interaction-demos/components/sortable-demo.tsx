@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 const PITCH = 60; // 행 높이 52 + 간격 8
-const initial = ["공항", "이호테우", "협재해수욕장", "동문시장"];
+export const initialOrder = ["공항", "이호테우", "협재해수욕장", "동문시장"];
 const goal = ["공항", "동문시장", "이호테우", "협재해수욕장"];
 
 type Drag = { label: string; from: number; startY: number; dy: number };
@@ -15,8 +15,24 @@ function move<T>(list: readonly T[], from: number, to: number) {
 }
 
 // magnet: 자리가 열리며 형제가 벌어진다(V4). line: 형제는 그대로 두고 삽입선만 보여 준다(V1).
-export function SortableDemo({ mode = "magnet" }: { mode?: "magnet" | "line" }) {
-  const [order, setOrder] = useState(initial);
+export type Preview = { order: string[]; label: string };
+
+type Props = {
+  mode?: "magnet" | "line";
+  // 주면 바깥에서 순서를 들고 있는 제어 모드(지도와 같은 순서를 쓰려고).
+  order?: string[];
+  onOrderChange?: (order: string[]) => void;
+  // 드래그 중 놓았을 때의 순서. 끝나면 null.
+  onPreview?: (preview: Preview | null) => void;
+};
+
+export function SortableDemo({ mode = "magnet", order: given, onOrderChange, onPreview }: Props) {
+  const [inner, setInner] = useState(initialOrder);
+  const order = given ?? inner;
+  function setOrder(next: string[]) {
+    setInner(next);
+    onOrderChange?.(next);
+  }
   const [drag, setDrag] = useState<Drag | null>(null);
   const last = order.length - 1;
 
@@ -26,9 +42,14 @@ export function SortableDemo({ mode = "magnet" }: { mode?: "magnet" | "line" }) 
   const shown = mode === "magnet" && drag && over !== null ? move(order, drag.from, over) : order;
   const done = shown.join() === goal.join();
 
+  function overAt(from: number, dy: number) {
+    return Math.min(last, Math.max(0, Math.round((from * PITCH + dy) / PITCH)));
+  }
+
   function end() {
     if (drag && over !== null) setOrder(move(order, drag.from, over));
     setDrag(null);
+    onPreview?.(null);
   }
 
   function onKey(e: React.KeyboardEvent, i: number) {
@@ -79,10 +100,19 @@ export function SortableDemo({ mode = "magnet" }: { mode?: "magnet" | "line" }) 
                 onPointerDown={(e) => {
                   e.currentTarget.setPointerCapture(e.pointerId);
                   setDrag({ label, from: i, startY: e.clientY, dy: 0 });
+                  onPreview?.({ order, label });
                 }}
-                onPointerMove={(e) => drag && setDrag({ ...drag, dy: e.clientY - drag.startY })}
+                onPointerMove={(e) => {
+                  if (!drag) return;
+                  const dy = e.clientY - drag.startY;
+                  setDrag({ ...drag, dy });
+                  onPreview?.({ order: move(order, drag.from, overAt(drag.from, dy)), label: drag.label });
+                }}
                 onPointerUp={end}
-                onPointerCancel={() => setDrag(null)}
+                onPointerCancel={() => {
+                  setDrag(null);
+                  onPreview?.(null);
+                }}
               >
                 ⋮⋮
               </span>
@@ -97,7 +127,7 @@ export function SortableDemo({ mode = "magnet" }: { mode?: "magnet" | "line" }) 
         </span>
         <button
           type="button"
-          onClick={() => setOrder(initial)}
+          onClick={() => setOrder(initialOrder)}
           className="rounded-sm text-muted-foreground underline underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           처음으로

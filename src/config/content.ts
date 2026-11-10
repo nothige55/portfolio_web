@@ -89,7 +89,7 @@ export const dragSteps = [
     id: "c",
     versions: "V5~V6",
     title: "앱 전체가 반응한다",
-    body: "드래그하는 동안 지도, 검색창, 펼침 상태가 함께 움직여요. 이 부분은 /dnd에서 이어서 보여 줄 거예요.",
+    body: "드래그하는 동안 지도가 함께 움직이고, 놓기 전에 바뀔 경로를 미리 보여 줘요. 지도는 데모용 좌표예요.",
     mode: "magnet",
   },
 ] as const;
