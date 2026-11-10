@@ -3,9 +3,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { education, projects, stack } from "@/config/content";
 import { site } from "@/config/site";
-import { BreadcrumbDemo } from "@/features/variant-playground/components/breadcrumb-demo";
-import { GestureCard } from "@/features/variant-playground/components/gesture-card";
-import { SortableDemo } from "@/features/variant-playground/components/sortable-demo";
+import { BreadcrumbDemo } from "@/features/interaction-demos/components/breadcrumb-demo";
+import { GestureCard } from "@/features/interaction-demos/components/gesture-card";
+import { SortableDemo } from "@/features/interaction-demos/components/sortable-demo";
 
 export const metadata: Metadata = { title: "V2 플레이그라운드" };
 
