@@ -69,12 +69,9 @@ export default function V4Page() {
           <p className="max-w-lg leading-relaxed text-muted-foreground">{trego.summary}</p>
         </section>
 
-        <section id="trego-drag" className="py-10">
-          <h3 className="mb-6 text-sm font-medium text-muted-foreground">
-            같은 드래그를 세 번 다시 만들었어요. 글을 내리면 오른쪽 표시가 바뀌어요.
-          </h3>
+        <section id="trego-drag">
           <DragStory steps={dragSteps} />
-          <Link href="/dnd" className={`${link} mt-6 inline-block text-sm`}>
+          <Link href="/dnd" className={`${link} mt-8 inline-block text-sm`}>
             버전별 과정 전체 보기 →
           </Link>
         </section>
