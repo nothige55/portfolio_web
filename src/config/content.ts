@@ -68,3 +68,28 @@ export const education = "동양미래대학교 컴퓨터정보공학과 · 2027
 
 export const approach =
   "요구사항에 없던 문제를 쓰다가 찾아내고, 흔한 해법이 왜 안 맞는지 따진 뒤 직접 설계해요.";
+
+// 드래그 변천 요약. 상세와 커밋은 features/dnd/config/chapters.ts에 있다.
+export const dragSteps = [
+  {
+    id: "a",
+    versions: "V1~V3",
+    title: "어디에 놓이는지 알려준다",
+    body: "선과 박스가 놓일 곳을 가리켜요. 놓아 보기 전에는 결과를 알 수 없다는 불안을 줄이려고 만들었어요.",
+    mode: "line",
+  },
+  {
+    id: "b",
+    versions: "V4",
+    title: "붙는다",
+    body: "놓을 수 있는 자리가 열리고 미리보기가 붙어요. 결과를 미리 앉혀 보여 주면 예측할 일이 줄어요.",
+    mode: "magnet",
+  },
+  {
+    id: "c",
+    versions: "V5~V6",
+    title: "앱 전체가 반응한다",
+    body: "드래그하는 동안 지도, 검색창, 펼침 상태가 함께 움직여요. 이 부분은 /dnd에서 이어서 보여 줄 거예요.",
+    mode: "magnet",
+  },
+] as const;

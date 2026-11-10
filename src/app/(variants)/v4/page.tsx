@@ -1,134 +1,119 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { education, projects, stack } from "@/config/content";
+import { dragSteps, education, projects, stack } from "@/config/content";
 import { site } from "@/config/site";
 import { BreadcrumbDemo } from "@/features/interaction-demos/components/breadcrumb-demo";
-import { SortableDemo } from "@/features/interaction-demos/components/sortable-demo";
-import { CopyLink } from "@/features/variant-strip/components/copy-link";
-import { CursorCircle } from "@/features/variant-strip/components/cursor-circle";
-import { FilmStrip } from "@/features/variant-strip/components/film-strip";
+import { CopyLink } from "@/features/interaction-demos/components/copy-link";
+import { DragStory } from "@/features/interaction-demos/components/drag-story";
+import { PathBar } from "@/features/variant-story/components/path-bar";
 
-export const metadata: Metadata = { title: "V4 필름 스트립" };
+export const metadata: Metadata = { title: "V4 스토리" };
 
 const [trego, surgi] = projects;
-const big = "text-[clamp(1.75rem,4.2vw,3.25rem)] font-semibold leading-[1.12] tracking-[-0.035em]";
-const small = "text-sm leading-relaxed text-neutral-600";
-const link = "rounded-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+const big = "text-[clamp(2rem,5.5vw,4.5rem)] font-semibold leading-[1.08] tracking-[-0.035em]";
+const label = "font-mono text-xs text-muted-foreground";
+const link =
+  "rounded-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
-const lines = [
-  `${site.name}은`,
-  "인터랙션을 만드는",
-  "프론트엔드 개발자예요.",
-  "Trego와 SurgiAuth를",
-  "만들었어요.",
-];
-
-const panels = [
-  {
-    label: "소개",
-    node: (
-      <CursorCircle>
-        <h1 className={big}>
-          {lines.map((l, i) => (
-            <span key={l} className={`block ${i % 2 ? "pl-[1.1em]" : ""}`}>
-              {l}
-            </span>
-          ))}
-        </h1>
-        <p className="mt-8 font-mono text-xs text-neutral-500">스크롤하면 옆으로 넘어가요 →</p>
-      </CursorCircle>
-    ),
-  },
-  {
-    label: "Trego",
-    node: (
-      <div className="flex h-full flex-col justify-between gap-6">
-        <div>
-          <p className="font-mono text-xs text-neutral-500">
-            {trego.period} · {trego.role}
-          </p>
-          <h2 className={`${big} mt-4`}>{trego.name}</h2>
-          <p className="mt-2 text-lg font-medium">{trego.kicker}</p>
-          <p className={`${small} mt-4 max-w-md`}>{trego.summary}</p>
-        </div>
-        <Link href="/dnd" className={`${link} self-start text-sm`}>
-          드래그가 세 번 바뀐 과정 보기 →
-        </Link>
-      </div>
-    ),
-  },
-  {
-    label: "드래그",
-    node: (
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold tracking-tight">놓일 자리가 붙는 드래그</h2>
-        <SortableDemo />
-      </div>
-    ),
-  },
-  {
-    label: "탐색",
-    node: (
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold tracking-tight">{trego.points[0].title}</h2>
-        <BreadcrumbDemo />
-      </div>
-    ),
-  },
-  {
-    label: "SurgiAuth",
-    node: (
-      <div className="space-y-4">
-        <p className="font-mono text-xs text-neutral-500">
-          {surgi.period} · {surgi.role}
-        </p>
-        <h2 className={big}>{surgi.name}</h2>
-        <p className="text-lg font-medium">{surgi.kicker}</p>
-        <p className={`${small} max-w-md`}>{surgi.summary}</p>
-        <p className="font-mono text-xs text-neutral-500">MediaPipe 손 추적 · Electron 단말 앱</p>
-      </div>
-    ),
-  },
-  {
-    label: "연락",
-    node: (
-      <div className="flex h-full flex-col justify-between gap-6">
-        <div className="space-y-2 text-lg font-medium">
-          {site.email && <CopyLink text={site.email} />}
-          <p>
-            <a href={site.github} target="_blank" rel="noopener noreferrer" className={link}>
-              GitHub
-            </a>
-          </p>
-        </div>
-        <div className="space-y-2">
-          <p className="font-mono text-xs leading-relaxed text-neutral-500">{stack.join(" · ")}</p>
-          <p className={small}>{education}</p>
-        </div>
-      </div>
-    ),
-  },
-];
+const entries = [
+  { id: "intro", path: [] },
+  { id: "trego", path: [] },
+  { id: "trego-drag", path: ["Trego"] },
+  { id: "trego-nav", path: ["Trego"] },
+  { id: "surgiauth", path: [] },
+  { id: "contact", path: [] },
+] as const;
 
 export default function V4Page() {
   return (
     <div
-      className="min-h-screen font-sans text-black"
+      className="min-h-screen pb-32 pt-11"
       style={
         {
-          "--background": "#ededed",
-          "--foreground": "#000",
-          "--card": "#fff",
-          "--muted": "oklch(0.96 0 0)",
-          "--muted-foreground": "oklch(0.45 0 0)",
-          "--border": "oklch(0.88 0 0)",
-          "--primary": "oklch(0.82 0.12 250)",
+          "--background": "oklch(0.975 0.004 100)",
+          "--foreground": "oklch(0.18 0 0)",
+          "--card": "oklch(1 0 0)",
+          "--muted": "oklch(0.95 0.004 100)",
+          "--muted-foreground": "oklch(0.5 0 0)",
+          "--border": "oklch(0.9 0.004 100)",
+          "--primary": "oklch(0.55 0.2 260)",
           "--ring": "oklch(0.55 0.2 260)",
           background: "var(--background)",
+          color: "var(--foreground)",
         } as React.CSSProperties
       }
     >
-      <FilmStrip panels={panels} />
+      <PathBar name={site.name} entries={entries} />
+
+      <div className="mx-auto max-w-[1100px] px-4">
+        <section id="intro" className="flex min-h-[80vh] flex-col justify-center py-20">
+          <h1 className={big}>
+            {site.name}은 인터랙션을
+            <br />
+            만드는 프론트엔드
+            <br />
+            개발자예요.
+          </h1>
+          <p className="mt-8 max-w-md leading-relaxed text-muted-foreground">
+            아래로 스크롤해 보세요. 위쪽 경로 바가 지금 어디인지 따라와요. 현재 위치는 빼고
+            상위 위치만 보여 줘요. Trego에서 만든 규칙이에요.
+          </p>
+        </section>
+
+        <section id="trego" className="space-y-4 py-20">
+          <p className={label}>
+            {trego.period} · {trego.role}
+          </p>
+          <h2 className={big}>{trego.name}</h2>
+          <p className="text-xl font-medium">{trego.kicker}</p>
+          <p className="max-w-lg leading-relaxed text-muted-foreground">{trego.summary}</p>
+        </section>
+
+        <section id="trego-drag" className="py-10">
+          <h3 className="mb-6 text-sm font-medium text-muted-foreground">
+            같은 드래그를 세 번 다시 만들었어요. 글을 내리면 오른쪽 표시가 바뀌어요.
+          </h3>
+          <DragStory steps={dragSteps} />
+          <Link href="/dnd" className={`${link} mt-6 inline-block text-sm`}>
+            버전별 과정 전체 보기 →
+          </Link>
+        </section>
+
+        <section id="trego-nav" className="grid gap-10 py-28 lg:grid-cols-2">
+          <div className="space-y-3 self-center">
+            <p className={label}>탐색</p>
+            <h3 className="text-2xl font-semibold tracking-tight">{trego.points[0].title}</h3>
+            <p className="max-w-sm leading-relaxed text-muted-foreground">{trego.points[0].body}</p>
+          </div>
+          <div className="rounded-xl border bg-card p-6">
+            <BreadcrumbDemo />
+          </div>
+        </section>
+
+        <section id="surgiauth" className="space-y-4 py-28">
+          <p className={label}>
+            {surgi.period} · {surgi.role}
+          </p>
+          <h2 className={big}>{surgi.name}</h2>
+          <p className="text-xl font-medium">{surgi.kicker}</p>
+          <p className="max-w-lg leading-relaxed text-muted-foreground">{surgi.summary}</p>
+          <p className={label}>MediaPipe 손 추적 · Electron 단말 앱</p>
+        </section>
+
+        <section id="contact" className="space-y-6 py-28">
+          <h2 className={big}>이야기해요.</h2>
+          <div className="space-y-1 text-lg">
+            {site.email && <CopyLink text={site.email} />}
+            <p>
+              <a href={site.github} target="_blank" rel="noopener noreferrer" className={link}>
+                GitHub
+              </a>
+            </p>
+          </div>
+          <p className={label}>{stack.join(" · ")}</p>
+          <p className="text-sm text-muted-foreground">{education}</p>
+        </section>
+      </div>
     </div>
   );
 }

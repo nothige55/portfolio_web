@@ -8,7 +8,7 @@ const items = [
   { href: "/v1", label: "V1 에디토리얼" },
   { href: "/v2", label: "V2 플레이그라운드" },
   { href: "/v3", label: "V3 스크롤" },
-  { href: "/v4", label: "V4 필름 스트립" },
+  { href: "/v4", label: "V4 스토리" },
 ];
 
 // 시안 비교용. 하나를 고르면 지운다.
