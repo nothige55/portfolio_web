@@ -5,6 +5,7 @@ import { BreadcrumbDemo } from "@/features/interaction-demos/components/breadcru
 import { CopyLink } from "@/features/interaction-demos/components/copy-link";
 import { CoverageGrid } from "@/features/interaction-demos/components/coverage-grid";
 import { DragStory } from "@/features/interaction-demos/components/drag-story";
+import { SplitReveal } from "@/features/interaction-demos/components/split-reveal";
 import { PathBar } from "@/features/variant-story/components/path-bar";
 
 const [trego, surgi] = projects;
@@ -24,7 +25,7 @@ const entries = [
 
 // 구간마다 데모가 가장 큰 요소가 되도록 회색 무대 하나에 올린다.
 function Stage({ children }: { children: React.ReactNode }) {
-  return <div className="rounded-[20px] bg-stage p-6 sm:p-12">{children}</div>;
+  return <div className="rounded-[20px] bg-stage p-6 sm:p-8">{children}</div>;
 }
 
 // 무대 아래에 실제 구현에서 나온 수치를 붙인다. 값이 없으면 그리지 않는다.
@@ -79,43 +80,53 @@ export default function V4Page() {
           </Link>
         </section>
 
-        <section id="trego-nav" className="py-28">
-          <div className="mx-auto max-w-lg space-y-3 text-center">
-            <p className={label}>탐색</p>
-            <h3 className="text-2xl font-semibold tracking-tight">{trego.points[0].title}</h3>
-            <p className="leading-relaxed text-muted-foreground">{trego.points[0].body}</p>
-          </div>
-          <div className="mt-10">
-            <Stage>
-              <div className="mx-auto max-w-md rounded-xl bg-card p-6">
-                <BreadcrumbDemo />
+        <section id="trego-nav">
+          <SplitReveal
+            text={
+              <div className="mx-auto max-w-sm space-y-3">
+                <p className={label}>탐색</p>
+                <h3 className="text-2xl font-semibold tracking-tight">{trego.points[0].title}</h3>
+                <p className="leading-relaxed text-muted-foreground">{trego.points[0].body}</p>
               </div>
-            </Stage>
-          </div>
+            }
+            demo={
+              <Stage>
+                <div className="mx-auto max-w-md rounded-xl bg-card p-6">
+                  <BreadcrumbDemo />
+                </div>
+              </Stage>
+            }
+          />
         </section>
 
-        <section id="surgiauth" className="py-28">
-          <div className="mx-auto max-w-lg space-y-4 text-center">
-            <p className={label}>
-              {surgi.period} · {surgi.role}
-            </p>
-            <h2 className={big}>{surgi.name}</h2>
-            <p className="text-xl font-medium">{surgi.kicker}</p>
-          </div>
-          <div className="mx-auto mt-10 grid max-w-3xl gap-8 sm:grid-cols-2">
-            {surgiPairs.map((p) => (
-              <div key={p.decision} className="space-y-2">
-                <p className="text-sm leading-relaxed text-muted-foreground">{p.problem}</p>
-                <p className="font-medium leading-relaxed">{p.decision}</p>
+        <section id="surgiauth">
+          <SplitReveal
+            text={
+              <div className="mx-auto max-w-md space-y-8">
+                <div className="space-y-3">
+                  <p className={label}>
+                    {surgi.period} · {surgi.role}
+                  </p>
+                  <h2 className={big}>{surgi.name}</h2>
+                  <p className="text-xl font-medium">{surgi.kicker}</p>
+                </div>
+                {surgiPairs.map((p) => (
+                  <div key={p.decision} className="space-y-2">
+                    <p className="text-sm leading-relaxed text-muted-foreground">{p.problem}</p>
+                    <p className="font-medium leading-relaxed">{p.decision}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            }
+            demo={
+              <Stage>
+                <CoverageGrid />
+              </Stage>
+            }
+          />
+          <div className="pb-28">
+            <Notes items={surgiNotes} />
           </div>
-          <div className="mt-10">
-            <Stage>
-              <CoverageGrid />
-            </Stage>
-          </div>
-          <Notes items={surgiNotes} />
         </section>
 
         <section id="contact" className="space-y-6 py-28 text-center">
