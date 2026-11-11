@@ -2,41 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// SurgiAuth 가입 화면의 수집 규칙을 손 모델로 흉내 낸 데모. 카메라는 쓰지 않는다.
-// 값은 SurgiAuth hand-orientation.ts와 같다: roll ±25°(칸 폭 10°)·pitch ±27°(칸 폭 18°)의 5×3 격자.
-// 격자 밖은 가장자리 칸으로 몰리고, open_palm 인식이 풀리는 각도(roll ±54°·pitch ±30° 밖)에서는 담지 않는다.
-const ROLL_COLS = 5;
-const PITCH_ROWS = 3;
-const ROLL_RANGE = 50;
-const PITCH_RANGE = 54;
-const ROLL_LIMIT = 54;
-const PITCH_LIMIT = 30;
-const PER_CELL = 2;
-const TOTAL = ROLL_COLS * PITCH_ROWS * PER_CELL;
-// 손잡이가 움직이는 각도 범위(인식 한계보다 조금 넓게 둬서 풀리는 구간을 보여 준다).
-const SHOW_ROLL = 70;
-const SHOW_PITCH = 45;
+import {
+  clamp, judge, PER_CELL, PITCH_LIMIT, PITCH_ROWS, ROLL_COLS, ROLL_LIMIT, SHOW_PITCH, SHOW_ROLL, TOTAL, type Angle,
+} from "../utils/hand-orientation";
 
 const C = 150;
 const R_ROLL = 135;
 const R_PITCH = 108;
 const RAD = Math.PI / 180;
-
-const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
-const bucket = (v: number, range: number, count: number) =>
-  clamp(Math.floor(((v + range / 2) / range) * count), 0, count - 1);
-
-type Angle = { roll: number; pitch: number };
-
-function judge({ roll, pitch }: Angle) {
-  if (Math.abs(roll) > ROLL_LIMIT || Math.abs(pitch) > PITCH_LIMIT) {
-    return { kind: "lost" as const, key: "" };
-  }
-  const r = bucket(roll, ROLL_RANGE, ROLL_COLS);
-  const p = bucket(pitch, PITCH_RANGE, PITCH_ROWS);
-  const clamped = Math.abs(roll) > ROLL_RANGE / 2 || Math.abs(pitch) > PITCH_RANGE / 2;
-  return { kind: clamped ? ("edge" as const) : ("ok" as const), key: `${p}-${r}` };
-}
 
 // roll은 위쪽에서 시계 방향, pitch는 오른쪽에서 위쪽 방향으로 잰다.
 const rollPoint = (deg: number, r = R_ROLL) => [C + r * Math.sin(deg * RAD), C - r * Math.cos(deg * RAD)] as const;
