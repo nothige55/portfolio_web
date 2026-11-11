@@ -4,6 +4,7 @@ import { dragSteps, education, projects, stack } from "@/config/content";
 import { site } from "@/config/site";
 import { BreadcrumbDemo } from "@/features/interaction-demos/components/breadcrumb-demo";
 import { CopyLink } from "@/features/interaction-demos/components/copy-link";
+import { CoverageGrid } from "@/features/interaction-demos/components/coverage-grid";
 import { DragStory } from "@/features/interaction-demos/components/drag-story";
 import { PathBar } from "@/features/variant-story/components/path-bar";
 
@@ -87,14 +88,26 @@ export default function V4Page() {
           </div>
         </section>
 
-        <section id="surgiauth" className="space-y-4 py-28">
-          <p className={label}>
-            {surgi.period} · {surgi.role}
-          </p>
-          <h2 className={big}>{surgi.name}</h2>
-          <p className="text-xl font-medium">{surgi.kicker}</p>
-          <p className="max-w-lg leading-relaxed text-muted-foreground">{surgi.summary}</p>
-          <p className={label}>MediaPipe 손 추적 · Electron 단말 앱</p>
+        <section id="surgiauth" className="grid gap-10 py-28 lg:grid-cols-2">
+          <div className="space-y-4 self-center">
+            <p className={label}>
+              {surgi.period} · {surgi.role}
+            </p>
+            <h2 className={big}>{surgi.name}</h2>
+            <p className="text-xl font-medium">{surgi.kicker}</p>
+            <p className="max-w-md leading-relaxed text-muted-foreground">{surgi.summary}</p>
+            <h3 className="pt-4 text-lg font-semibold tracking-tight">수집 단계에서 품질을 잡았어요</h3>
+            <ul className="max-w-md list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+              <li>MediaPipe Gesture Recognizer가 open palm으로 판정한 프레임만 담아서 오제스처를 막았어요.</li>
+              <li>각도는 인식이 유지되는 범위 안에서만 받아요. roll ±25°(칸 폭 10°), pitch ±27°(칸 폭 18°)예요.</li>
+              <li>open palm 30장을 5×3 격자에 칸마다 2장씩 모아 자세가 한쪽에 쏠리지 않게 했어요.</li>
+              <li>처음에는 범위를 ±90°로 뒀는데 실제로는 가운데 줄 3칸만 찼어요. 인식이 유지되는 한도를 재서 좁혔어요.</li>
+            </ul>
+          </div>
+          <div className="rounded-xl border bg-card p-6">
+            <p className={`${label} mb-4`}>카메라 없이 마우스로 손의 기울기를 흉내 내요</p>
+            <CoverageGrid />
+          </div>
         </section>
 
         <section id="contact" className="space-y-6 py-28">
