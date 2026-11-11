@@ -89,11 +89,6 @@ export const surgiPairs = [
   },
 ] as const;
 
-// 나머지 값은 사용자가 채운다. 실제 구현에서 나온 값만 넣는다.
-export const dragNotes: readonly Note[] = [
-  { value: "7.5px", label: "자동 펼침 직후, 이만큼 더 움직이기 전까지 드롭 판정을 미뤄요." },
-];
-
 // 드래그 변천 요약. 상세와 커밋은 features/dnd/config/chapters.ts에 있다.
 export const dragSteps = [
   {
@@ -114,7 +109,7 @@ export const dragSteps = [
     id: "c",
     versions: "V5~V6",
     title: "앱 전체가 반응한다",
-    body: "드래그하는 동안 지도가 함께 반응하고, 놓기 전에 바뀔 경로를 미리 보여 줘요. 지도는 데모용 좌표예요.",
+    body: "드래그하는 동안 지도가 함께 반응하고, 놓기 전에 바뀔 경로를 미리 보여 줘요. 자동 펼침 직후에는 7.5px 더 움직이기 전까지 드롭 판정을 미뤄요. 지도는 데모용 좌표예요.",
     mode: "magnet",
   },
 ] as const;

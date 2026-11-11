@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { dragSteps, dragNotes, education, projects, stack, surgiNotes, surgiPairs, type Note } from "@/config/content";
+import { dragSteps, education, projects, stack, surgiNotes, surgiPairs, type Note } from "@/config/content";
 import { site } from "@/config/site";
 import { BreadcrumbDemo } from "@/features/interaction-demos/components/breadcrumb-demo";
 import { CopyLink } from "@/features/interaction-demos/components/copy-link";
@@ -76,7 +76,6 @@ export default function V4Page() {
 
         <section id="trego-drag">
           <DragStory steps={dragSteps} />
-          <Notes items={dragNotes} />
           <p className="mt-6 text-center">
             <Link href="/dnd" className={`${link} text-sm`}>
               버전별 과정 전체 보기 →
