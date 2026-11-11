@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { dragSteps, dragNotes, education, projects, stack, surgiNotes, type Note } from "@/config/content";
+import { dragSteps, dragNotes, education, projects, stack, surgiNotes, surgiPairs, type Note } from "@/config/content";
 import { site } from "@/config/site";
 import { BreadcrumbDemo } from "@/features/interaction-demos/components/breadcrumb-demo";
 import { CopyLink } from "@/features/interaction-demos/components/copy-link";
@@ -101,9 +101,14 @@ export default function V4Page() {
             </p>
             <h2 className={big}>{surgi.name}</h2>
             <p className="text-xl font-medium">{surgi.kicker}</p>
-            <p className="leading-relaxed text-muted-foreground">
-              인식기가 open palm으로 판정한 프레임만, 각도가 쏠리지 않게 칸마다 나눠 담았어요.
-            </p>
+          </div>
+          <div className="mx-auto mt-10 grid max-w-3xl gap-8 sm:grid-cols-2">
+            {surgiPairs.map((p) => (
+              <div key={p.decision} className="space-y-2">
+                <p className="text-sm leading-relaxed text-muted-foreground">{p.problem}</p>
+                <p className="font-medium leading-relaxed">{p.decision}</p>
+              </div>
+            ))}
           </div>
           <div className="mt-10">
             <Stage>

@@ -99,7 +99,7 @@ export function CoverageGrid() {
       : !engaged
         ? "손을 기울여 보세요"
         : lost
-          ? "open palm 인식이 풀렸어요. 이 프레임은 담지 않아요"
+          ? "인식기가 먼저 걸러요. open palm 판정이 풀리는 각도라 담지 않아요"
           : here
             ? "이 칸은 찼어요. 다른 각도로 옮겨 보세요"
             : verdict.kind === "edge"

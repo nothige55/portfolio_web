@@ -77,6 +77,18 @@ export const surgiNotes: readonly Note[] = [
   { value: "2장", label: "칸마다 채우는 수예요. 합쳐서 30장이에요." },
 ];
 
+// 홈 SurgiAuth 구간에 쓰는 고민. 첫 번째는 1차(인식기), 두 번째는 2차(격자)다.
+export const surgiPairs = [
+  {
+    problem: "수집 화면에 방어가 없으면, 인증 제스처와 상관없는 손동작까지 샘플로 들어간다는 걸 알았어요.",
+    decision: "Gesture Recognizer를 프론트에 넣어서 open palm으로 판정된 프레임만 받아요.",
+  },
+  {
+    problem: "open palm 샘플의 품질을 높이려면 다양한 각도에서 모아야 했어요.",
+    decision: "roll과 pitch를 두 축으로 5×3 칸을 만들고, 칸마다 2장씩 모아요.",
+  },
+] as const;
+
 // 나머지 값은 사용자가 채운다. 실제 구현에서 나온 값만 넣는다.
 export const dragNotes: readonly Note[] = [
   { value: "7.5px", label: "자동 펼침 직후, 이만큼 더 움직이기 전까지 드롭 판정을 미뤄요." },
