@@ -101,6 +101,7 @@ export default function V4Page() {
 
         <section id="surgiauth">
           <SplitReveal
+            textSide="right"
             text={
               <div className="mx-auto max-w-md space-y-8">
                 <div className="space-y-3">
