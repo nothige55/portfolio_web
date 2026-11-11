@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-// SurgiAuth 가입 화면의 수집 규칙을 마우스로 흉내 낸 데모. 카메라는 쓰지 않는다.
+// SurgiAuth 가입 화면의 수집 규칙을 손 모델로 흉내 낸 데모. 카메라는 쓰지 않는다.
 // 값은 SurgiAuth hand-orientation.ts와 같다: roll ±25°(칸 폭 10°)·pitch ±27°(칸 폭 18°)의 5×3 격자.
 // 격자 밖은 가장자리 칸으로 몰리고, open_palm 인식이 풀리는 각도(roll ±54°·pitch ±30° 밖)에서는 담지 않는다.
 const ROLL_COLS = 5;
@@ -13,9 +13,14 @@ const ROLL_LIMIT = 54;
 const PITCH_LIMIT = 30;
 const PER_CELL = 2;
 const TOTAL = ROLL_COLS * PITCH_ROWS * PER_CELL;
-// 패드가 보여 주는 각도 범위(격자보다 넓다).
-const PAD_ROLL = 60;
-const PAD_PITCH = 35;
+// 손잡이가 움직이는 각도 범위(인식 한계보다 조금 넓게 둬서 풀리는 구간을 보여 준다).
+const SHOW_ROLL = 70;
+const SHOW_PITCH = 45;
+
+const C = 150;
+const R_ROLL = 135;
+const R_PITCH = 108;
+const RAD = Math.PI / 180;
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 const bucket = (v: number, range: number, count: number) =>
@@ -31,6 +36,32 @@ function judge({ roll, pitch }: Angle) {
   const p = bucket(pitch, PITCH_RANGE, PITCH_ROWS);
   const clamped = Math.abs(roll) > ROLL_RANGE / 2 || Math.abs(pitch) > PITCH_RANGE / 2;
   return { kind: clamped ? ("edge" as const) : ("ok" as const), key: `${p}-${r}` };
+}
+
+// roll은 위쪽에서 시계 방향, pitch는 오른쪽에서 위쪽 방향으로 잰다.
+const rollPoint = (deg: number, r = R_ROLL) => [C + r * Math.sin(deg * RAD), C - r * Math.cos(deg * RAD)] as const;
+const pitchPoint = (deg: number, r = R_PITCH) => [C + r * Math.cos(deg * RAD), C - r * Math.sin(deg * RAD)] as const;
+
+function arc(point: (d: number) => readonly [number, number], from: number, to: number) {
+  const [x0, y0] = point(from);
+  const [x1, y1] = point(to);
+  // 두 호 모두 한 번에 90° 미만이라 large-arc는 항상 0이다.
+  return `M${x0.toFixed(1)},${y0.toFixed(1)} A${point === rollPoint ? R_ROLL : R_PITCH},${point === rollPoint ? R_ROLL : R_PITCH} 0 0 ${to > from ? 1 : 0} ${x1.toFixed(1)},${y1.toFixed(1)}`;
+}
+
+function Hand() {
+  return (
+    <svg viewBox="0 0 100 120" className="size-full" aria-hidden>
+      <g fill="oklch(0.93 0.03 60)" stroke="oklch(0.35 0.03 60)" strokeWidth="1.5" strokeLinejoin="round">
+        <rect x="30" y="58" width="42" height="50" rx="14" />
+        <rect x="30" y="24" width="9" height="44" rx="4.5" />
+        <rect x="41" y="12" width="9" height="56" rx="4.5" />
+        <rect x="52" y="20" width="9" height="48" rx="4.5" />
+        <rect x="63" y="34" width="9" height="36" rx="4.5" />
+        <rect x="10" y="66" width="9" height="34" rx="4.5" transform="rotate(-38 14 82)" />
+      </g>
+    </svg>
+  );
 }
 
 export function CoverageGrid() {
@@ -52,40 +83,51 @@ export function CoverageGrid() {
     return () => clearInterval(id);
   }, [collecting, verdict.key]);
 
-  function onMove(e: React.PointerEvent<HTMLDivElement>) {
-    const box = e.currentTarget.getBoundingClientRect();
-    setEngaged(true);
-    setAngle({
-      roll: clamp((((e.clientX - box.left) / box.width) - 0.5) * 2 * PAD_ROLL, -PAD_ROLL, PAD_ROLL),
-      pitch: clamp((0.5 - (e.clientY - box.top) / box.height) * 2 * PAD_PITCH, -PAD_PITCH, PAD_PITCH),
-    });
+  function local(e: React.PointerEvent) {
+    const box = (e.currentTarget as SVGElement).ownerSVGElement!.getBoundingClientRect();
+    const scale = 300 / box.width;
+    return { x: (e.clientX - box.left) * scale - C, y: (e.clientY - box.top) * scale - C };
   }
 
-  function onKey(e: React.KeyboardEvent) {
-    const step = 5;
-    const d: Record<string, Angle> = {
-      ArrowLeft: { roll: -step, pitch: 0 },
-      ArrowRight: { roll: step, pitch: 0 },
-      ArrowUp: { roll: 0, pitch: step },
-      ArrowDown: { roll: 0, pitch: -step },
+  function drag(axis: "roll" | "pitch") {
+    return {
+      onPointerDown: (e: React.PointerEvent) => e.currentTarget.setPointerCapture(e.pointerId),
+      onPointerMove: (e: React.PointerEvent) => {
+        if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+        const { x, y } = local(e);
+        setEngaged(true);
+        setAngle((a) =>
+          axis === "roll"
+            ? { ...a, roll: clamp(Math.atan2(x, -y) / RAD, -SHOW_ROLL, SHOW_ROLL) }
+            : { ...a, pitch: clamp(Math.atan2(-y, x) / RAD, -SHOW_PITCH, SHOW_PITCH) },
+        );
+      },
     };
-    const move = d[e.key];
-    if (!move) return;
-    e.preventDefault();
-    setEngaged(true);
-    setAngle((a) => ({
-      roll: clamp(a.roll + move.roll, -PAD_ROLL, PAD_ROLL),
-      pitch: clamp(a.pitch + move.pitch, -PAD_PITCH, PAD_PITCH),
-    }));
   }
 
-  const pct = (v: number, range: number) => ((v + range) / (2 * range)) * 100;
-  const gridLeft = pct(-ROLL_RANGE / 2, PAD_ROLL);
-  const gridTop = 100 - pct(PITCH_RANGE / 2, PAD_PITCH);
+  function key(axis: "roll" | "pitch") {
+    return (e: React.KeyboardEvent) => {
+      const dir = e.key === "ArrowRight" || e.key === "ArrowUp" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowDown" ? -1 : 0;
+      if (!dir) return;
+      e.preventDefault();
+      setEngaged(true);
+      setAngle((a) =>
+        axis === "roll"
+          ? { ...a, roll: clamp(a.roll + dir * 5, -SHOW_ROLL, SHOW_ROLL) }
+          : { ...a, pitch: clamp(a.pitch + dir * 5, -SHOW_PITCH, SHOW_PITCH) },
+      );
+    };
+  }
+
+  const [rx, ry] = rollPoint(angle.roll);
+  const [px, py] = pitchPoint(angle.pitch);
+  const lost = verdict.kind === "lost";
+  const guide = "oklch(0.55 0 0 / 0.45)";
+  const warn = "oklch(0.62 0.17 30 / 0.7)";
 
   const message = !engaged
-    ? "패드 위에 마우스를 올려 손을 기울여 보세요"
-    : verdict.kind === "lost"
+    ? "손잡이를 끌어 손을 기울여 보세요"
+    : lost
       ? "open_palm 인식이 풀리는 각도예요. 이 프레임은 담지 않아요"
       : (counts[verdict.key] ?? 0) >= PER_CELL
         ? "이 칸은 찼어요. 다른 각도로 옮겨 보세요"
@@ -94,61 +136,92 @@ export function CoverageGrid() {
           : "머물면 한 장씩 담겨요";
 
   return (
-    <div className="space-y-3">
-      <div
-        tabIndex={0}
-        role="application"
-        aria-label="손 각도 패드. 화살표 키로 roll과 pitch를 바꿔요"
-        onPointerMove={onMove}
-        onKeyDown={onKey}
-        className="relative aspect-[480/280] w-full cursor-crosshair touch-none select-none overflow-hidden rounded-lg border bg-[repeating-linear-gradient(135deg,transparent_0_6px,oklch(0.9_0_0)_6px_7px)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
+    <div className="space-y-4">
+      <div className="relative mx-auto aspect-square w-full max-w-[300px]">
         <div
-          aria-hidden
-          className="absolute bg-card"
+          className="absolute left-[30%] top-[27%] h-[46%] w-[40%] transition-opacity"
           style={{
-            left: `${pct(-ROLL_LIMIT, PAD_ROLL)}%`,
-            right: `${pct(-ROLL_LIMIT, PAD_ROLL)}%`,
-            top: `${100 - pct(PITCH_LIMIT, PAD_PITCH)}%`,
-            bottom: `${100 - pct(PITCH_LIMIT, PAD_PITCH)}%`,
+            transform: `perspective(500px) rotateX(${angle.pitch}deg) rotateZ(${angle.roll}deg)`,
+            opacity: lost ? 0.35 : 1,
+            filter: lost ? "grayscale(1)" : undefined,
           }}
-        />
-        <div
-          className="absolute grid grid-cols-5 grid-rows-3 border border-foreground/30"
-          style={{ left: `${gridLeft}%`, right: `${gridLeft}%`, top: `${gridTop}%`, bottom: `${gridTop}%` }}
         >
-          {Array.from({ length: ROLL_COLS * PITCH_ROWS }, (_, i) => {
-            const row = Math.floor(i / ROLL_COLS);
-            const p = PITCH_ROWS - 1 - row; // 위쪽 줄이 pitch가 큰 칸
-            const r = i % ROLL_COLS;
-            const key = `${p}-${r}`;
-            const n = counts[key] ?? 0;
-            const here = collecting && verdict.key === key;
-            return (
-              <div
-                key={key}
-                className={`flex items-center justify-center gap-1 border border-foreground/10 transition-colors ${n >= PER_CELL ? "bg-primary/20" : ""} ${here ? "ring-2 ring-inset ring-primary" : ""}`}
-              >
-                {Array.from({ length: PER_CELL }, (_, d) => (
-                  <span key={d} className={`size-1.5 rounded-full ${d < n ? "bg-primary" : "bg-foreground/15"}`} />
-                ))}
-              </div>
-            );
-          })}
+          <Hand />
         </div>
-        {engaged && (
-          <span
-            aria-hidden
-            className={`pointer-events-none absolute text-2xl transition-opacity ${verdict.kind === "lost" ? "opacity-30 grayscale" : ""}`}
-            style={{
-              left: `${pct(angle.roll, PAD_ROLL)}%`,
-              top: `${100 - pct(angle.pitch, PAD_PITCH)}%`,
-              transform: `translate(-50%,-50%) rotate(${angle.roll}deg) scaleY(${Math.cos((angle.pitch * Math.PI) / 180)})`,
-            }}
-          >
-            🖐
-          </span>
-        )}
+
+        <svg viewBox="0 0 300 300" className="absolute inset-0 size-full touch-none select-none" role="group" aria-label="손 기울기 조절">
+          {/* roll 호: 위쪽. 인식 한계 안은 실선, 밖은 점선 */}
+          <path d={arc(rollPoint, -ROLL_LIMIT, ROLL_LIMIT)} fill="none" stroke={guide} strokeWidth="2" />
+          <path d={arc(rollPoint, -SHOW_ROLL, -ROLL_LIMIT)} fill="none" stroke={warn} strokeWidth="2" strokeDasharray="3 3" />
+          <path d={arc(rollPoint, ROLL_LIMIT, SHOW_ROLL)} fill="none" stroke={warn} strokeWidth="2" strokeDasharray="3 3" />
+          {/* pitch 호: 오른쪽 */}
+          <path d={arc(pitchPoint, -PITCH_LIMIT, PITCH_LIMIT)} fill="none" stroke={guide} strokeWidth="2" />
+          <path d={arc(pitchPoint, -SHOW_PITCH, -PITCH_LIMIT)} fill="none" stroke={warn} strokeWidth="2" strokeDasharray="3 3" />
+          <path d={arc(pitchPoint, PITCH_LIMIT, SHOW_PITCH)} fill="none" stroke={warn} strokeWidth="2" strokeDasharray="3 3" />
+          {/* 칸 경계 눈금 */}
+          {[-25, -15, -5, 5, 15, 25].map((d) => {
+            const [a, b] = rollPoint(d, R_ROLL - 5);
+            const [c, e] = rollPoint(d, R_ROLL + 5);
+            return <line key={`r${d}`} x1={a} y1={b} x2={c} y2={e} stroke={guide} />;
+          })}
+          {[-27, -9, 9, 27].map((d) => {
+            const [a, b] = pitchPoint(d, R_PITCH - 5);
+            const [c, e] = pitchPoint(d, R_PITCH + 5);
+            return <line key={`p${d}`} x1={a} y1={b} x2={c} y2={e} stroke={guide} />;
+          })}
+          <text x={C} y="12" textAnchor="middle" fontSize="10" fill="oklch(0.5 0 0)">roll</text>
+          <text x="292" y={C + 3} textAnchor="end" fontSize="10" fill="oklch(0.5 0 0)">pitch</text>
+
+          <circle
+            cx={rx}
+            cy={ry}
+            r="10"
+            tabIndex={0}
+            role="slider"
+            aria-label="roll"
+            aria-valuemin={-70}
+            aria-valuemax={70}
+            aria-valuenow={Math.round(angle.roll)}
+            className="cursor-grab fill-primary stroke-white outline-none focus-visible:stroke-foreground active:cursor-grabbing"
+            strokeWidth="2.5"
+            onKeyDown={key("roll")}
+            {...drag("roll")}
+          />
+          <circle
+            cx={px}
+            cy={py}
+            r="10"
+            tabIndex={0}
+            role="slider"
+            aria-label="pitch"
+            aria-valuemin={-45}
+            aria-valuemax={45}
+            aria-valuenow={Math.round(angle.pitch)}
+            className="cursor-grab fill-primary stroke-white outline-none focus-visible:stroke-foreground active:cursor-grabbing"
+            strokeWidth="2.5"
+            onKeyDown={key("pitch")}
+            {...drag("pitch")}
+          />
+        </svg>
+      </div>
+
+      <div className="mx-auto grid w-full max-w-[300px] grid-cols-5 grid-rows-3 border border-foreground/30" aria-label="수집 격자 5×3">
+        {Array.from({ length: ROLL_COLS * PITCH_ROWS }, (_, i) => {
+          const p = PITCH_ROWS - 1 - Math.floor(i / ROLL_COLS); // 위쪽 줄이 pitch가 큰 칸
+          const k = `${p}-${i % ROLL_COLS}`;
+          const n = counts[k] ?? 0;
+          const here = collecting && verdict.key === k;
+          return (
+            <div
+              key={k}
+              className={`flex h-10 items-center justify-center gap-1 border border-foreground/10 transition-colors ${n >= PER_CELL ? "bg-primary/20" : ""} ${here ? "ring-2 ring-inset ring-primary" : ""}`}
+            >
+              {Array.from({ length: PER_CELL }, (_, d) => (
+                <span key={d} className={`size-1.5 rounded-full ${d < n ? "bg-primary" : "bg-foreground/15"}`} />
+              ))}
+            </div>
+          );
+        })}
       </div>
 
       <div className="flex items-center justify-between gap-3 text-sm" aria-live="polite">
