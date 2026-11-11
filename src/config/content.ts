@@ -97,6 +97,8 @@ export const dragSteps = [
     title: "어디에 놓이는지 알려준다",
     body: "선과 박스가 놓일 곳을 가리켜요. 놓아 보기 전에는 결과를 알 수 없다는 불안을 줄이려고 만들었어요.",
     mode: "line",
+    axes: { judge: "포인터가 있는 세로 구역과 가로 깊이", feedback: "삽입선, 컨테이너 외곽선", child: "구역에 들어가면 바로" },
+    changed: [],
   },
   {
     id: "b",
@@ -104,12 +106,16 @@ export const dragSteps = [
     title: "붙는다",
     body: "놓을 수 있는 자리가 열리고 미리보기가 붙어요. 결과를 미리 앉혀 보여 주면 예측할 일이 줄어요.",
     mode: "magnet",
+    axes: { judge: "가까운 허용 깊이로 붙음", feedback: "자리가 열리고 미리보기", child: "0.5초 머물면" },
+    changed: ["judge", "feedback", "child"],
   },
   {
     id: "c",
     versions: "V5~V6",
     title: "앱 전체가 반응한다",
-    body: "드래그하는 동안 지도가 함께 반응하고, 놓기 전에 바뀔 경로를 미리 보여 줘요. 자동 펼침 직후에는 7.5px 더 움직이기 전까지 드롭 판정을 미뤄요. 지도는 데모용 좌표예요.",
+    body: "드래그하는 동안 지도가 함께 반응하고, 놓기 전에 바뀔 경로를 미리 보여 줘요. 컨테이너는 1초 채움이 끝나야 안으로 받고, 붙은 직후에는 7.5px 더 움직이기 전까지 판정을 미뤄요. 지도는 데모용 좌표예요.",
     mode: "fill",
+    axes: { judge: "V4와 같음(허용 깊이에 붙음)", feedback: "채움 표시, 지도 경로 미리보기", child: "1초 채우면, 붙은 뒤 7.5px 데드존" },
+    changed: ["feedback", "child"],
   },
 ] as const;

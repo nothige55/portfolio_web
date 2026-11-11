@@ -9,7 +9,38 @@ import { TreeDemo, type Preview } from "./tree-demo";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type Step = { id: string; versions: string; title: string; body: string; mode: StepMode };
+type Axis = "judge" | "feedback" | "child";
+type Step = {
+  id: string;
+  versions: string;
+  title: string;
+  body: string;
+  mode: StepMode;
+  axes: Record<Axis, string>;
+  changed: readonly Axis[];
+};
+
+const axisNames: Record<Axis, string> = { judge: "판정", feedback: "피드백", child: "자식 넣기" };
+
+// 이전 단계에서 바뀐 칸만 강조한다.
+function Axes({ step }: { step: Step }) {
+  return (
+    <dl className="grid gap-2 text-xs sm:grid-cols-3">
+      {(Object.keys(axisNames) as Axis[]).map((k) => {
+        const changed = step.changed.includes(k);
+        return (
+          <div key={k} className={`rounded-md border p-2 ${changed ? "border-primary bg-primary/5" : ""}`}>
+            <dt className="font-mono text-muted-foreground">
+              {axisNames[k]}
+              {changed && <span className="ml-1 text-primary">· 바뀜</span>}
+            </dt>
+            <dd className="mt-0.5 leading-snug">{step.axes[k]}</dd>
+          </div>
+        );
+      })}
+    </dl>
+  );
+}
 
 const CLOSED = "inset(40% 38% 40% 38% round 28px)";
 const OPEN = "inset(0% 0% 0% 0% round 16px)";
@@ -97,7 +128,10 @@ export function DragStory({ steps }: { steps: readonly Step[] }) {
         </div>
 
         <div ref={content} className="grid flex-1 content-center gap-8 p-6 lg:grid-cols-2 lg:p-12">
-          <TreeDemo mode={current.mode} rows={rows} onRowsChange={setRows} onPreview={setPreview} />
+          <div className="space-y-4">
+            <TreeDemo mode={current.mode} rows={rows} onRowsChange={setRows} onPreview={setPreview} />
+            <Axes step={current} />
+          </div>
           <JejuMap order={placesInOrder(rows)} preview={current.mode === "fill" ? preview : null} />
         </div>
 
