@@ -2,14 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  clamp,
   handPosition,
   judge,
   PER_CELL,
   PITCH_ROWS,
   ROLL_COLS,
-  SHOW_PITCH,
-  SHOW_ROLL,
+  ROLL_RANGE,
+  PITCH_RANGE,
+  tiltAngle,
   TOTAL,
   type Angle,
 } from "../utils/hand-orientation";
@@ -42,14 +42,12 @@ export function CoverageGrid() {
   const wheelOn = useRef(false);
   // 끌기는 movementX/Y 대신 마지막 좌표와의 차이로 잰다. 터치에서 movement 값이 0으로 오는 브라우저가 있다.
   const lastDrag = useRef({ x: 0, y: 0 });
+  // 끌 때 커서가 간 거리를 격자 크기로 환산하려고 쓴다. 그래야 손이 커서 밑에 머문다.
+  const gridEl = useRef<HTMLDivElement>(null);
 
   function tilt(dRoll: number, dPitch: number) {
-    const prev = angleRef.current;
-    const next = {
-      roll: clamp(prev.roll + dRoll, -SHOW_ROLL, SHOW_ROLL),
-      pitch: clamp(prev.pitch + dPitch, -SHOW_PITCH, SHOW_PITCH),
-    };
-    if (next.roll === prev.roll && next.pitch === prev.pitch) return false;
+    const next = tiltAngle(angleRef.current, dRoll, dPitch);
+    if (!next) return false;
     angleRef.current = next;
     setAngle(next);
     setEngaged(true);
@@ -140,6 +138,7 @@ export function CoverageGrid() {
       >
         <div className="relative mx-auto w-full max-w-[520px]">
           <div
+            ref={gridEl}
             className="grid grid-cols-5 grid-rows-3 border border-foreground/25 bg-card"
             aria-label={`수집 격자 ${ROLL_COLS}×${PITCH_ROWS}`}
           >
@@ -180,7 +179,9 @@ export function CoverageGrid() {
                 if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
                 const { x, y } = lastDrag.current;
                 lastDrag.current = { x: e.clientX, y: e.clientY };
-                tilt((e.clientX - x) * 0.3, -(e.clientY - y) * 0.3);
+                const box = gridEl.current?.getBoundingClientRect();
+                if (!box) return;
+                tilt(((e.clientX - x) * ROLL_RANGE) / box.width, (-(e.clientY - y) * PITCH_RANGE) / box.height);
               }}
             >
               <Hand />

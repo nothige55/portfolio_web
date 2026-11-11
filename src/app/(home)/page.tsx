@@ -31,10 +31,8 @@ function Stage({ children }: { children: React.ReactNode }) {
 // 무대 아래에 실제 구현에서 나온 수치를 붙인다. 값이 없으면 그리지 않는다.
 function Notes({ items }: { items: readonly Note[] }) {
   if (!items.length) return null;
-  // 하나뿐이면 격자에서 한 칸만 차서 외로워 보인다. 가운데로 모은다.
-  const single = items.length === 1;
   return (
-    <dl className={single ? "mx-auto mt-8 max-w-md text-center" : "mt-8 grid gap-6 sm:grid-cols-3"}>
+    <dl className="mt-8 grid gap-6 sm:grid-cols-3">
       {items.map((n) => (
         <div key={n.value}>
           <dt className="text-lg font-semibold tabular-nums">{n.value}</dt>

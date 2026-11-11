@@ -36,3 +36,12 @@ export function handPosition({ roll, pitch }: Angle) {
     y: (PITCH_RANGE / 2 - clamp(pitch, -PITCH_RANGE / 2, PITCH_RANGE / 2)) / PITCH_RANGE,
   };
 }
+
+// 각도를 더하고 손이 움직이는 범위(SHOW_*)로 자른다. 더 못 가면 null이라, 호출한 쪽이 페이지 스크롤로 넘길 수 있다.
+export function tiltAngle(prev: Angle, dRoll: number, dPitch: number): Angle | null {
+  const next = {
+    roll: clamp(prev.roll + dRoll, -SHOW_ROLL, SHOW_ROLL),
+    pitch: clamp(prev.pitch + dPitch, -SHOW_PITCH, SHOW_PITCH),
+  };
+  return next.roll === prev.roll && next.pitch === prev.pitch ? null : next;
+}
