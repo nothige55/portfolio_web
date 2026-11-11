@@ -110,6 +110,6 @@ export const dragSteps = [
     versions: "V5~V6",
     title: "앱 전체가 반응한다",
     body: "드래그하는 동안 지도가 함께 반응하고, 놓기 전에 바뀔 경로를 미리 보여 줘요. 자동 펼침 직후에는 7.5px 더 움직이기 전까지 드롭 판정을 미뤄요. 지도는 데모용 좌표예요.",
-    mode: "magnet",
+    mode: "fill",
   },
 ] as const;

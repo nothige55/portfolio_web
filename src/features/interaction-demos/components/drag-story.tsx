@@ -4,11 +4,12 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef, useState } from "react";
 import { JejuMap } from "./jeju-map";
-import { initialOrder, SortableDemo, type Preview } from "./sortable-demo";
+import { initialRows, placesInOrder, type Row, type StepMode } from "../utils/tree-drop";
+import { TreeDemo, type Preview } from "./tree-demo";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type Step = { id: string; versions: string; title: string; body: string; mode: "line" | "magnet" };
+type Step = { id: string; versions: string; title: string; body: string; mode: StepMode };
 
 const CLOSED = "inset(40% 38% 40% 38% round 28px)";
 const OPEN = "inset(0% 0% 0% 0% round 16px)";
@@ -27,7 +28,7 @@ export function DragStory({ steps }: { steps: readonly Step[] }) {
 
   const [stepIndex, setStepIndex] = useState(0);
   const [animated, setAnimated] = useState(false);
-  const [order, setOrder] = useState(initialOrder);
+  const [rows, setRows] = useState<readonly Row[]>(initialRows);
   const [preview, setPreview] = useState<Preview | null>(null);
 
   useEffect(() => {
@@ -96,13 +97,8 @@ export function DragStory({ steps }: { steps: readonly Step[] }) {
         </div>
 
         <div ref={content} className="grid flex-1 content-center gap-8 p-6 lg:grid-cols-2 lg:p-12">
-          <SortableDemo
-            mode={current.mode}
-            order={order}
-            onOrderChange={setOrder}
-            onPreview={setPreview}
-          />
-          <JejuMap order={order} preview={preview} />
+          <TreeDemo mode={current.mode} rows={rows} onRowsChange={setRows} onPreview={setPreview} />
+          <JejuMap order={placesInOrder(rows)} preview={current.mode === "fill" ? preview : null} />
         </div>
 
         <div className="flex flex-col gap-3 border-t p-6 lg:flex-row lg:items-center lg:justify-between lg:px-12">
