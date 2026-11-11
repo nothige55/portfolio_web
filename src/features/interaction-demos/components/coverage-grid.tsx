@@ -40,6 +40,8 @@ export function CoverageGrid() {
   const angleRef = useRef(angle);
   // 포인터가 무대 위에서 실제로 움직였거나 포커스가 있을 때만 휠을 받는다. 스크롤하다 무대가 포인터 밑으로 들어온 것만으로는 받지 않는다.
   const wheelOn = useRef(false);
+  // 끌기는 movementX/Y 대신 마지막 좌표와의 차이로 잰다. 터치에서 movement 값이 0으로 오는 브라우저가 있다.
+  const lastDrag = useRef({ x: 0, y: 0 });
 
   function tilt(dRoll: number, dPitch: number) {
     const prev = angleRef.current;
@@ -61,10 +63,17 @@ export function CoverageGrid() {
       if (!wheelOn.current) return;
       const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
       const moved = horizontal ? tilt(e.deltaX * 0.15, 0) : tilt(0, -e.deltaY * 0.1);
-      if (moved) e.preventDefault();
+      // 가로 휠은 한계에서도 막는다. 넘기면 트랙패드 스와이프가 브라우저 뒤로 가기가 된다.
+      if (moved || horizontal) e.preventDefault();
     }
+    // 페이지가 스크롤됐다는 건 휠이 넘어갔다는 뜻이다. 포인터를 다시 움직이기 전까지는 받지 않는다.
+    const disarm = () => (wheelOn.current = false);
     el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    window.addEventListener("scroll", disarm, { passive: true });
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      window.removeEventListener("scroll", disarm);
+    };
   }, []);
 
   const verdict = judge(angle);
@@ -163,9 +172,15 @@ export function CoverageGrid() {
                 opacity: lost ? 0.35 : 1,
                 filter: lost ? "grayscale(1)" : undefined,
               }}
-              onPointerDown={(e) => e.currentTarget.setPointerCapture(e.pointerId)}
+              onPointerDown={(e) => {
+                e.currentTarget.setPointerCapture(e.pointerId);
+                lastDrag.current = { x: e.clientX, y: e.clientY };
+              }}
               onPointerMove={(e) => {
-                if (e.currentTarget.hasPointerCapture(e.pointerId)) tilt(e.movementX * 0.3, -e.movementY * 0.3);
+                if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+                const { x, y } = lastDrag.current;
+                lastDrag.current = { x: e.clientX, y: e.clientY };
+                tilt((e.clientX - x) * 0.3, -(e.clientY - y) * 0.3);
               }}
             >
               <Hand />
