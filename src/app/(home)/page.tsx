@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { dragSteps, education, projects, stack } from "@/config/content";
 import { site } from "@/config/site";
@@ -7,8 +6,6 @@ import { CopyLink } from "@/features/interaction-demos/components/copy-link";
 import { CoverageGrid } from "@/features/interaction-demos/components/coverage-grid";
 import { DragStory } from "@/features/interaction-demos/components/drag-story";
 import { PathBar } from "@/features/variant-story/components/path-bar";
-
-export const metadata: Metadata = { title: "V4 스토리" };
 
 const [trego, surgi] = projects;
 const big = "text-[clamp(2rem,5.5vw,4.5rem)] font-semibold leading-[1.08] tracking-[-0.035em]";

@@ -60,6 +60,8 @@ export function DragStory({ steps }: { steps: readonly Step[] }) {
         setAnimated(false);
       };
     });
+    // 웹폰트가 늦게 오면 위쪽 높이가 바뀌어 pin 시작 위치가 어긋나므로 다시 계산한다.
+    document.fonts.ready.then(() => ScrollTrigger.refresh());
     return () => mm.revert();
   }, []);
 
@@ -95,7 +97,6 @@ export function DragStory({ steps }: { steps: readonly Step[] }) {
 
         <div ref={content} className="grid flex-1 content-center gap-8 p-6 lg:grid-cols-2 lg:p-12">
           <SortableDemo
-            key={current.mode}
             mode={current.mode}
             order={order}
             onOrderChange={setOrder}

@@ -70,12 +70,14 @@ export function CoverageGrid() {
   const [counts, setCounts] = useState<Record<string, number>>({});
 
   const stage = useRef<HTMLDivElement>(null);
+  // 휠은 손을 누르거나 포커스한 뒤에만 받는다. 그냥 지나가며 스크롤할 때 페이지를 붙잡지 않게 하려는 것.
+  const [armed, setArmed] = useState(false);
 
   // 손 위에서 휠을 굴리면 기울어진다: 세로 휠은 pitch, 가로 휠(Shift+휠, 트랙패드 좌우)은 roll.
   // 끝까지 갔으면 페이지 스크롤로 넘겨서 화면이 갇히지 않게 한다.
   useEffect(() => {
     const el = stage.current;
-    if (!el) return;
+    if (!el || !armed) return;
     function onWheel(e: WheelEvent) {
       const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
       const next: Angle = horizontal
@@ -88,7 +90,7 @@ export function CoverageGrid() {
     }
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [angle]);
+  }, [angle, armed]);
 
   const verdict = judge(angle);
   const collecting = engaged && verdict.kind !== "lost";
@@ -147,7 +149,7 @@ export function CoverageGrid() {
   const warn = "oklch(0.62 0.17 30 / 0.7)";
 
   const message = !engaged
-    ? "손 위에서 스크롤하거나 손잡이를 끌어 보세요"
+    ? "손을 눌러 선택한 뒤 스크롤하거나 손잡이를 끌어 보세요"
     : lost
       ? "open_palm 인식이 풀리는 각도예요. 이 프레임은 담지 않아요"
       : (counts[verdict.key] ?? 0) >= PER_CELL
@@ -158,7 +160,14 @@ export function CoverageGrid() {
 
   return (
     <div className="space-y-4">
-      <div ref={stage} className="relative mx-auto aspect-square w-full max-w-[300px]">
+      <div
+        ref={stage}
+        className="relative mx-auto aspect-square w-full max-w-[300px]"
+        onPointerDown={() => setArmed(true)}
+        onPointerLeave={() => setArmed(false)}
+        onFocus={() => setArmed(true)}
+        onBlur={() => setArmed(false)}
+      >
         <div
           className="absolute left-[30%] top-[27%] h-[46%] w-[40%] transition-opacity"
           style={{
