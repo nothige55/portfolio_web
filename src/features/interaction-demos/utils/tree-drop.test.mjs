@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { allowedDepths, applyDrop, canContain, initialRows as rows, locate, placesInOrder, resolveByDepth, resolveInside } from "./tree-drop.ts";
+import { allowedDepths, applyDrop, canContain, canDropInside, holdProgress, INSIDE_DELAY_MS, initialRows as rows, isWithinDeadZone, locate, moveByKey, placesInOrder, resolveByDepth, resolveInside, snapDepth } from "./tree-drop.ts";
 
 const labels = (r) => r.map((x) => x.label);
 
@@ -83,4 +83,42 @@ test("어떤 이동에도 장소는 4개 그대로", () => {
     assert.equal(new Set(out).size, 4);
   }
   assert.deepEqual(placesInOrder(rows), ["공항", "이호테우", "협재해수욕장", "동문시장"]);
+});
+
+test("snapDepth: 가장 가까운 허용 깊이로 붙는다", () => {
+  const s = (after, depth) => snapDepth(rows, "dongmun", after, depth);
+  assert.deepEqual(s("hyeopjae", 1), { target: { parentId: "day1", index: 2 }, depth: 2, valid: true });
+  assert.equal(s("hyeopjae", 3.4).depth, 3);
+  assert.equal(s("hyeopjae", 2.49).depth, 2);
+  assert.equal(s("hyeopjae", 2.5).depth, 3); // 같은 거리면 깊은 쪽
+  assert.equal(s("airport", 0).depth, 2);
+  assert.equal(s("folder", 2), null);
+});
+
+test("머무름 지연과 진행도", () => {
+  assert.deepEqual(INSIDE_DELAY_MS, { line: 0, magnet: 500, fill: 1000 });
+  assert.equal(holdProgress(250, 500), 0.5);
+  assert.equal(holdProgress(2000, 1000), 1);
+  assert.equal(holdProgress(-5, 1000), 0);
+  assert.equal(holdProgress(0, 0), 1);
+  assert.equal(canDropInside(999, 1000), false);
+  assert.equal(canDropInside(1000, 1000), true);
+  assert.equal(canDropInside(0, 0), true);
+});
+
+test("데드존 7.5px", () => {
+  assert.equal(isWithinDeadZone({ x: 0, y: 0 }, { x: 5, y: 5 }), true);
+  assert.equal(isWithinDeadZone({ x: 0, y: 0 }, { x: 7.5, y: 0 }), false);
+  assert.equal(isWithinDeadZone({ x: 0, y: 0 }, { x: 6, y: 6 }), false);
+  assert.equal(isWithinDeadZone(null, { x: 1, y: 1 }), false);
+});
+
+test("moveByKey: 방향키로 같은 이동을 한다", () => {
+  assert.deepEqual(labels(moveByKey(rows, "dongmun", "ArrowDown")), ["제주 여행", "1일차", "공항", "해안 코스", "이호테우", "협재해수욕장", "2일차", "동문시장"]);
+  assert.deepEqual(labels(moveByKey(rows, "dongmun", "ArrowUp")), ["제주 여행", "1일차", "공항", "해안 코스", "이호테우", "동문시장", "협재해수욕장", "2일차"]);
+  const right = moveByKey(rows, "dongmun", "ArrowRight");
+  assert.deepEqual(labels(right), ["제주 여행", "1일차", "공항", "해안 코스", "이호테우", "협재해수욕장", "동문시장", "2일차"]);
+  assert.equal(right.find((x) => x.id === "dongmun").depth, 3);
+  assert.equal(moveByKey(rows, "dongmun", "ArrowLeft"), null);
+  assert.equal(moveByKey(rows, "airport", "ArrowUp"), null);
 });

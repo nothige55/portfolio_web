@@ -124,3 +124,56 @@ export function applyDrop(rows: readonly Row[], dragId: string, target: Target):
 export function placesInOrder(rows: readonly Row[]): string[] {
   return rows.filter((r) => r.kind === "place").map((r) => r.label);
 }
+
+export function snapDepth(rows: readonly Row[], dragId: string, afterId: string, depth: number): Resolved | null {
+  const allowed = allowedDepths(rows, dragId, afterId);
+  if (allowed.length === 0) return null;
+  const best = allowed.reduce((a, b) => {
+    const da = Math.abs(a - depth);
+    const db = Math.abs(b - depth);
+    return db < da || (db === da && b > a) ? b : a;
+  });
+  return resolveByDepth(rows, dragId, afterId, best);
+}
+
+export const INSIDE_DELAY_MS: Record<StepMode, number> = { line: 0, magnet: 500, fill: 1000 };
+
+export function holdProgress(elapsedMs: number, delayMs: number): number {
+  if (delayMs <= 0) return 1;
+  return Math.min(1, Math.max(0, elapsedMs / delayMs));
+}
+
+export const canDropInside = (elapsedMs: number, delayMs: number) => holdProgress(elapsedMs, delayMs) >= 1;
+
+export const DEAD_ZONE_PX = 7.5;
+
+type Point = { x: number; y: number };
+
+export function isWithinDeadZone(anchor: Point | null, point: Point): boolean {
+  return anchor !== null && Math.hypot(anchor.x - point.x, anchor.y - point.y) < DEAD_ZONE_PX;
+}
+
+export function moveByKey(
+  rows: readonly Row[],
+  dragId: string,
+  key: "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight",
+): Row[] | null {
+  const drag = rows.find((r) => r.id === dragId);
+  const at = rows.findIndex((r) => r.id === dragId);
+  if (!drag || at < 1) return null;
+  const rest = rows.filter((r) => r.id !== dragId);
+  const apply = (r: Resolved | null) => (r && r.valid ? applyDrop(rows, dragId, r.target) : null);
+
+  if (key === "ArrowLeft" || key === "ArrowRight") {
+    const depths = allowedDepths(rows, dragId, dragId);
+    const next = key === "ArrowLeft" ? Math.max(...depths.filter((d) => d < drag.depth)) : Math.min(...depths.filter((d) => d > drag.depth));
+    return Number.isFinite(next) ? apply(resolveByDepth(rows, dragId, dragId, next)) : null;
+  }
+
+  const step = key === "ArrowUp" ? -1 : 1;
+  for (let j = at - 1 + step; j >= 0 && j < rest.length; j += step) {
+    const depths = allowedDepths(rows, dragId, rest[j].id);
+    if (depths.length) return apply(resolveByDepth(rows, dragId, rest[j].id, Math.max(...depths)));
+  }
+  return null;
+}
