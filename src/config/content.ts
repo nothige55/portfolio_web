@@ -69,6 +69,19 @@ export const education = "동양미래대학교 컴퓨터정보공학과 · 2027
 export const approach =
   "요구사항에 없던 문제를 쓰다가 찾아내고, 흔한 해법이 왜 안 맞는지 따진 뒤 직접 설계해요.";
 
+export type Note = { value: string; label: string };
+
+export const surgiNotes: readonly Note[] = [
+  { value: "±54° · ±30°", label: "roll과 pitch의 인식 한계예요. 넘으면 담지 않아요." },
+  { value: "5 × 3", label: "roll 10°, pitch 18° 간격으로 나눈 칸이에요." },
+  { value: "2장", label: "칸마다 채우는 수예요. 합쳐서 30장이에요." },
+];
+
+// 나머지 값은 사용자가 채운다. 실제 구현에서 나온 값만 넣는다.
+export const dragNotes: readonly Note[] = [
+  { value: "7.5px", label: "자동 펼침 직후, 이만큼 더 움직이기 전까지 드롭 판정을 미뤄요." },
+];
+
 // 드래그 변천 요약. 상세와 커밋은 features/dnd/config/chapters.ts에 있다.
 export const dragSteps = [
   {
