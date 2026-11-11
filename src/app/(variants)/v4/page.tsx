@@ -105,7 +105,7 @@ export default function V4Page() {
             </ul>
           </div>
           <div className="rounded-xl border bg-card p-6">
-            <p className={`${label} mb-4`}>카메라 없이 손잡이로 손의 기울기를 흉내 내요</p>
+            <p className={`${label} mb-4`}>카메라 없이 스크롤(세로는 pitch, Shift+스크롤은 roll)이나 손잡이로 손을 기울여 보세요</p>
             <CoverageGrid />
           </div>
         </section>

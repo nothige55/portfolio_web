@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // SurgiAuth 가입 화면의 수집 규칙을 손 모델로 흉내 낸 데모. 카메라는 쓰지 않는다.
 // 값은 SurgiAuth hand-orientation.ts와 같다: roll ±25°(칸 폭 10°)·pitch ±27°(칸 폭 18°)의 5×3 격자.
@@ -69,6 +69,27 @@ export function CoverageGrid() {
   const [engaged, setEngaged] = useState(false);
   const [counts, setCounts] = useState<Record<string, number>>({});
 
+  const stage = useRef<HTMLDivElement>(null);
+
+  // 손 위에서 휠을 굴리면 기울어진다: 세로 휠은 pitch, 가로 휠(Shift+휠, 트랙패드 좌우)은 roll.
+  // 끝까지 갔으면 페이지 스크롤로 넘겨서 화면이 갇히지 않게 한다.
+  useEffect(() => {
+    const el = stage.current;
+    if (!el) return;
+    function onWheel(e: WheelEvent) {
+      const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+      const next: Angle = horizontal
+        ? { ...angle, roll: clamp(angle.roll + e.deltaX * 0.15, -SHOW_ROLL, SHOW_ROLL) }
+        : { ...angle, pitch: clamp(angle.pitch - e.deltaY * 0.1, -SHOW_PITCH, SHOW_PITCH) };
+      if (next.roll === angle.roll && next.pitch === angle.pitch) return;
+      e.preventDefault();
+      setEngaged(true);
+      setAngle(next);
+    }
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [angle]);
+
   const verdict = judge(angle);
   const collecting = engaged && verdict.kind !== "lost";
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
@@ -126,7 +147,7 @@ export function CoverageGrid() {
   const warn = "oklch(0.62 0.17 30 / 0.7)";
 
   const message = !engaged
-    ? "손잡이를 끌어 손을 기울여 보세요"
+    ? "손 위에서 스크롤하거나 손잡이를 끌어 보세요"
     : lost
       ? "open_palm 인식이 풀리는 각도예요. 이 프레임은 담지 않아요"
       : (counts[verdict.key] ?? 0) >= PER_CELL
@@ -137,7 +158,7 @@ export function CoverageGrid() {
 
   return (
     <div className="space-y-4">
-      <div className="relative mx-auto aspect-square w-full max-w-[300px]">
+      <div ref={stage} className="relative mx-auto aspect-square w-full max-w-[300px]">
         <div
           className="absolute left-[30%] top-[27%] h-[46%] w-[40%] transition-opacity"
           style={{
