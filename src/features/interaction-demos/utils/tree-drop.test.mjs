@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { allowedDepths, applyDrop, canContain, canDropInside, holdProgress, INSIDE_DELAY_MS, initialRows as rows, isWithinDeadZone, locate, moveByKey, placesInOrder, resolveByDepth, resolveInside, snapDepth } from "./tree-drop.ts";
+import { allowedDepths, applyDrop, canContain, canDropInside, holdProgress, INSIDE_DELAY_MS, initialRows as rows, isWithinDeadZone, locate, locateSlot, moveByKey, placesInOrder, resolveByDepth, resolveInside, snapDepth } from "./tree-drop.ts";
 
 const labels = (r) => r.map((x) => x.label);
 
@@ -121,4 +121,13 @@ test("moveByKey: 방향키로 같은 이동을 한다", () => {
   assert.equal(right.find((x) => x.id === "dongmun").depth, 3);
   assert.equal(moveByKey(rows, "dongmun", "ArrowLeft"), null);
   assert.equal(moveByKey(rows, "airport", "ArrowUp"), null);
+});
+
+test("locateSlot: 컨테이너 안쪽 구역에서도 슬롯으로 본다", () => {
+  assert.deepEqual(locateSlot(rows, 40, 30), { kind: "slot", afterId: "folder" });
+  assert.deepEqual(locateSlot(rows, 45, 30), { kind: "slot", afterId: "day1" });
+  assert.deepEqual(locateSlot(rows, 70, 30), { kind: "slot", afterId: "day1" });
+  assert.equal(locateSlot(rows, 2, 30), null);
+  assert.equal(locateSlot(rows, -5, 30), null);
+  assert.deepEqual(locateSlot(rows, 1000, 30), { kind: "slot", afterId: "day2" });
 });

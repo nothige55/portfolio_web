@@ -177,3 +177,12 @@ export function moveByKey(
   }
   return null;
 }
+
+// locate와 같지만 컨테이너 가운데 구역(inside)도 f < 0.5 / 그 이상으로 나눈 슬롯으로 돌려준다.
+export function locateSlot(rows: readonly Row[], y: number, rowHeight: number): Extract<Located, { kind: "slot" }> | null {
+  if (y < 0 || rows.length === 0) return null;
+  const i = Math.floor(y / rowHeight);
+  if (i >= rows.length) return { kind: "slot", afterId: rows[rows.length - 1].id };
+  if (y - i * rowHeight < rowHeight / 2) return i === 0 ? null : { kind: "slot", afterId: rows[i - 1].id };
+  return { kind: "slot", afterId: rows[i].id };
+}
