@@ -6,6 +6,7 @@
 
 @theme inline {
   --color-background: var(--background);
+  --color-stage: var(--stage);
   --color-foreground: var(--foreground);
   --font-sans: "Pretendard Variable", system-ui, sans-serif;
   --font-serif: var(--font-noto-serif), serif;
@@ -130,4 +131,16 @@
   html {
     @apply font-sans;
   }
+}
+/* 홈 전용 토큰. :root를 바꾸면 /dnd, /about이 달라지므로 클래스 아래에 둔다. 밝은 테마 고정. */
+.home {
+  --background: #ffffff;
+  --foreground: #191f28;
+  --card: #ffffff;
+  --muted: #f2f3f5;
+  --muted-foreground: #6b7684;
+  --border: #e5e8eb;
+  --primary: oklch(0.55 0.2 260);
+  --ring: oklch(0.55 0.2 260);
+  --stage: #f2f3f5;
 }

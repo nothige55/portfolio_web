@@ -69,6 +69,26 @@ export const education = "동양미래대학교 컴퓨터정보공학과 · 2027
 export const approach =
   "요구사항에 없던 문제를 쓰다가 찾아내고, 흔한 해법이 왜 안 맞는지 따진 뒤 직접 설계해요.";
 
+export type Note = { value: string; label: string };
+
+export const surgiNotes: readonly Note[] = [
+  { value: "±54° · ±30°", label: "roll과 pitch의 인식 한계예요. 넘으면 담지 않아요." },
+  { value: "5 × 3", label: "roll 10°, pitch 18° 간격으로 나눈 칸이에요." },
+  { value: "2장", label: "칸마다 채우는 수예요. 합쳐서 30장이에요." },
+];
+
+// 홈 SurgiAuth 구간에 쓰는 고민. 첫 번째는 1차(인식기), 두 번째는 2차(격자)다.
+export const surgiPairs = [
+  {
+    problem: "수집 화면에 방어가 없으면, 인증 제스처와 상관없는 손동작까지 샘플로 들어간다는 걸 알았어요.",
+    decision: "Gesture Recognizer를 프론트에 넣어서 open palm으로 판정된 프레임만 받아요.",
+  },
+  {
+    problem: "open palm 샘플의 품질을 높이려면 다양한 각도에서 모아야 했어요.",
+    decision: "roll과 pitch를 두 축으로 5×3 칸을 만들고, 칸마다 2장씩 모아요.",
+  },
+] as const;
+
 // 드래그 변천 요약. 상세와 커밋은 features/dnd/config/chapters.ts에 있다.
 export const dragSteps = [
   {
@@ -89,7 +109,7 @@ export const dragSteps = [
     id: "c",
     versions: "V5~V6",
     title: "앱 전체가 반응한다",
-    body: "드래그하는 동안 지도가 함께 반응하고, 놓기 전에 바뀔 경로를 미리 보여 줘요. 지도는 데모용 좌표예요.",
+    body: "드래그하는 동안 지도가 함께 반응하고, 놓기 전에 바뀔 경로를 미리 보여 줘요. 자동 펼침 직후에는 7.5px 더 움직이기 전까지 드롭 판정을 미뤄요. 지도는 데모용 좌표예요.",
     mode: "magnet",
   },
 ] as const;
