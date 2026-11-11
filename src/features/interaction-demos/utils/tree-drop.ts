@@ -186,3 +186,11 @@ export function locateSlot(rows: readonly Row[], y: number, rowHeight: number): 
   if (y - i * rowHeight < rowHeight / 2) return i === 0 ? null : { kind: "slot", afterId: rows[i - 1].id };
   return { kind: "slot", afterId: rows[i].id };
 }
+
+// 끌기 시작 때의 행 깊이에서, 가로로 움직인 만큼만 깊이를 바꾼다(손잡이 위치 때문에 누르기만 해도 옮겨지지 않게).
+export const dropDepth = (startDepth: number, startX: number, x: number) => startDepth + (x - startX) / INDENT;
+
+// 트리 상자(0,0,width,height)에서 margin 넘게 벗어났는지. 벗어나서 놓으면 취소로 본다.
+export function isOutsideTree(p: { x: number; y: number }, width: number, height: number, margin = 24): boolean {
+  return p.x < -margin || p.x > width + margin || p.y < -margin || p.y > height + margin;
+}

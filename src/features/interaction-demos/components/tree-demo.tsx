@@ -5,10 +5,12 @@ import {
   allowedDepths,
   applyDrop,
   canDropInside,
+  dropDepth,
   holdProgress,
   INDENT,
   initialRows,
   INSIDE_DELAY_MS,
+  isOutsideTree,
   isWithinDeadZone,
   locate,
   locateSlot,
@@ -40,7 +42,8 @@ type Props = {
   onPreview: (preview: Preview | null) => void;
 };
 
-type Drag = { id: string; x: number; y: number };
+// startX/startDepth: 끌기 시작 때 포인터 x와 행 깊이. 깊이는 여기서부터의 가로 이동량으로 정한다.
+type Drag = { id: string; x: number; y: number; startX: number; startDepth: number };
 // 컨테이너 가운데 구역에 머문 시작 시각. 지연이 지나야 안으로 붙는다.
 type Hold = { id: string; since: number };
 // 안으로 붙은 순간의 포인터 위치. 데드존 안에서는 그 판정을 유지한다(fill).
@@ -72,7 +75,11 @@ export function TreeDemo({ mode, rows, onRowsChange, onPreview }: Props) {
   }, [hold]);
 
   // 포인터 위치에서 놓일 곳을 정한다. 위치 판정은 항상 끌기 전 배치(rows) 기준이라 미리보기가 움직여도 되먹임이 없다.
-  function decide(id: string, p: { x: number; y: number }, isHeld: (containerId: string) => boolean) {
+  function decide(d: Drag, p: { x: number; y: number }, isHeld: (containerId: string) => boolean) {
+    const id = d.id;
+    const depth = dropDepth(d.startDepth, d.startX, p.x);
+    const box = tree.current?.getBoundingClientRect();
+    if (box && isOutsideTree(p, box.width, box.height)) return { located: null, resolved: null, slotAfter: null, held: false };
     const lockedId = mode === "fill" && anchor && isWithinDeadZone(anchor, p) ? anchor.id : null;
     const located = lockedId ? ({ kind: "inside", id: lockedId } as const) : locate(rows, p.y, ROW_H);
     let resolved: Resolved | null = null;
@@ -83,21 +90,21 @@ export function TreeDemo({ mode, rows, onRowsChange, onPreview }: Props) {
       resolved =
         located.kind === "inside"
           ? resolveInside(rows, id, located.id)
-          : resolveByDepth(rows, id, located.afterId, p.x / INDENT);
+          : resolveByDepth(rows, id, located.afterId, depth);
       slotAfter = located.kind === "slot" ? located.afterId : null;
     } else if (held) {
       resolved = resolveInside(rows, id, located.id);
     } else {
       const slot = located.kind === "slot" ? located : locateSlot(rows, p.y, ROW_H);
       slotAfter = slot?.afterId ?? null;
-      resolved = slot ? snapDepth(rows, id, slot.afterId, p.x / INDENT) : null;
+      resolved = slot ? snapDepth(rows, id, slot.afterId, depth) : null;
     }
     return { located, resolved, slotAfter, held };
   }
 
   const elapsed = hold ? Math.max(0, now - hold.since) : 0;
   const { located, resolved, slotAfter, held } = drag
-    ? decide(drag.id, drag, (cid) => hold?.id === cid && canDropInside(elapsed, INSIDE_DELAY_MS[mode]))
+    ? decide(drag, drag, (cid) => hold?.id === cid && canDropInside(elapsed, INSIDE_DELAY_MS[mode]))
     : { located: null, resolved: null, slotAfter: null, held: false };
   const dragLabel = drag ? rows.find((r) => r.id === drag.id)?.label : undefined;
   const next = drag && resolved?.valid ? applyDrop(rows, drag.id, resolved.target) : null;
@@ -114,14 +121,16 @@ export function TreeDemo({ mode, rows, onRowsChange, onPreview }: Props) {
     return { x: e.clientX - box.left, y: e.clientY - box.top };
   }
 
-  function move(e: React.PointerEvent, id: string, prev: { x: number; y: number }) {
+  function move(e: React.PointerEvent, d: Drag) {
     const p = pointAt(e);
-    setDrag({ id, ...p });
+    setDrag({ ...d, ...p });
     if (mode === "fill") {
-      const r = decide(id, p, (cid) => hold?.id === cid && canDropInside(e.timeStamp - hold.since, INSIDE_DELAY_MS[mode]));
+      const r = decide(d, p, (cid) => hold?.id === cid && canDropInside(e.timeStamp - hold.since, INSIDE_DELAY_MS[mode]));
       if (!r.held || r.located?.kind !== "inside") setAnchor(null);
-      else if (anchor?.id !== r.located.id) setAnchor({ id: r.located.id, ...prev });
+      else if (anchor?.id !== r.located.id) setAnchor({ id: r.located.id, x: d.x, y: d.y });
     }
+    // 데드존 안에서는 붙은 판정을 유지하므로 머무름도 건드리지 않는다.
+    if (mode === "fill" && anchor && isWithinDeadZone(anchor, p)) return;
     const at = locate(rows, p.y, ROW_H);
     const id2 = at?.kind === "inside" ? at.id : null;
     if (id2 === null) setHold(null);
@@ -140,7 +149,7 @@ export function TreeDemo({ mode, rows, onRowsChange, onPreview }: Props) {
   // 마지막 move가 아직 그려지지 않았을 수 있어, 놓는 순간의 좌표로 다시 판정한다.
   function end(e: React.PointerEvent) {
     if (drag) {
-      const r = decide(drag.id, pointAt(e), (cid) => hold?.id === cid && canDropInside(e.timeStamp - hold.since, INSIDE_DELAY_MS[mode])).resolved;
+      const r = decide(drag, pointAt(e), (cid) => hold?.id === cid && canDropInside(e.timeStamp - hold.since, INSIDE_DELAY_MS[mode])).resolved;
       if (r?.valid) onRowsChange(applyDrop(rows, drag.id, r.target));
     }
     stop();
@@ -196,11 +205,15 @@ export function TreeDemo({ mode, rows, onRowsChange, onPreview }: Props) {
                   className="cursor-grab touch-none px-1 text-muted-foreground active:cursor-grabbing"
                   onPointerDown={(e) => {
                     e.currentTarget.setPointerCapture(e.pointerId);
-                    setDrag({ id: row.id, ...pointAt(e) });
+                    {
+                      const p = pointAt(e);
+                      setDrag({ id: row.id, ...p, startX: p.x, startDepth: row.depth });
+                    }
                   }}
-                  onPointerMove={(e) => drag && move(e, drag.id, drag)}
+                  onPointerMove={(e) => drag && move(e, drag)}
                   onPointerUp={end}
                   onPointerCancel={stop}
+                  onLostPointerCapture={stop}
                 >
                   ⋮⋮
                 </span>

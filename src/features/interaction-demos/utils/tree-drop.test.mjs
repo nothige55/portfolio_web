@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { allowedDepths, applyDrop, canContain, canDropInside, holdProgress, INSIDE_DELAY_MS, initialRows as rows, isWithinDeadZone, locate, locateSlot, moveByKey, placesInOrder, resolveByDepth, resolveInside, snapDepth } from "./tree-drop.ts";
+import { allowedDepths, applyDrop, canContain, canDropInside, holdProgress, INSIDE_DELAY_MS, dropDepth, initialRows as rows, isOutsideTree, isWithinDeadZone, locate, locateSlot, moveByKey, placesInOrder, resolveByDepth, resolveInside, snapDepth } from "./tree-drop.ts";
 
 const labels = (r) => r.map((x) => x.label);
 
@@ -130,4 +130,18 @@ test("locateSlot: 컨테이너 안쪽 구역에서도 슬롯으로 본다", () =
   assert.equal(locateSlot(rows, 2, 30), null);
   assert.equal(locateSlot(rows, -5, 30), null);
   assert.deepEqual(locateSlot(rows, 1000, 30), { kind: "slot", afterId: "day2" });
+});
+
+test("dropDepth: 손잡이를 누르기만 하면 깊이가 그대로", () => {
+  assert.equal(dropDepth(2, 57, 57), 2);
+  assert.equal(dropDepth(2, 57, 57 + 22), 3);
+  assert.equal(dropDepth(2, 57, 57 - 44), 0);
+});
+
+test("isOutsideTree: 트리 밖(여유 24px)에서 놓으면 취소", () => {
+  assert.equal(isOutsideTree({ x: 10, y: 10 }, 300, 288), false);
+  assert.equal(isOutsideTree({ x: 10, y: 288 + 23 }, 300, 288), false);
+  assert.equal(isOutsideTree({ x: 10, y: 288 + 25 }, 300, 288), true);
+  assert.equal(isOutsideTree({ x: -30, y: 10 }, 300, 288), true);
+  assert.equal(isOutsideTree({ x: 330, y: 10 }, 300, 288), true);
 });
