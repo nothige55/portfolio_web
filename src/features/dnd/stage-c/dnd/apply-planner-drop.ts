@@ -1,0 +1,41 @@
+// 드롭 목적지(부모 + position)를 잡은 노드에 적용해 트리를 다시 만드는 순수 함수
+
+import type { PlannerDropDestination } from "@/features/dnd/stage-c/dnd/planner-drop-rules";
+import type {
+  FlattenedPlannerNode,
+  PlannerNode,
+  PlannerNodePathId,
+  PlannerTree,
+} from "@/features/dnd/stage-c/types/planner-node";
+import { buildPlannerTree } from "@/features/dnd/stage-c/utils/build-planner-tree";
+
+function toPlannerNode(node: FlattenedPlannerNode): PlannerNode {
+  const { depth, siblingIndex, ...plannerNode } = node;
+  void depth;
+  void siblingIndex;
+  return plannerNode;
+}
+
+export function applyPlannerDrop(
+  tree: PlannerTree,
+  activePathId: PlannerNodePathId,
+  destination: Readonly<PlannerDropDestination>,
+): PlannerTree {
+  if (!tree.entityMap.has(activePathId)) {
+    return tree;
+  }
+
+  const nodes = tree.flattenedItems.map((node) => {
+    const plannerNode = toPlannerNode(node);
+
+    return node.pathId === activePathId
+      ? {
+          ...plannerNode,
+          parentPathId: destination.parentPathId,
+          position: destination.position,
+        }
+      : plannerNode;
+  });
+
+  return buildPlannerTree(nodes);
+}

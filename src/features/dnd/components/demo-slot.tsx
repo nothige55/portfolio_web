@@ -1,10 +1,23 @@
-export function DemoSlot({ versions }: { versions: string }) {
-  return (
-    <div className="mx-auto w-full max-w-[1100px] break-words rounded-xl border border-dashed border-border p-8 text-center">
-      <p className="text-sm text-foreground">준비 중이에요. 이 자리에 {versions} 체험이 들어와요.</p>
-      <p className="mt-2 text-xs text-muted-foreground">
-        마우스로 체험하는 데모예요. 데스크톱에서 보세요.
-      </p>
-    </div>
-  );
+"use client";
+
+import dynamic from "next/dynamic";
+
+import type { Chapter } from "../config/chapters";
+
+// 단계마다 dnd 코드가 따로라서 단계별 청크로 나눠 브라우저에서만 불러온다(dnd-kit은 SSR이 필요 없음)
+const demos = {
+  a: dynamic(() => import("../stage-a/components/stage-a-demo").then((m) => m.StageADemo), {
+    ssr: false,
+  }),
+  b: dynamic(() => import("../stage-b/components/stage-b-demo").then((m) => m.StageBDemo), {
+    ssr: false,
+  }),
+  c: dynamic(() => import("../stage-c/components/stage-c-demo").then((m) => m.StageCDemo), {
+    ssr: false,
+  }),
+} satisfies Record<Chapter["id"], unknown>;
+
+export function DemoSlot({ id }: { id: Chapter["id"] }) {
+  const Demo = demos[id];
+  return <Demo />;
 }
