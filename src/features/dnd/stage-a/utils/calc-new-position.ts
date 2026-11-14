@@ -1,6 +1,7 @@
 // trego-frontend 8970c3a src/features/dnd/utils/calcNewPosition.js 이식
 
-import { type LegacyItem, sortedChildren } from "@/features/dnd/data/legacy-items";
+// Node 테스트(npm test)가 직접 읽도록 상대 경로 + .ts 확장자를 쓴다
+import { type LegacyItem, sortedChildren } from "../../data/legacy-items.ts";
 import type { DropZone } from "@/features/dnd/stage-a/utils/drop-zone";
 
 export default function calcNewPosition({

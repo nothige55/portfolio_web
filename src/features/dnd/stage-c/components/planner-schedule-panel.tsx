@@ -175,20 +175,12 @@ export function PlannerSchedulePanel({
   const rowAdornments = useMemo(
     () =>
       new Map(
-        sortableItems.map((node, index) => [
+        sortableItems.map((node) => [
           node.pathId,
-          getPlannerRowAdornments({
-            node,
-            nextNode: sortableItems[index + 1],
-            tree,
-            rootPathId,
-            topItemId: null,
-            isDragging: activePathId !== null,
-            projection: dragLayout?.projection,
-          }),
+          getPlannerRowAdornments({ node, tree, projection: dragLayout?.projection }),
         ]),
       ),
-    [activePathId, dragLayout, rootPathId, sortableItems, tree],
+    [dragLayout, sortableItems, tree],
   );
   // 레이아웃 높이는 그대로 두고 노드 박스만 옮김. dnd-kit이 시작 때 잰 rect가 끝까지
   // 유효하고, 경로 정보 칸이 생기거나 사라지는 것도 옮기는 거리 안에서 흡수됨

@@ -4,16 +4,12 @@
 import type {
   FlattenedPlannerNode,
   PlannerActivityNode,
-  PlannerNodePathId,
   PlannerTree,
 } from "@/features/dnd/stage-c/types/planner-node";
 import type { PlannerDragProjection } from "@/features/dnd/stage-c/utils/build-planner-drag-projection";
 import { calculatePlannerDistanceKm } from "@/features/dnd/stage-c/utils/calculate-planner-distance";
 
 export type PlannerRowAdornments = {
-  // 다음 최상위 노드가 breadcrumb 아랫변까지 올라왔을 때 이 행 아래쪽에 붙일 이전 구간의 최상위 라벨
-  // 다음 구간에 밀려 함께 올라가므로, 행 높이(메모 유무)와 상관없이 breadcrumb 자리에서 이어받음
-  readonly boundaryAncestor?: FlattenedPlannerNode;
   // 같은 Day 안에서 바로 앞 Activity. 이동 수단·거리 안내를 그릴 때만 씀
   readonly previousActivity?: PlannerActivityNode;
   // 경로 정보가 자리를 차지하는 행인지 여부. 트리로만 정하므로 드래그 내내 변하지 않음
@@ -45,39 +41,13 @@ function hasTreeRouteInfo(node: FlattenedPlannerNode, tree: PlannerTree): boolea
   return calculatePlannerDistanceKm(previous, node) !== null;
 }
 
-function getTopAncestor(
-  node: FlattenedPlannerNode,
-  tree: PlannerTree,
-  rootPathId: PlannerNodePathId | null,
-): FlattenedPlannerNode {
-  let currentItem = node;
-
-  while (currentItem.parentPathId) {
-    const parent = tree.entityMap.get(currentItem.parentPathId);
-    if (!parent || parent.pathId === rootPathId) {
-      break;
-    }
-    currentItem = parent;
-  }
-
-  return currentItem;
-}
-
 export function getPlannerRowAdornments({
   node,
-  nextNode,
   tree,
-  rootPathId,
-  topItemId,
-  isDragging,
   projection,
 }: {
   readonly node: FlattenedPlannerNode;
-  readonly nextNode?: FlattenedPlannerNode;
   readonly tree: PlannerTree;
-  readonly rootPathId: PlannerNodePathId | null;
-  readonly topItemId: PlannerNodePathId | null;
-  readonly isDragging: boolean;
   // 드래그 중이면 지금 놓았을 때의 이웃 관계로 앞 Activity를 고름
   readonly projection?: PlannerDragProjection | null;
 }): PlannerRowAdornments {
@@ -104,17 +74,5 @@ export function getPlannerRowAdornments({
     node.kind === "activity" &&
     calculatePlannerDistanceKm(previousActivity, node) !== null;
 
-  // 형제가 하나뿐인 root 직속 자식은 조상을 겹쳐 봐도 얻는 정보가 없음
-  const isAloneAndRootChild =
-    (tree.childrenMap.get(node.parentPathId) ?? []).length === 1 && node.depth === 2;
-  const boundaryAncestor =
-    !isDragging &&
-    nextNode?.depth === 1 &&
-    nextNode.pathId === topItemId &&
-    node.depth !== 1 &&
-    !isAloneAndRootChild
-      ? getTopAncestor(node, tree, rootPathId)
-      : undefined;
-
-  return { boundaryAncestor, hasRouteSlot, previousActivity, showsRouteInfo };
+  return { hasRouteSlot, previousActivity, showsRouteInfo };
 }
