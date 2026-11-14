@@ -7,6 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-stage: var(--stage);
+  /* Trego DnD 데모가 원본 색을 그대로 쓰도록 둔 토큰 */
+  --color-brand: #0d99ff;
+  --color-brand-hover: #0b87e6;
   --color-foreground: var(--foreground);
   --font-sans: "Pretendard Variable", system-ui, sans-serif;
   --font-serif: var(--font-noto-serif), serif;
@@ -143,4 +146,61 @@
   --primary: oklch(0.55 0.2 260);
   --ring: oklch(0.55 0.2 260);
   --stage: #f2f3f5;
+}
+
+/* Trego V5~V6: 빈 컨테이너에 자식으로 넣을 때 1초 동안 왼쪽부터 채움 (원본 index.css) */
+@keyframes planner-child-drop-fill {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.planner-child-drop-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.planner-child-drop-fill::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: color-mix(in srgb, var(--color-brand) 15%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: planner-child-drop-fill 1s ease-in forwards;
+}
+
+.planner-child-drop-fill > * {
+  position: relative;
+}
+
+/* Trego V4: 빈 컨테이너 위에서 1초 동안 왼쪽부터 채움 (원본 SortableItem.css) */
+.v4-snapped-child-fill {
+  position: relative;
+}
+
+.v4-snapped-child-fill::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background-color: #e5f4ff;
+  z-index: -1;
+  animation: v4-fill-from-left 1s ease-in forwards;
+}
+
+@keyframes v4-fill-from-left {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
 }

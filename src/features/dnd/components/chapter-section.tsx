@@ -9,7 +9,7 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
         <Badge variant="secondary">{chapter.versions}</Badge>
         <h2 className="font-heading text-2xl font-bold">{chapter.title}</h2>
       </div>
-      <DemoSlot versions={chapter.versions} />
+      <DemoSlot id={chapter.id} />
       <div className="mx-auto max-w-[680px] space-y-4 leading-relaxed">
         <p>
           <span className="block text-sm text-muted-foreground">사용자가 느끼는 것</span>
