@@ -1,5 +1,5 @@
 // 일정 트리의 행 하나를 그림
-// 원본에서 드롭 상태 표현과 펼침만 남기고, 선택·hover·이름/메모 편집·컨텍스트 메뉴·지도 토글은 뺐다
+// 원본에서 드롭 상태 표현, 펼침, 구간 경계 라벨(breadcrumb와 이어짐)만 남기고, 선택·hover·이름/메모 편집·컨텍스트 메뉴·지도 토글은 뺐다
 // 행 높이는 원본 36px 대신 V1~V3, V4와 같은 30px(shared/row-metrics)로 맞췄다. 밀림은 실제 높이를 재므로 판정은 그대로다
 
 import { useSortable } from "@dnd-kit/sortable";
@@ -21,6 +21,7 @@ export function PlannerTreeItem({
   dayNumber,
   registerItem,
   dragOffset,
+  boundaryAncestor,
   isDropTargetVisible,
   isChildTarget,
   isExpandingTarget,
@@ -32,6 +33,7 @@ export function PlannerTreeItem({
   readonly registerItem: (pathId: PlannerNodePathId, element: HTMLDivElement | null) => void;
   // 드래그 중 노드 박스를 옮길 거리. 지금 놓았을 때의 배치에서 계산
   readonly dragOffset: number;
+  readonly boundaryAncestor?: FlattenedPlannerNode;
   // 놓을 자리가 있을 때만 빈 자리를 표시. 목록 밖에서는 빠진 것처럼 보여야 함
   readonly isDropTargetVisible: boolean;
   readonly isChildTarget: boolean;
@@ -86,6 +88,24 @@ export function PlannerTreeItem({
             data-testid="planner-drag-placeholder"
             className="visible absolute inset-0 rounded-md border border-dashed border-brand/40 bg-brand/5"
           />
+        ) : null}
+        {boundaryAncestor ? (
+          // 수정: 왼쪽 여백 22px → 20px, 높이 h-8 → h-[30px]. breadcrumb와 같은 이유로, 이어받는 breadcrumb와 같은 크기다
+          <div
+            aria-hidden="true"
+            data-testid="planner-root-boundary-label"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex h-[30px] items-center bg-card pr-2 pl-5"
+          >
+            <PlannerNodeLabel
+              node={boundaryAncestor}
+              parent={
+                boundaryAncestor.parentPathId
+                  ? entityMap.get(boundaryAncestor.parentPathId)
+                  : undefined
+              }
+              className="w-full"
+            />
+          </div>
         ) : null}
         <div
           className={`group flex h-[30px] items-center text-foreground ${PLANNER_ROW_SURFACE_CLASS_NAME} ${
