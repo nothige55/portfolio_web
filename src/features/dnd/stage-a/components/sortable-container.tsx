@@ -15,6 +15,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { type LegacyItem, type LegacyReorder, sortedChildren } from "@/features/dnd/data/legacy-items";
 import { PlanLabel } from "@/features/dnd/stage-a/components/plan-label";
@@ -22,10 +23,16 @@ import calcNewPosition from "@/features/dnd/stage-a/utils/calc-new-position";
 import determineNewParentPathId from "@/features/dnd/stage-a/utils/determine-new-parent-path-id";
 import dndCondition from "@/features/dnd/stage-a/utils/dnd-condition";
 import type { DropZone } from "@/features/dnd/stage-a/utils/drop-zone";
+import {
+  DND_INDENT_WIDTH,
+  DND_ROW_HEIGHT,
+  DND_TOGGLE_WIDTH,
+} from "@/features/dnd/shared/row-metrics";
 
-const INDENT_PER_LEVEL = 32; // 계층 1단계당 32px
-const BASE_INDENT = 22; // 루트 기준 패딩 + expand 아이콘 너비
-const ROW_HEIGHT = 30;
+// 수정: 원본은 32px 들여쓰기, 루트 기준 22px(4px 여백 + 패딩 + 아이콘)이었다. 세 데모 공통 행 치수로 바꿨다
+const INDENT_PER_LEVEL = DND_INDENT_WIDTH;
+const BASE_INDENT = DND_TOGGLE_WIDTH; // 펼침 칸 너비 = 루트 라벨 시작점
+const ROW_HEIGHT = DND_ROW_HEIGHT;
 
 type OverRect = { top: number; left: number; width: number; height: number };
 
@@ -165,8 +172,9 @@ export function SortableContainer({
     } else if (finalPosition === "middle") {
       newStyle = {
         top: over.rect.top,
-        left: over.rect.left + 4,
-        width: over.rect.width - 4,
+        // 수정: 행 왼쪽 4px 여백을 없앴으므로 박스도 행 왼쪽 끝부터 그린다
+        left: over.rect.left,
+        width: over.rect.width,
         height: ROW_HEIGHT,
         border: "1px solid #0D99FF",
         borderRadius: "8px 0px 0px 8px",
@@ -259,24 +267,27 @@ export function SortableContainer({
       collisionDetection={pointerWithin} // 포인터가 아이템 위에 있을 때만 충돌 감지
     >
       {children}
-      {dropIndicatorStyle && <div style={dropIndicatorStyle} />}
-      {activeItem && (
-        <div
-          style={{
-            left: cursorPosition.x,
-            top: cursorPosition.y,
-            position: "fixed",
-            zIndex: 10001,
-            pointerEvents: "none",
-            backgroundColor: "rgba(255, 255, 255, 0.8)",
-            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8px",
-            width: "240px",
-          }}
-        >
-          <PlanLabel entity={activeItem} />
-        </div>
-      )}
+      {/* 수정: fixed는 transform이 걸린 조상(홈의 GSAP 연출) 안에서는 뷰포트가 아니라 그 조상 기준이 된다. body로 내보내 항상 뷰포트 좌표로 그린다 */}
+      {dropIndicatorStyle && createPortal(<div style={dropIndicatorStyle} />, document.body)}
+      {activeItem &&
+        createPortal(
+          <div
+            style={{
+              left: cursorPosition.x,
+              top: cursorPosition.y,
+              position: "fixed",
+              zIndex: 10001,
+              pointerEvents: "none",
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+              borderRadius: "8px",
+              width: "240px",
+            }}
+          >
+            <PlanLabel entity={activeItem} />
+          </div>,
+          document.body,
+        )}
     </DndContext>
   );
 }

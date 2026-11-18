@@ -69,7 +69,7 @@ export function usePlannerDragAndDrop({
   const [isSiblingDropActive, setIsSiblingDropActive] = useState(false);
   // 포인터가 목록 좌우 밖에 있는지 여부. 이때만 잡은 노드를 목록에서 빼서 보여 줌
   const [isOutsideList, setIsOutsideList] = useState(false);
-  // 지금 놓으면 들어갈 자리. 경로 정보 미리보기가 이 값으로 이웃 관계를 다시 계산
+  // 지금 놓으면 들어갈 자리. 보일 순서를 이 값으로 다시 계산
   const [dropDestination, setDropDestination] = useState<PlannerDragDestination | null>(null);
   const [horizontalOffset, setHorizontalOffset] = useState(0);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

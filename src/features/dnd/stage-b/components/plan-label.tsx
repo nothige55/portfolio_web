@@ -18,7 +18,7 @@ export function PlanLabel({
 }) {
   if (entity.folderId) {
     return (
-      <div className="flex min-h-[30px] items-center gap-2 text-sm">
+      <div className="flex h-[30px] items-center gap-2 text-sm">
         {entity.folderType === "wish" ? (
           <Heart aria-hidden="true" className="size-4 fill-[#F44336] text-[#F44336]" />
         ) : (
@@ -30,7 +30,7 @@ export function PlanLabel({
   }
   if (entity.dayId) {
     return (
-      <div className="flex min-h-[30px] items-center gap-2 text-sm">
+      <div className="flex h-[30px] items-center gap-2 text-sm">
         <span
           className="flex size-4 items-end justify-center rounded-[3px] border-t-4 bg-[#EDF5FF] text-[8px] leading-none font-bold"
           style={{ borderTopColor: entity.color ?? "#F44336" }}
@@ -42,7 +42,7 @@ export function PlanLabel({
     );
   }
   return (
-    <div className="flex min-h-[30px] items-center gap-2 text-sm">
+    <div className="flex h-[30px] items-center gap-2 text-sm">
       <span
         className="flex size-4 shrink-0 items-center justify-center rounded-full text-[10px] text-white"
         style={{ backgroundColor: color ?? "#9D9D9D" }}

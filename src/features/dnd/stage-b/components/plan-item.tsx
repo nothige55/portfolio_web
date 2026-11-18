@@ -7,6 +7,7 @@ import type { LegacyItem } from "@/features/dnd/data/legacy-items";
 import { PlanLabel } from "@/features/dnd/stage-b/components/plan-label";
 import type { Snap } from "@/features/dnd/stage-b/components/sortable-container";
 import { SortableItem } from "@/features/dnd/stage-b/components/sortable-item";
+import { DND_INDENT_WIDTH } from "@/features/dnd/shared/row-metrics";
 
 function ToggleButton({
   entity,
@@ -59,8 +60,9 @@ export function PlanItem({
   dayNumber?: number;
 }) {
   // usePlanItemPL
-  const paddingLeft =
-    entity.hierarchy > 1 && hasChildren ? 30 * (entity.hierarchy - 1) - 16 : 30 * (entity.hierarchy - 1);
+  // 30px = 세 데모 공통 들여쓰기(shared/row-metrics)
+  const indent = DND_INDENT_WIDTH * (entity.hierarchy - 1);
+  const paddingLeft = entity.hierarchy > 1 && hasChildren ? indent - 16 : indent;
   const toggle = (
     <ToggleButton
       entity={entity}

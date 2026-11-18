@@ -1,9 +1,11 @@
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { dragSteps, education, projects, stack, surgiNotes, surgiPairs, type Note } from "@/config/content";
 import { site } from "@/config/site";
 import { BreadcrumbDemo } from "@/features/interaction-demos/components/breadcrumb-demo";
 import { CopyLink } from "@/features/interaction-demos/components/copy-link";
 import { CoverageGrid } from "@/features/interaction-demos/components/coverage-grid";
+import { DemoSlot } from "@/features/dnd/components/demo-slot";
 import { DragStory } from "@/features/interaction-demos/components/drag-story";
 import { SplitReveal } from "@/features/interaction-demos/components/split-reveal";
 import { PathBar } from "@/features/variant-story/components/path-bar";
@@ -73,10 +75,14 @@ export default function V4Page() {
         </section>
 
         <section id="trego-drag">
-          <DragStory steps={dragSteps} />
+          <DragStory
+            steps={dragSteps}
+            demos={{ a: <DemoSlot id="a" bare />, b: <DemoSlot id="b" bare />, c: <DemoSlot id="c" bare /> }}
+          />
           <p className="mt-6 text-center">
-            <Link href="/dnd" className={`${link} text-sm`}>
-              버전별 과정 전체 보기 →
+            <Link href="/dnd" className={`${link} inline-flex items-center gap-1 text-sm`}>
+              버전별 과정 전체 보기
+              <ArrowRight aria-hidden="true" className="size-3.5" />
             </Link>
           </p>
         </section>

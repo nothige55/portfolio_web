@@ -1,4 +1,5 @@
 // trego-frontend 8970c3a PlanLabel.jsx 이식. 이름 편집, 메모, Day 설정·표시 토글은 데모에서 뺐다
+// 수정: 아이콘과 이름 사이를 V4, V5~V6와 같은 8px로 맞췄다
 
 import { Folder, ListTodo } from "lucide-react";
 
@@ -17,7 +18,7 @@ export function PlanLabel({
 }) {
   if (entity.folderId) {
     return (
-      <div className="flex h-[30px] w-full items-center gap-1 pl-1 text-sm">
+      <div className="flex h-[30px] w-full items-center gap-2 text-sm">
         <Folder aria-hidden="true" className="size-4" strokeWidth={1.5} />
         {entity.name}
       </div>
@@ -25,8 +26,8 @@ export function PlanLabel({
   }
   if (entity.dayId) {
     return (
-      <div className="flex h-[30px] w-full items-center justify-between pr-[20px] pl-1 text-sm">
-        <div className="flex items-center gap-1">
+      <div className="flex h-[30px] w-full items-center justify-between pr-[20px] text-sm">
+        <div className="flex items-center gap-2">
           <ListTodo aria-hidden="true" className="size-4" strokeWidth={1.5} />
           {entity.name}
         </div>
@@ -37,7 +38,7 @@ export function PlanLabel({
     );
   }
   return (
-    <div className="flex h-[30px] w-full items-center pl-1 text-sm">
+    <div className="flex h-[30px] w-full items-center gap-2 text-sm">
       {/* SpotNumberBadge */}
       <span
         className="flex size-4 shrink-0 items-center justify-center rounded-full text-[10px] text-white"
@@ -45,7 +46,7 @@ export function PlanLabel({
       >
         {index}
       </span>
-      <p className="pl-2 leading-none">{entity.name}</p>
+      <p className="leading-none">{entity.name}</p>
     </div>
   );
 }
