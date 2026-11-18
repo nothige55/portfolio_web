@@ -1,7 +1,30 @@
+"use client";
+
+import dynamic from "next/dynamic";
+
+import { env } from "@/config/env";
 import { jejuSeed } from "@/features/dnd/data/jeju-seed";
 import type { RouteRow } from "@/features/dnd/data/route-rows";
+import { buildPlannerTree } from "@/features/dnd/stage-c/utils/build-planner-tree";
 
-// 데모용 단순 지도. 시드의 위경도를 평면에 펴서 그린 것이고, 거리는 직선거리다.
+// Mapbox 토큰이 있으면 원본 Trego 지도(dnd/map)를 쓴다. mapbox-gl은 브라우저 전용이고 무거워서 따로 불러온다
+const PlannerMap = dynamic(() => import("@/features/dnd/map/planner-map").then((m) => m.PlannerMap), {
+  ssr: false,
+  loading: () => <div className="h-[360px] rounded-lg border bg-[#eef1f3]" />,
+});
+
+// 트리의 현재 구조(rows)를 시드 노드에 덮어써 원본과 같은 PlannerTree로 만든다
+function toPlannerTree(rows: readonly RouteRow[]) {
+  const byPathId = new Map(rows.map((row) => [row.pathId, row]));
+  return buildPlannerTree(
+    jejuSeed.flatMap((node) => {
+      const row = byPathId.get(node.pathId);
+      return row ? [{ ...node, parentPathId: row.parentPathId, position: row.position }] : [];
+    }),
+  );
+}
+
+// 토큰이 없을 때 쓰는 데모용 단순 지도. 시드의 위경도를 평면에 펴서 그린 것이고, 거리는 직선거리다.
 const W = 300;
 const H = 200;
 const PAD = 28;
@@ -61,38 +84,45 @@ export function RouteMap({ rows }: { rows: readonly RouteRow[] }) {
     0,
   );
 
+  const accessToken = env.mapboxAccessToken;
+  const tree = toPlannerTree(rows);
+
   return (
     <div className="space-y-3">
-      <div className="overflow-hidden rounded-lg border bg-sky-50">
-        <svg viewBox={`0 0 ${W} ${H}`} className="block w-full" role="img" aria-label="제주 북서쪽 지도. 날짜마다 색이 다른 선으로 장소가 이어져요">
-          {routes.map(({ day, stops }) => {
-            const color = day.color ?? "#444";
-            const points = stops.map((stop) => project(stop.latitude, stop.longitude));
-            return (
-              <g key={day.pathId}>
-                <polyline
-                  points={points.map((p) => `${p.x},${p.y}`).join(" ")}
-                  fill="none"
-                  stroke={color}
-                  strokeWidth="2"
-                  strokeLinejoin="round"
-                />
-                {stops.map((stop, i) => (
-                  <g key={stop.pathId}>
-                    <circle cx={points[i].x} cy={points[i].y} r="8" fill="white" stroke={color} strokeWidth="1.5" />
-                    <text x={points[i].x} y={points[i].y + 3.5} textAnchor="middle" fontSize="9" fontWeight="600">
-                      {i + 1}
-                    </text>
-                    <text x={points[i].x} y={points[i].y - 12} textAnchor="middle" fontSize="8" fill="oklch(0.35 0 0)">
-                      {stop.name}
-                    </text>
-                  </g>
-                ))}
-              </g>
-            );
-          })}
-        </svg>
-      </div>
+      {accessToken ? (
+        <PlannerMap accessToken={accessToken} tree={tree} />
+      ) : (
+        <div className="overflow-hidden rounded-lg border bg-sky-50">
+          <svg viewBox={`0 0 ${W} ${H}`} className="block w-full" role="img" aria-label="제주 북서쪽 지도. 날짜마다 색이 다른 선으로 장소가 이어져요">
+            {routes.map(({ day, stops }) => {
+              const color = day.color ?? "#444";
+              const points = stops.map((stop) => project(stop.latitude, stop.longitude));
+              return (
+                <g key={day.pathId}>
+                  <polyline
+                    points={points.map((p) => `${p.x},${p.y}`).join(" ")}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth="2"
+                    strokeLinejoin="round"
+                  />
+                  {stops.map((stop, i) => (
+                    <g key={stop.pathId}>
+                      <circle cx={points[i].x} cy={points[i].y} r="8" fill="white" stroke={color} strokeWidth="1.5" />
+                      <text x={points[i].x} y={points[i].y + 3.5} textAnchor="middle" fontSize="9" fontWeight="600">
+                        {i + 1}
+                      </text>
+                      <text x={points[i].x} y={points[i].y - 12} textAnchor="middle" fontSize="8" fill="oklch(0.35 0 0)">
+                        {stop.name}
+                      </text>
+                    </g>
+                  ))}
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+      )}
       <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground" aria-label="날짜별 색">
         {days.map((day) => (
           <li key={day.pathId} className="flex items-center gap-1.5">
