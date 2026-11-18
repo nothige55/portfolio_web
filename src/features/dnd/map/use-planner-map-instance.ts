@@ -198,6 +198,9 @@ export function usePlannerMapInstance(
       });
       renderedMarkers.clear();
       map.remove();
+      // 수정: cooperativeGestures가 컨테이너에 붙인 안내 요소(scroll-zoom-blocker 등)는 map.remove()가 지우지 않는다.
+      // 남겨 두면 StrictMode 재마운트나 다시 시도 때 "map container element should be empty" 경고가 난다
+      container.replaceChildren();
       mapRef.current = null;
       isLoadedRef.current = false;
       hasAppliedInitialCameraRef.current = false;
