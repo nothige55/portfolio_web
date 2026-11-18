@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { DemoFrame } from "@/features/dnd/components/demo-frame";
+import type { DemoProps } from "@/features/dnd/data/route-rows";
 import { jejuSeed } from "@/features/dnd/data/jeju-seed";
 import {
   applyLegacyReorder,
@@ -16,16 +17,19 @@ import { SortableContainer } from "@/features/dnd/stage-a/components/sortable-co
 
 const initialItems = () => withHierarchy(toLegacyItems(jejuSeed));
 
-export function StageADemo() {
+export function StageADemo({ onRowsChange, aside, bare }: DemoProps) {
   const [items, setItems] = useState(initialItems);
   // 처음으로를 누르면 행마다 가진 펼침 상태까지 새로 시작하도록 key를 바꾼다
   const [version, setVersion] = useState(0);
   const dayNumberByPathId = useMemo(() => buildDayNumbers(items), [items]);
+  useEffect(() => onRowsChange?.(items), [items, onRowsChange]);
   // 원본 PlanBody: position이 0인 엔터티가 root
   const root = items.find((item) => item.position === 0);
 
   return (
     <DemoFrame
+      aside={aside}
+      bare={bare}
       onReset={() => {
         setItems(initialItems());
         setVersion((value) => value + 1);

@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { DemoFrame } from "@/features/dnd/components/demo-frame";
+import type { DemoProps } from "@/features/dnd/data/route-rows";
 import { jejuSeed } from "@/features/dnd/data/jeju-seed";
 import {
   applyLegacyReorder,
@@ -47,7 +48,7 @@ function buildVisibleItems(
   return result;
 }
 
-export function StageBDemo() {
+export function StageBDemo({ onRowsChange, aside, bare }: DemoProps) {
   const [items, setItems] = useState(initialItems);
   const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(initialExpanded);
   const [isSnapped, setIsSnapped] = useState<Snap>(false);
@@ -57,6 +58,7 @@ export function StageBDemo() {
     [items, childrenMap, expandedIds],
   );
   const dayNumberByPathId = useMemo(() => buildDayNumbers(items), [items]);
+  useEffect(() => onRowsChange?.(items), [items, onRowsChange]);
   const toggleExpanded = (pathId: string) =>
     setExpandedIds((current) => {
       const next = new Set(current);
@@ -67,6 +69,8 @@ export function StageBDemo() {
 
   return (
     <DemoFrame
+      aside={aside}
+      bare={bare}
       onReset={() => {
         setItems(initialItems());
         setExpandedIds(initialExpanded());

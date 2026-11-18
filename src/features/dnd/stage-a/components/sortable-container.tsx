@@ -15,6 +15,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { type LegacyItem, type LegacyReorder, sortedChildren } from "@/features/dnd/data/legacy-items";
 import { PlanLabel } from "@/features/dnd/stage-a/components/plan-label";
@@ -259,24 +260,27 @@ export function SortableContainer({
       collisionDetection={pointerWithin} // 포인터가 아이템 위에 있을 때만 충돌 감지
     >
       {children}
-      {dropIndicatorStyle && <div style={dropIndicatorStyle} />}
-      {activeItem && (
-        <div
-          style={{
-            left: cursorPosition.x,
-            top: cursorPosition.y,
-            position: "fixed",
-            zIndex: 10001,
-            pointerEvents: "none",
-            backgroundColor: "rgba(255, 255, 255, 0.8)",
-            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8px",
-            width: "240px",
-          }}
-        >
-          <PlanLabel entity={activeItem} />
-        </div>
-      )}
+      {/* 수정: fixed는 transform이 걸린 조상(홈의 GSAP 연출) 안에서는 뷰포트가 아니라 그 조상 기준이 된다. body로 내보내 항상 뷰포트 좌표로 그린다 */}
+      {dropIndicatorStyle && createPortal(<div style={dropIndicatorStyle} />, document.body)}
+      {activeItem &&
+        createPortal(
+          <div
+            style={{
+              left: cursorPosition.x,
+              top: cursorPosition.y,
+              position: "fixed",
+              zIndex: 10001,
+              pointerEvents: "none",
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+              borderRadius: "8px",
+              width: "240px",
+            }}
+          >
+            <PlanLabel entity={activeItem} />
+          </div>,
+          document.body,
+        )}
     </DndContext>
   );
 }

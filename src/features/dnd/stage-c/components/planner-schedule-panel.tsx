@@ -11,12 +11,9 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useCallback, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { PlannerDragPreview } from "@/features/dnd/stage-c/components/planner-drag-preview";
-import {
-  PLANNER_ROUTE_INFO_HEIGHT,
-  PlannerRouteInfo,
-} from "@/features/dnd/stage-c/components/planner-route-info";
 import { PlannerTreeItem } from "@/features/dnd/stage-c/components/planner-tree-item";
 import { calculatePlannerDragFootprintHeight } from "@/features/dnd/stage-c/dnd/resolve-planner-drop";
 import { usePlannerDragAndDrop } from "@/features/dnd/stage-c/dnd/use-planner-drag-and-drop";
@@ -27,8 +24,6 @@ import {
   calculatePlannerDragOffsets,
 } from "@/features/dnd/stage-c/utils/build-planner-drag-layout";
 import { buildPlannerDragProjection } from "@/features/dnd/stage-c/utils/build-planner-drag-projection";
-import { getPlannerRowAdornments } from "@/features/dnd/stage-c/utils/get-planner-row-adornments";
-import { getPlannerRowIndentation } from "@/features/dnd/stage-c/utils/get-planner-row-indentation";
 import { getVisiblePlannerNodes } from "@/features/dnd/stage-c/utils/get-visible-planner-nodes";
 
 export function PlannerSchedulePanel({
@@ -53,7 +48,7 @@ export function PlannerSchedulePanel({
     },
     [],
   );
-  // 노드가 떠나면 그 앞머리인 경로 정보도 함께 닫히므로 자리는 li 기준으로 잼
+  // 자리는 li 기준으로 잼
   const getItemBlockHeight = useCallback((pathId: PlannerNodePathId): number => {
     const element = itemRefs.current.get(pathId);
     if (!element) {
@@ -172,18 +167,7 @@ export function PlannerSchedulePanel({
     sortableItems,
     tree,
   ]);
-  const rowAdornments = useMemo(
-    () =>
-      new Map(
-        sortableItems.map((node) => [
-          node.pathId,
-          getPlannerRowAdornments({ node, tree, projection: dragLayout?.projection }),
-        ]),
-      ),
-    [dragLayout, sortableItems, tree],
-  );
-  // 레이아웃 높이는 그대로 두고 노드 박스만 옮김. dnd-kit이 시작 때 잰 rect가 끝까지
-  // 유효하고, 경로 정보 칸이 생기거나 사라지는 것도 옮기는 거리 안에서 흡수됨
+  // 레이아웃 높이는 그대로 두고 노드 박스만 옮김. dnd-kit이 시작 때 잰 rect가 끝까지 유효함
   const dragOffsets = useMemo(
     () =>
       dragLayout
@@ -191,18 +175,15 @@ export function PlannerSchedulePanel({
             layoutRows: sortableItems,
             visualRows: dragLayout.visualRows,
             getNodeHeight: (pathId) => dragNodeHeights.get(pathId) ?? 0,
-            hasLayoutSlot: (row) => rowAdornments.get(row.pathId)?.hasRouteSlot ?? false,
-            hasVisualSlot: (row) => rowAdornments.get(row.pathId)?.showsRouteInfo ?? false,
-            slotHeight: PLANNER_ROUTE_INFO_HEIGHT,
           })
         : null,
-    [dragLayout, dragNodeHeights, rowAdornments, sortableItems],
+    [dragLayout, dragNodeHeights, sortableItems],
   );
 
   return (
     <div ref={scrollContainerRef} className="pb-5">
       {/* over는 포인터가 멈춰 있어도 리렌더로 다시 계산되는데 onDragMove는 그때
-          불리지 않음. 그것만 물면 경로 정보 미리보기가 한 프레임 뒤처져 화면
+          불리지 않음. 그것만 물면 밀림이 한 프레임 뒤처져 화면
           순서와 어긋남. onDragOver는 over가 바뀌는 시점에 setOver와 같은
           배치로 불리므로 둘 다 같은 핸들러를 씀 */}
       <DndContext
@@ -214,57 +195,19 @@ export function PlannerSchedulePanel({
         onDragOver={handlePanelDragMove}
         onDragStart={handlePanelDragStart}
       >
-        {/* 밀림은 전략이 내는 transform이 아니라 dragOffsets로 그림. 드래그 중 경로 정보
-            칸이 생기거나 사라지는 걸 전략은 모르기 때문. 전략은 목록 모양에 맞는
-            세로 목록 전략으로 두되, 화면에는 쓰지 않음 */}
+        {/* 밀림은 전략이 내는 transform이 아니라 dragOffsets로 그림. 전략은 잡은 노드를
+            목록에서 빼고 보일 순서를 다시 짜는 이 데모의 배치를 모르기 때문. 전략은
+            목록 모양에 맞는 세로 목록 전략으로 두되, 화면에는 쓰지 않음 */}
         <SortableContext
           items={sortableItems.map((node) => node.pathId)}
           strategy={verticalListSortingStrategy}
         >
           <ul role="tree" aria-label="여행 일정" className="min-h-full outline-none">
             {sortableItems.map((node) => {
-              const { hasRouteSlot, previousActivity, showsRouteInfo } = rowAdornments.get(
-                node.pathId,
-              )!;
-              const isDraggingList = activePathId !== null;
-              // 목록에서 빠진 잡은 노드는 보일 배치에 없음. 그 행에는 아무것도 그리지 않음
-              const isInVisibleLayout = !dragOffsets || dragOffsets.has(node.pathId);
-
               return (
                 <PlannerTreeItem
                   key={node.pathId}
                   node={node}
-                  routeInfo={
-                    node.kind === "activity" && hasRouteSlot ? (
-                      // 레이아웃 높이를 지키는 칸. 드래그 중에는 비워 두고,
-                      // 내용은 노드 박스에 붙은 dragRouteInfo가 노드와 함께 옮김
-                      <div
-                        data-planner-route-slot=""
-                        style={{ height: PLANNER_ROUTE_INFO_HEIGHT, overflow: "hidden" }}
-                      >
-                        {!isDraggingList && previousActivity ? (
-                          <PlannerRouteInfo
-                            activity={node}
-                            previousActivity={previousActivity}
-                            indentation={getPlannerRowIndentation(node.depth)}
-                          />
-                        ) : null}
-                      </div>
-                    ) : null
-                  }
-                  dragRouteInfo={
-                    isDraggingList &&
-                    isInVisibleLayout &&
-                    showsRouteInfo &&
-                    node.kind === "activity" &&
-                    previousActivity ? (
-                      <PlannerRouteInfo
-                        activity={node}
-                        previousActivity={previousActivity}
-                        indentation={getPlannerRowIndentation(node.depth)}
-                      />
-                    ) : null
-                  }
                   dragOffset={dragOffsets?.get(node.pathId) ?? 0}
                   dayNumber={dayNumberByPathId.get(node.pathId)}
                   isDropTargetVisible={!isOutsideList}
@@ -276,14 +219,18 @@ export function PlannerSchedulePanel({
             })}
           </ul>
         </SortableContext>
-        {activeNode ? (
-          <DragOverlay>
-            <PlannerDragPreview
-              node={activeNode}
-              dayNumber={dayNumberByPathId.get(activeNode.pathId)}
-            />
-          </DragOverlay>
-        ) : null}
+        {/* 수정: DragOverlay도 fixed라서 transform 조상 안에서는 어긋난다. body로 내보낸다 */}
+        {activeNode
+          ? createPortal(
+              <DragOverlay>
+                <PlannerDragPreview
+                  node={activeNode}
+                  dayNumber={dayNumberByPathId.get(activeNode.pathId)}
+                />
+              </DragOverlay>,
+              document.body,
+            )
+          : null}
       </DndContext>
       <div
         aria-hidden="true"

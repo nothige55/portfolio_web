@@ -1,8 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useState } from "react";
 
 import type { Chapter } from "../config/chapters";
+import { type RouteRow, seedRows } from "../data/route-rows";
+import { RouteMap } from "./route-map";
 
 // 불러오는 동안 데모 높이(데스크톱 실측 572/572/772px)보다 조금 작게 자리를 잡아 글이 밀리는 폭을 줄인다
 // 단계마다 dnd 코드가 따로라서 단계별 청크로 나눠 브라우저에서만 불러온다(dnd-kit은 SSR이 필요 없음)
@@ -21,7 +24,9 @@ const demos = {
   }),
 } satisfies Record<Chapter["id"], unknown>;
 
-export function DemoSlot({ id }: { id: Chapter["id"] }) {
+// 트리 옆에 지도를 두고, 트리가 바뀌면 같은 순서로 지도를 다시 그린다
+export function DemoSlot({ id, bare }: { id: Chapter["id"]; bare?: boolean }) {
   const Demo = demos[id];
-  return <Demo />;
+  const [rows, setRows] = useState<readonly RouteRow[]>(seedRows);
+  return <Demo onRowsChange={setRows} aside={<RouteMap rows={rows} />} bare={bare} />;
 }

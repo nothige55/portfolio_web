@@ -3,10 +3,9 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { type ReactNode, useCallback } from "react";
+import { useCallback } from "react";
 
 import { PlannerNodeLabel } from "@/features/dnd/stage-c/components/planner-node-label";
-import { PLANNER_ROUTE_INFO_HEIGHT } from "@/features/dnd/stage-c/components/planner-route-info";
 import { usePlannerViewStore } from "@/features/dnd/stage-c/stores/planner-view-store";
 import type {
   FlattenedPlannerNode,
@@ -20,8 +19,6 @@ export function PlannerTreeItem({
   node,
   dayNumber,
   registerItem,
-  routeInfo,
-  dragRouteInfo,
   dragOffset,
   isDropTargetVisible,
   isChildTarget,
@@ -32,12 +29,6 @@ export function PlannerTreeItem({
   // 렌더마다 새 함수가 오면 ref가 떨어졌다 붙어 dnd-kit이 droppable을 다시 잼
   // pathId와 함께 부르는 고정 함수를 받아 이 안에서 안정된 콜백으로 묶음
   readonly registerItem: (pathId: PlannerNodePathId, element: HTMLDivElement | null) => void;
-  // 평상시 행 머리에 붙는 경로 정보 칸. 노드의 히트박스에는 들어가지 않음
-  // 드래그 중에는 레이아웃 높이만 지키는 빈 칸으로 남고, 내용은 dragRouteInfo가 그림
-  readonly routeInfo?: ReactNode;
-  // 드래그 중 경로 정보. 노드 박스 바로 위에 겹쳐 그려 노드와 함께 옮겨 가고,
-  // 레이아웃 높이에는 영향을 주지 않음
-  readonly dragRouteInfo?: ReactNode;
   // 드래그 중 노드 박스를 옮길 거리. 지금 놓았을 때의 배치에서 계산
   readonly dragOffset: number;
   // 놓을 자리가 있을 때만 빈 자리를 표시. 목록 밖에서는 빠진 것처럼 보여야 함
@@ -73,8 +64,7 @@ export function PlannerTreeItem({
       data-drop-state={isChildTarget ? "child" : isExpandingTarget ? "expanding" : undefined}
       className="list-none"
     >
-      {routeInfo}
-      {/* 잡는 단위이자 충돌 rect. 경로 정보를 뺀 라벨만 여기에 들어감 */}
+      {/* 잡는 단위이자 충돌 rect */}
       <div
         ref={setRefs}
         {...listeners}
@@ -89,14 +79,6 @@ export function PlannerTreeItem({
           visibility: isDragging ? "hidden" : undefined,
         }}
       >
-        {dragRouteInfo ? (
-          <div
-            className="pointer-events-none visible absolute inset-x-0 bottom-full"
-            style={{ height: PLANNER_ROUTE_INFO_HEIGHT }}
-          >
-            {dragRouteInfo}
-          </div>
-        ) : null}
         {isDragging && isDropTargetVisible ? (
           <div
             aria-hidden="true"

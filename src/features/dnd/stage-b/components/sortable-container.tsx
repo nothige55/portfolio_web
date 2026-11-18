@@ -17,6 +17,7 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import type { LegacyItem, LegacyReorder } from "@/features/dnd/data/legacy-items";
 import { PlanLabel } from "@/features/dnd/stage-b/components/plan-label";
@@ -340,16 +341,20 @@ export function SortableContainer({
       collisionDetection={closestCenter}
     >
       {children}
-      {isDragging && entity && (
-        <DragOverlay>
-          <div
-            className="rounded-lg bg-[#E5F4FF]"
-            style={{ marginLeft: 20, paddingLeft: leftPadding }}
-          >
-            <PlanLabel entity={entity} dayNumber={dayNumberByPathId.get(entity.pathId)} />
-          </div>
-        </DragOverlay>
-      )}
+      {/* 수정: DragOverlay도 fixed라서 transform 조상 안에서는 어긋난다. body로 내보낸다 */}
+      {isDragging &&
+        entity &&
+        createPortal(
+          <DragOverlay>
+            <div
+              className="rounded-lg bg-[#E5F4FF]"
+              style={{ marginLeft: 20, paddingLeft: leftPadding }}
+            >
+              <PlanLabel entity={entity} dayNumber={dayNumberByPathId.get(entity.pathId)} />
+            </div>
+          </DragOverlay>,
+          document.body,
+        )}
     </DndContext>
   );
 }
