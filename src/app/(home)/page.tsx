@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { dragSteps, education, projects, stack, surgiNotes, surgiPairs, type Note } from "@/config/content";
 import { site } from "@/config/site";
@@ -79,8 +80,9 @@ export default function V4Page() {
             demos={{ a: <DemoSlot id="a" bare />, b: <DemoSlot id="b" bare />, c: <DemoSlot id="c" bare /> }}
           />
           <p className="mt-6 text-center">
-            <Link href="/dnd" className={`${link} text-sm`}>
-              버전별 과정 전체 보기 →
+            <Link href="/dnd" className={`${link} inline-flex items-center gap-1 text-sm`}>
+              버전별 과정 전체 보기
+              <ArrowRight aria-hidden="true" className="size-3.5" />
             </Link>
           </p>
         </section>

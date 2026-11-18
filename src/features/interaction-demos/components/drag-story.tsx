@@ -1,6 +1,7 @@
 "use client";
 
 import gsap from "gsap";
+import { ArrowDown } from "lucide-react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
@@ -135,7 +136,10 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
             드래그 하나를
             <br />
             세 번 다시 만들었어요
-            <span className="mt-3 block font-mono text-xs font-normal text-muted-foreground">내려 보세요 ↓</span>
+            <span className="mt-3 flex items-center justify-center gap-1 font-mono text-xs font-normal text-muted-foreground">
+              내려 보세요
+              <ArrowDown aria-hidden="true" className="size-3" />
+            </span>
           </p>
         </div>
 
