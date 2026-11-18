@@ -98,9 +98,7 @@ export default function V4Page() {
             }
             demo={
               <Stage>
-                <div className="mx-auto max-w-md rounded-xl bg-card p-6">
-                  <BreadcrumbDemo />
-                </div>
+                <BreadcrumbDemo />
               </Stage>
             }
           />
