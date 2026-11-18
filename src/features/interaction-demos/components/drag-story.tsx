@@ -5,7 +5,8 @@ import { ArrowDown } from "lucide-react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
-const MIN_ZOOM = 0.6;
+// 이보다 작으면 글이 읽히지 않고, V1~V3의 가로 깊이 판정(30px 기준)이 눈에 보이는 들여쓰기와 어긋난다. 모자란 높이는 스크롤로 둔다
+const MIN_ZOOM = 0.8;
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -77,7 +78,8 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
       setZoom(1);
       return;
     }
-    let current = 1;
+    // 단계가 바뀌어도 화면에 걸린 배율에서 이어서 계산한다
+    let current = parseFloat(inner.style.zoom) || 1;
     let dragging = false;
     const apply = () => {
       if (dragging) return;
@@ -144,7 +146,7 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
         </div>
 
         <div ref={content} className="min-h-0 flex-1 p-6 lg:p-8">
-          <div ref={fit} className="h-full overflow-hidden">
+          <div ref={fit} className="h-full overflow-y-auto">
             <div key={current.id} ref={demo} style={{ zoom }}>
               {demos[current.id]}
             </div>

@@ -25,10 +25,6 @@ export interface PlannerActivityNode extends PlannerNodeBase {
   readonly activityType: string | null;
   readonly memo: string | null;
   readonly markerType: string | null;
-  readonly travelMode: string | null;
-  readonly travelTime: number | null;
-  readonly travelDistance: number | null;
-  readonly travelCost: string | null;
   readonly startTime: string | null;
   readonly endTime: string | null;
   readonly placeId: number | null;
