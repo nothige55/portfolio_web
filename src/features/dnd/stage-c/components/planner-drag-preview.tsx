@@ -20,13 +20,12 @@ export function PlannerDragPreview({
 
   return (
     <div className="pointer-events-none w-fit max-w-80" style={{ paddingLeft: indentation }}>
-      <div className="flex min-h-9 w-fit items-center rounded-md border-l-2 border-brand bg-card pr-3 text-foreground shadow-lg ring-1 ring-brand/30">
-        <span className="h-9 w-5 shrink-0" aria-hidden="true" />
+      <div className="flex min-h-[30px] w-fit items-center rounded-md border-l-2 border-brand bg-card pr-3 text-foreground shadow-lg ring-1 ring-brand/30">
+        <span className="h-[30px] w-[18px] shrink-0" aria-hidden="true" />
         <PlannerNodeLabel
           node={node}
           dayNumber={dayNumber}
           parent={node.parentPathId ? entityMap.get(node.parentPathId) : undefined}
-          className="py-2.5"
         />
       </div>
     </div>
