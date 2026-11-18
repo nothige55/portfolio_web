@@ -2,7 +2,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { dragSteps, education, projects, stack, surgiNotes, surgiPairs, type Note } from "@/config/content";
 import { site } from "@/config/site";
-import { BreadcrumbDemo } from "@/features/interaction-demos/components/breadcrumb-demo";
+import { BreadcrumbDemo } from "@/features/dnd/breadcrumb/components/breadcrumb-demo";
 import { CopyLink } from "@/features/interaction-demos/components/copy-link";
 import { CoverageGrid } from "@/features/interaction-demos/components/coverage-grid";
 import { DemoSlot } from "@/features/dnd/components/demo-slot";
