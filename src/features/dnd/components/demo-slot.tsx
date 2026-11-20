@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 
 import type { Chapter } from "../config/chapters";
-import { type RouteRow, seedRows } from "../data/route-rows";
+import { type DragPreview, type RouteRow, seedRows } from "../data/route-rows";
 import { RouteMap } from "./route-map";
 
 // 불러오는 동안 데모 높이(데스크톱 실측 572/572/772px)보다 조금 작게 자리를 잡아 글이 밀리는 폭을 줄인다
@@ -28,5 +28,13 @@ const demos = {
 export function DemoSlot({ id, bare }: { id: Chapter["id"]; bare?: boolean }) {
   const Demo = demos[id];
   const [rows, setRows] = useState<readonly RouteRow[]>(seedRows);
-  return <Demo onRowsChange={setRows} aside={<RouteMap rows={rows} />} bare={bare} />;
+  const [dragPreview, setDragPreview] = useState<DragPreview | null>(null);
+  return (
+    <Demo
+      onRowsChange={setRows}
+      onDragPreview={setDragPreview}
+      aside={<RouteMap rows={rows} dragPreview={dragPreview} />}
+      bare={bare}
+    />
+  );
 }

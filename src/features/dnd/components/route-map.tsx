@@ -2,9 +2,12 @@
 
 import dynamic from "next/dynamic";
 
+import { useMemo } from "react";
+
 import { env } from "@/config/env";
 import { jejuSeed } from "@/features/dnd/data/jeju-seed";
-import type { RouteRow } from "@/features/dnd/data/route-rows";
+import type { DragPreview, RouteRow } from "@/features/dnd/data/route-rows";
+import { withDragPreview } from "@/features/dnd/data/with-drag-preview";
 import { buildPlannerTree } from "@/features/dnd/stage-c/utils/build-planner-tree";
 
 // Mapbox 토큰이 있으면 원본 Trego 지도(dnd/map)를 쓴다. mapbox-gl은 브라우저 전용이고 무거워서 따로 불러온다
@@ -58,14 +61,6 @@ const project = (latitude: number, longitude: number) => ({
   y: H - offsetY - (latitude - minLat) * scale,
 });
 
-function distanceKm(a: { latitude: number; longitude: number }, b: { latitude: number; longitude: number }) {
-  const rad = Math.PI / 180;
-  const h =
-    Math.sin(((b.latitude - a.latitude) * rad) / 2) ** 2 +
-    Math.cos(a.latitude * rad) * Math.cos(b.latitude * rad) * Math.sin(((b.longitude - a.longitude) * rad) / 2) ** 2;
-  return 12742 * Math.asin(Math.sqrt(h));
-}
-
 // 날짜 아래에 있는 장소만, 트리의 현재 순서대로
 function routeOf(rows: readonly RouteRow[], dayPathId: string) {
   return rows
@@ -77,20 +72,23 @@ function routeOf(rows: readonly RouteRow[], dayPathId: string) {
     });
 }
 
-export function RouteMap({ rows }: { rows: readonly RouteRow[] }) {
-  const routes = days.map((day) => ({ day, stops: routeOf(rows, day.pathId) }));
-  const total = routes.reduce(
-    (sum, { stops }) => sum + stops.slice(1).reduce((acc, stop, i) => acc + distanceKm(stops[i], stop), 0),
-    0,
-  );
+export function RouteMap({ rows, dragPreview = null }: { rows: readonly RouteRow[]; dragPreview?: DragPreview | null }) {
+  const previewRows = useMemo(() => withDragPreview(rows, dragPreview), [rows, dragPreview]);
+  // 드래그 중 카메라가 볼 컨테이너: 놓일 자리의 부모, 자리가 없으면 원래 부모
+  const dragFocusPathId = dragPreview
+    ? (dragPreview.destination?.parentPathId ??
+      rows.find((row) => row.pathId === dragPreview.activePathId)?.parentPathId ??
+      null)
+    : null;
+  const routes = days.map((day) => ({ day, stops: routeOf(previewRows, day.pathId) }));
 
   const accessToken = env.mapboxAccessToken;
-  const tree = toPlannerTree(rows);
+  const tree = useMemo(() => toPlannerTree(previewRows), [previewRows]);
 
   return (
     <div className="space-y-3">
       {accessToken ? (
-        <PlannerMap accessToken={accessToken} tree={tree} />
+        <PlannerMap accessToken={accessToken} tree={tree} dragFocusPathId={dragFocusPathId} />
       ) : (
         <div className="overflow-hidden rounded-lg border bg-sky-50">
           <svg viewBox={`0 0 ${W} ${H}`} className="block w-full" role="img" aria-label="제주 북서쪽 지도. 날짜마다 색이 다른 선으로 장소가 이어져요">
@@ -131,10 +129,6 @@ export function RouteMap({ rows }: { rows: readonly RouteRow[] }) {
           </li>
         ))}
       </ul>
-      <p className="text-sm" aria-live="polite">
-        총 이동 <b>{total.toFixed(1)} km</b>
-        <span className="ml-2 text-xs text-muted-foreground">직선거리, 놓은 뒤 기준</span>
-      </p>
     </div>
   );
 }

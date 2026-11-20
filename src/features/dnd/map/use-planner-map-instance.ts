@@ -44,6 +44,8 @@ const NO_HIDDEN_DAYS: ReadonlySet<PlannerNodePathId> = new Set();
 export function usePlannerMapInstance(
   accessToken: string | null | undefined,
   tree: PlannerTree,
+  // 추가: 드래그 중 놓일 자리의 컨테이너. 바뀔 때마다 그 컨테이너의 장소로 카메라를 맞춘다(원본 requestMapMove fitBounds)
+  dragFocusPathId: PlannerNodePathId | null = null,
 ): PlannerMapInstance {
   const [selectedItemId, setSelectedItemId] = useState<PlannerNodePathId | null>(null);
   const [hoveredItemId, setHoveredItemId] = useState<PlannerNodePathId | null>(null);
@@ -235,6 +237,21 @@ export function usePlannerMapInstance(
     }
     lastHandledFocusRequestRef.current = mapFocusRequest;
   }, [handlers, mapFocusRequest, mapModel]);
+
+  // 드래그 중 카메라. 잡은 장소가 이미 미리 끼워진 모델이라 놓일 컨테이너의 장소를 모두 담는다
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!dragFocusPathId || !map || !isLoadedRef.current) {
+      return;
+    }
+
+    const coordinates = mapModelRef.current.markers
+      .filter((marker) => marker.containerPathId === dragFocusPathId)
+      .map((marker) => marker.coordinate);
+    if (coordinates.length > 0) {
+      focusMap(map, { pathId: dragFocusPathId, kind: "bounds", coordinates });
+    }
+  }, [dragFocusPathId, mapLoadState]);
 
   // hover 굵기를 프레임마다 보간해 넣음. 첫 반영은 동기로 처리해 색·표시 여부는 즉시 맞춤
   useEffect(() => {

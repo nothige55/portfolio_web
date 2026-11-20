@@ -14,8 +14,16 @@ import type { PlannerTree } from "@/features/dnd/stage-c/types/planner-node";
 
 // 수정: 원본은 토큰이 없으면 안내 문구를 띄웠다. 데모는 토큰이 있을 때만 이 컴포넌트를 쓰고,
 // 없으면 route-map.tsx의 SVG 지도로 대신한다. 모듈 패널 열기 버튼은 패널이 없어 뺐다.
-export function PlannerMap({ accessToken, tree }: { readonly accessToken: string; readonly tree: PlannerTree }) {
-  const { mapContainerRef, mapLoadState, resetCamera, retry } = usePlannerMapInstance(accessToken, tree);
+export function PlannerMap({
+  accessToken,
+  tree,
+  dragFocusPathId = null,
+}: {
+  readonly accessToken: string;
+  readonly tree: PlannerTree;
+  readonly dragFocusPathId?: string | null;
+}) {
+  const { mapContainerRef, mapLoadState, resetCamera, retry } = usePlannerMapInstance(accessToken, tree, dragFocusPathId);
 
   return (
     // 수정: 원본은 화면을 채우는 flex-1 영역이다. 데모는 트리 옆 카드라 높이를 정해 둔다
