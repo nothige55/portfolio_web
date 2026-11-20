@@ -10,13 +10,14 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { PlannerDragPreview } from "@/features/dnd/stage-c/components/planner-drag-preview";
 import { PlannerTreeItem } from "@/features/dnd/stage-c/components/planner-tree-item";
 import { calculatePlannerDragFootprintHeight } from "@/features/dnd/stage-c/dnd/resolve-planner-drop";
 import { usePlannerDragAndDrop } from "@/features/dnd/stage-c/dnd/use-planner-drag-and-drop";
+import type { DragPreview } from "@/features/dnd/data/route-rows";
 import { usePlannerViewStore } from "@/features/dnd/stage-c/stores/planner-view-store";
 import type { PlannerNodePathId } from "@/features/dnd/stage-c/types/planner-node";
 import {
@@ -28,8 +29,11 @@ import { getVisiblePlannerNodes } from "@/features/dnd/stage-c/utils/get-visible
 
 export function PlannerSchedulePanel({
   dayNumberByPathId,
+  onDragPreview,
 }: {
   readonly dayNumberByPathId: ReadonlyMap<PlannerNodePathId, number>;
+  // 수정: 원본은 드래그 상태를 지도 store로 보냈다. 데모는 바깥 지도에 콜백으로 알린다
+  readonly onDragPreview?: (preview: DragPreview | null) => void;
 }) {
   const tree = usePlannerViewStore((state) => state.tree);
   const rootPathId = usePlannerViewStore((state) => state.rootPathId);
@@ -136,7 +140,8 @@ export function PlannerSchedulePanel({
   // 드래그 중에는 목록이 "지금 놓으면" 보일 모습으로 그림
   // - 목록 밖: 잡은 노드를 빼고 구멍 없이 닫힌 일정
   // - 형제 사이 자리: 잡은 노드를 그 자리에 끼운 일정
-  // - 그 밖(받아 주지 않는 자리, 컨테이너 안으로 넣는 중): 아무것도 옮기지 않음
+  // - 그 밖(받아 주지 않는 자리, 컨테이너 안으로 넣는 중): 아무것도 옮기지 않고, 원래 자리의 빈 자리 표시도 숨김
+  //   수정: 원본은 목록 밖에서만 숨겼다. 놓을 자리가 없을 때 원래 자리에 남은 표시가 "여기에 놓임"으로 읽혀서 같이 숨긴다
   const dragLayout = useMemo(() => {
     if (!activePathId || (!isOutsideList && !(isSiblingDropActive && dropDestination))) {
       return null;
@@ -167,6 +172,23 @@ export function PlannerSchedulePanel({
     sortableItems,
     tree,
   ]);
+  // 리스트가 놓을 자리를 보여 줄 때만 지도에 알린다. 빈·접힌 폴더 대기 중에는 아직 받지 않는 이동이라 알리지 않는다
+  const previewDestination = dragLayout && !isOutsideList ? dropDestination : null;
+  const dropParentPathId = previewDestination?.parentPathId;
+  const dropSiblingIndex = previewDestination?.siblingIndex;
+  useEffect(() => {
+    onDragPreview?.(
+      activePathId
+        ? {
+            activePathId,
+            destination:
+              dropParentPathId === undefined || dropSiblingIndex === undefined
+                ? null
+                : { parentPathId: dropParentPathId, siblingIndex: dropSiblingIndex },
+          }
+        : null,
+    );
+  }, [activePathId, dropParentPathId, dropSiblingIndex, onDragPreview]);
   // 레이아웃 높이는 그대로 두고 노드 박스만 옮김. dnd-kit이 시작 때 잰 rect가 끝까지 유효함
   const dragOffsets = useMemo(
     () =>
@@ -210,7 +232,7 @@ export function PlannerSchedulePanel({
                   node={node}
                   dragOffset={dragOffsets?.get(node.pathId) ?? 0}
                   dayNumber={dayNumberByPathId.get(node.pathId)}
-                  isDropTargetVisible={!isOutsideList}
+                  isDropTargetVisible={dragLayout !== null}
                   isChildTarget={childTargetPathId === node.pathId}
                   isExpandingTarget={expandingTargetPathId === node.pathId}
                   registerItem={registerItem}
