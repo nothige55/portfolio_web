@@ -35,6 +35,9 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
   const [animated, setAnimated] = useState(false);
 
   useEffect(() => {
+    // 새로고침하면 브라우저가 pin 여백(450%)이 생기기 전의 짧은 페이지에서 스크롤을 복원해, 엉뚱한 단계(V5~V6)에 걸린다.
+    // 복원을 끄고 맨 위에서 시작한다. #trego-drag 같은 해시 이동은 영향받지 않는다.
+    ScrollTrigger.clearScrollMemory("manual");
     const mm = gsap.matchMedia();
     mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
       setAnimated(true);
