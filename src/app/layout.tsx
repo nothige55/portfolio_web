@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 import { site } from "@/config/site";
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           본문으로 건너뛰기
         </a>
         {children}
+        <Analytics />
       </body>
     </html>
   );
