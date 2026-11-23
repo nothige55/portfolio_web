@@ -19,6 +19,16 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
           <span className="block text-sm text-muted-foreground">바뀐 이유</span>
           {chapter.reason}
         </p>
+        {chapter.design && (
+          <div>
+            <span className="block text-sm text-muted-foreground">이 데모 안의 설계</span>
+            <ul className="mt-1 list-disc space-y-1 pl-5">
+              {chapter.design.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         <ul className="flex flex-wrap gap-2" aria-label="관련 커밋">
           {chapter.commits.map((hash) => (
             <li key={hash}>

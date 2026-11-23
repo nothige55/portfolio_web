@@ -19,11 +19,11 @@ export const projects = [
       },
       {
         title: "계층 트리 상태 설계",
-        body: "조회·렌더링·순서 변경이 다른 접근 방식을 요구해서, 원본 배열 하나에서 목적별 인덱스를 파생시켰어요.",
+        body: "조회·렌더링·순서 변경이 서로 다른 접근 방식을 요구해서, 원본 배열 하나에서 인덱스 세 개를 파생시켰어요. 순서를 바꿀 때는 이웃 사이 중간값을 위치로 써서 다른 행을 건드리지 않아요.",
       },
       {
         title: "실시간 동시 편집",
-        body: "서버 이벤트를 나에게 미리 보내는 방식으로 로컬과 서버의 상태가 어긋날 길을 없앴어요.",
+        body: "서버 이벤트를 나에게 미리 보내는 방식으로 로컬과 서버의 상태가 어긋날 길을 없앴어요. 연결 하나로 트리·채팅·커서를 함께 쓰고, 되돌리기는 화면 스냅샷이 아니라 작업 단위 명령 이력이라 동료의 변경까지 되돌리지 않아요.",
       },
     ],
   },
@@ -76,6 +76,19 @@ export const surgiNotes: readonly Note[] = [
   { value: "5 × 3", label: "roll 10°, pitch 18° 간격으로 나눈 칸이에요." },
   { value: "2장", label: "칸마다 채우는 수예요. 합쳐서 30장이에요." },
 ];
+
+// 홈 trego-state 구간 수치. 근거: stage-c/utils/build-planner-tree.ts, stage-c/dnd/planner-drop-rules.ts
+export const stateNotes: readonly Note[] = [
+  { value: "3개", label: "원본 배열 하나에서 entityMap, childrenMap, flattenedItems를 파생해요." },
+  { value: "(앞 + 뒤) ÷ 2", label: "두 이웃 사이에 놓으면 위치를 중간값으로 정해서 다른 행의 위치를 안 바꿔요." },
+  { value: "0.1", label: "이웃이 한쪽뿐이거나 없을 때 쓰는 간격(POSITION_STEP)이에요." },
+];
+
+// 홈 trego-sync 구간의 본 앱 근거 링크. 이 저장소에는 데모가 없고 trego-web-portfolio에 있다.
+export const syncLinks = [
+  { label: "백엔드 없이 동작하는 /demo", href: "https://trego-web-portfolio.vercel.app/demo" },
+  { label: "코드 보기", href: "https://github.com/nothige55/trego-web-portfolio" },
+] as const;
 
 // 홈 SurgiAuth 구간에 쓰는 고민. 첫 번째는 1차(인식기), 두 번째는 2차(격자)다.
 export const surgiPairs = [
