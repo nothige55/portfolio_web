@@ -21,7 +21,7 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
         </p>
         {chapter.design && (
           <div>
-            <span className="block text-sm text-muted-foreground">이 데모 안의 설계</span>
+            <span className="block text-sm text-muted-foreground">Trego에서의 설계</span>
             <ul className="mt-1 list-disc space-y-1 pl-5">
               {chapter.design.map((line) => (
                 <li key={line}>{line}</li>
