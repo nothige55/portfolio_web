@@ -8,6 +8,7 @@ import { CoverageGrid } from "@/features/interaction-demos/components/coverage-g
 import { DemoSlot } from "@/features/dnd/components/demo-slot";
 import { DragStory } from "@/features/interaction-demos/components/drag-story";
 import { ExpandStage } from "@/features/interaction-demos/components/expand-stage";
+import { ProjectTitle } from "@/features/interaction-demos/components/project-title";
 import { ScrollReveal } from "@/features/interaction-demos/components/scroll-reveal";
 import { SplitReveal } from "@/features/interaction-demos/components/split-reveal";
 import { PathBar } from "@/features/variant-story/components/path-bar";
@@ -62,16 +63,11 @@ export default function V4Page() {
           </div>
         </section>
 
-        <section id="trego" className="space-y-4 pb-8 pt-14 text-center">
-          <p className={label}>
-            {trego.period} · {trego.role}
-          </p>
-          <h2 className={big}>{trego.name}</h2>
-          <p className="text-xl font-medium">{trego.kicker}</p>
-          <p className="mx-auto max-w-lg leading-relaxed text-muted-foreground">{trego.summary}</p>
+        <section id="trego">
+          <ProjectTitle eyebrow={`${trego.period} · ${trego.role}`} name={trego.name} lines={[trego.kicker, trego.summary]} />
         </section>
 
-        <section id="trego-drag">
+        <section id="trego-drag" className="relative z-10 lg:motion-safe:-mt-[100vh]">
           <DragStory
             steps={dragSteps}
             demos={{ a: <DemoSlot id="a" bare />, b: <DemoSlot id="b" bare />, c: <DemoSlot id="c" bare /> }}
@@ -102,31 +98,27 @@ export default function V4Page() {
         </section>
 
         <section id="surgiauth">
-          <SplitReveal
-            textSide="right"
-            text={
-              <div className="mx-auto max-w-md space-y-8">
-                <div className="space-y-3">
-                  <p className={label}>
-                    {surgi.period} · {surgi.role}
-                  </p>
-                  <h2 className={big}>{surgi.name}</h2>
-                  <p className="text-xl font-medium">{surgi.kicker}</p>
+          <ProjectTitle eyebrow={`${surgi.period} · ${surgi.role}`} name={surgi.name} lines={[surgi.kicker, surgi.summary]} />
+          <div className="relative z-10 lg:motion-safe:-mt-[100vh]">
+            <SplitReveal
+              textSide="right"
+              text={
+                <div className="mx-auto max-w-md space-y-8">
+                  {surgiPairs.map((p) => (
+                    <div key={p.decision} className="space-y-2">
+                      <p className="text-sm leading-relaxed text-muted-foreground">{p.problem}</p>
+                      <p className="font-medium leading-relaxed">{p.decision}</p>
+                    </div>
+                  ))}
                 </div>
-                {surgiPairs.map((p) => (
-                  <div key={p.decision} className="space-y-2">
-                    <p className="text-sm leading-relaxed text-muted-foreground">{p.problem}</p>
-                    <p className="font-medium leading-relaxed">{p.decision}</p>
-                  </div>
-                ))}
-              </div>
-            }
-            demo={
-              <Stage>
-                <CoverageGrid />
-              </Stage>
-            }
-          />
+              }
+              demo={
+                <Stage>
+                  <CoverageGrid />
+                </Stage>
+              }
+            />
+          </div>
           <ScrollReveal className="pb-12">
             <Notes items={surgiNotes} />
           </ScrollReveal>
