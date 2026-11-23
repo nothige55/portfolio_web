@@ -9,6 +9,7 @@ import { DemoSlot } from "@/features/dnd/components/demo-slot";
 import { DragStory } from "@/features/interaction-demos/components/drag-story";
 import { SplitReveal } from "@/features/interaction-demos/components/split-reveal";
 import { PathBar } from "@/features/variant-story/components/path-bar";
+import { ScrollCue } from "@/features/variant-story/components/scroll-cue";
 
 const [trego, surgi] = projects;
 const big = "text-[clamp(2rem,5.5vw,4.5rem)] font-bold leading-[1.1] tracking-[-0.035em]";
@@ -49,6 +50,7 @@ export default function V4Page() {
   return (
     <div className="home min-h-screen bg-background pb-32 pt-11 text-foreground">
       <PathBar name={site.name} entries={entries} />
+      <ScrollCue />
 
       <div className="mx-auto max-w-[1100px] px-4">
         <section id="intro" className="flex min-h-[80vh] flex-col items-center justify-center py-20 text-center">
