@@ -11,14 +11,17 @@ gsap.registerPlugin(ScrollTrigger);
 
 type Step = { id: "a" | "b" | "c"; versions: string; title: string; body: string };
 
+// 고정 진행도 0~ASSEMBLED는 무대 조립 구간이고, 나머지를 세 단계가 고르게 나눈다.
+const ASSEMBLED = 0.2;
 // 타임라인 진행도(0~1)에서 각 단계가 시작하는 지점.
-const STARTS = [0, 0.34, 0.67] as const;
-const CENTERS = [0.17, 0.5, 0.83] as const;
+const STARTS = [0, 0.467, 0.733] as const;
+const CENTERS = [0.335, 0.6, 0.867] as const;
 // 경계 근처에서 위아래로 조금씩 흔들려도 단계가 뒤집히지 않게, 되돌아갈 때만 이만큼 더 지나야 바뀐다.
 const BACK_MARGIN = 0.02;
 
 // 애플 제품 페이지처럼 화면을 고정(pin)하고 스크롤 진행도에 애니메이션을 묶는다.
-// 소개가 올라가는 동안 무대가 아래에서 커지며 들어오고(고정 전), 고정 중에 단계가 바뀌고, 고정이 풀리면 그대로 위로 스크롤돼 나간다.
+// 프레임은 보이지 않은 채 소개 위로 겹쳐 올라오고, 고정이 시작되면 그 자리에서 무대 → 트리 → 지도 → 하단 줄 순으로 조립된다.
+// 조립 뒤 고정 중에 단계가 바뀌고, 고정이 풀리면 그대로 위로 스크롤돼 나간다.
 // 데모는 features 경계 때문에 바깥(app)에서 만들어 넘겨받는다. 현재 단계의 것만 그린다.
 export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Record<Step["id"], ReactNode> }) {
   const frame = useRef<HTMLDivElement>(null);
@@ -32,50 +35,30 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
 
   const [stepIndex, setStepIndex] = useState(0);
   const [animated, setAnimated] = useState(false);
-  // 고정이 시작되기 전(등장 중)에는 조작을 받지 않는다. 안 그러면 보이지 않는 데모가 휠과 드래그를 가져간다.
+  // 조립이 끝나기 전에는 조작을 받지 않는다. 안 그러면 보이지 않는 데모가 휠과 드래그를 가져간다.
   const [ready, setReady] = useState(true);
 
   useEffect(() => {
-    // 새로고침하면 브라우저가 pin 여백(300%)이 생기기 전의 짧은 페이지에서 스크롤을 복원해, 엉뚱한 단계(V5~V6)에 걸린다.
+    // 새로고침하면 브라우저가 pin 여백(380%)이 생기기 전의 짧은 페이지에서 스크롤을 복원해, 엉뚱한 단계(V5~V6)에 걸린다.
     // 복원을 끄고 맨 위에서 시작한다. #trego-drag 같은 해시 이동은 영향받지 않는다.
     ScrollTrigger.clearScrollMemory("manual");
     const mm = gsap.matchMedia();
     mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
       setAnimated(true);
       setReady(false);
-      // 등장: 고정 없이, 프레임이 화면 아래에서 위쪽에 닿을 때까지 무대가 커지며 들어온다.
-      gsap
-        .timeline({
-          defaults: { ease: "none" },
-          scrollTrigger: { trigger: frame.current, start: "top bottom", end: "top top", scrub: 0.6, invalidateOnRefresh: true },
-        })
-        .fromTo(stage.current, { scale: 0.72, y: 80, clipPath: "inset(0% 0% 0% 0% round 48px)" }, { scale: 1, y: 0, clipPath: "inset(0% 0% 0% 0% round 16px)", duration: 1, ease: "expo.out" }, 0)
-        .fromTo(
-          content.current,
-          { "--asm-tree-x": "-160px", "--asm-tree-y": "0px", "--asm-tree-o": 0 },
-          { "--asm-tree-x": "0px", "--asm-tree-o": 1, duration: 0.45, ease: "power3.out" },
-          0.2,
-        )
-        .fromTo(
-          content.current,
-          { "--asm-map-x": "120px", "--asm-map-y": "60px", "--asm-map-s": 0.94, "--asm-map-o": 0 },
-          { "--asm-map-x": "0px", "--asm-map-y": "0px", "--asm-map-s": 1, "--asm-map-o": 1, duration: 0.45, ease: "power3.out" },
-          0.35,
-        )
-        .fromTo(footer.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.3 }, 0.6);
       const tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
           trigger: frame.current,
           start: "top top",
-          end: "+=300%",
+          end: "+=380%",
           pin: true,
           scrub: 0.6,
           invalidateOnRefresh: true,
-          onToggle: (self) => setReady(self.progress > 0 || self.isActive),
+          onToggle: (self) => setReady(self.progress >= ASSEMBLED),
           onUpdate: (self) => {
             const p = self.progress;
-            setReady(p > 0 || self.isActive);
+            setReady(p >= ASSEMBLED);
             setStepIndex((i) => {
               while (i < 2 && p >= STARTS[i + 1]) i++;
               while (i > 0 && p < STARTS[i] - BACK_MARGIN) i--;
@@ -85,7 +68,23 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
         },
       });
       trigger.current = tl.scrollTrigger ?? null;
-      tl.to({}, { duration: 1 });
+      // 조립: 고정된 자리에서 화면 전체가 한 번에 짜인다. 고정 전에는 from 값(opacity 0)이라 프레임이 보이지 않는다.
+      // content의 --asm-* 변수 이름은 dnd DemoFrame과 맞춘다.
+      tl.fromTo(stage.current, { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.09, ease: "power2.out" }, 0)
+        .fromTo(
+          content.current,
+          { "--asm-tree-x": "-160px", "--asm-tree-y": "0px", "--asm-tree-o": 0 },
+          { "--asm-tree-x": "0px", "--asm-tree-o": 1, duration: 0.08, ease: "power3.out" },
+          0.04,
+        )
+        .fromTo(
+          content.current,
+          { "--asm-map-x": "120px", "--asm-map-y": "60px", "--asm-map-s": 0.94, "--asm-map-o": 0 },
+          { "--asm-map-x": "0px", "--asm-map-y": "0px", "--asm-map-s": 1, "--asm-map-o": 1, duration: 0.08, ease: "power3.out" },
+          0.08,
+        )
+        .fromTo(footer.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.06 }, 0.13)
+        .to({}, { duration: 1 - 0.19 }, 0.19);
       return () => {
         trigger.current = null;
         setAnimated(false);

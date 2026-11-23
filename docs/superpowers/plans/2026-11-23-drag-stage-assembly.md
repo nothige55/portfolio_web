@@ -73,11 +73,11 @@
 | 위치 | 대상 | from → to | duration / ease |
 |---|---|---|---|
 | 0 | `stage` | 기존 그대로: `{ scale: 0.72, y: 80, clipPath: "…round 48px" }` → `{ scale: 1, y: 0, clipPath: "…round 16px" }` | 1 / `"expo.out"` |
-| 0.2 | `content` | `{ "--asm-tree-x": "-160px", "--asm-tree-y": "0px", "--asm-tree-o": 0 }` → `{ "--asm-tree-x": "0px", "--asm-tree-o": 1 }` | 0.45 / `"power3.out"` |
-| 0.35 | `content` | `{ "--asm-map-x": "120px", "--asm-map-y": "60px", "--asm-map-s": 0.94, "--asm-map-o": 0 }` → `{ "--asm-map-x": "0px", "--asm-map-y": "0px", "--asm-map-s": 1, "--asm-map-o": 1 }` | 0.45 / `"power3.out"` |
-| 0.6 | `footer` | 기존 그대로: `{ opacity: 0, y: 40 }` → `{ opacity: 1, y: 0 }` | 0.3 |
+| 0.45 | `content` | `{ "--asm-tree-x": "-160px", "--asm-tree-y": "0px", "--asm-tree-o": 0 }` → `{ "--asm-tree-x": "0px", "--asm-tree-o": 1 }` | 0.3 / `"power3.out"` |
+| 0.58 | `content` | `{ "--asm-map-x": "120px", "--asm-map-y": "60px", "--asm-map-s": 0.94, "--asm-map-o": 0 }` → `{ "--asm-map-x": "0px", "--asm-map-y": "0px", "--asm-map-s": 1, "--asm-map-o": 1 }` | 0.3 / `"power3.out"` |
+| 0.78 | `footer` | 기존 그대로: `{ opacity: 0, y: 40 }` → `{ opacity: 1, y: 0 }` | 0.22 |
 
-마지막 tween이 0.9에서 끝나고 stage는 1에서 끝나므로 전체 길이는 1이다.
+(구현 후 조정: 처음 값 0.2/0.35/0.6에서는 무대가 화면 아래쪽에 걸쳐 있을 때 조립이 끝나 보이지 않아 뒤로 미룸.) 마지막 tween이 1에서 끝나고 stage는 1에서 끝나므로 전체 길이는 1이다.
 
 - `content` 위에 계약 변수 이름을 적은 주석 한 줄을 남긴다. 「변수 이름은 dnd DemoFrame과 맞춘다」라는 내용이다.
 - `matchMedia`의 `mm.revert()`가 인라인 변수를 지우는지 브라우저에서 확인한다(Review Focus 5). 지우지 않으면 cleanup에서 `gsap.set(content.current, { clearProps: "--asm-tree-x,--asm-tree-y,--asm-tree-o,--asm-map-x,--asm-map-y,--asm-map-s,--asm-map-o" })`를 호출한다.
@@ -113,3 +113,8 @@ Expected: 모두 통과
 - [ ] **Step 6: 커밋**
 
 제목 예: `홈 드래그 스토리 등장을 트리·지도가 따로 들어와 맞물리는 조립 방식으로 변경`
+
+
+## 구현 후 변경 (2026-11-23)
+
+사용자 피드백: 스크롤로 올라오면서 조립되니 조립되는 느낌이 살지 않는다. 그래서 고정 전 등장 트리거를 없애고, 조립을 고정 타임라인 앞부분(0~0.2)으로 옮겼다. 무대는 opacity 0, scale 0.92에서 시작하고 트리는 0.04, 지도는 0.08, 하단 줄은 0.13에 들어온다. 이에 맞춰 고정 길이는 380%, `STARTS`는 0/0.467/0.733, `CENTERS`는 0.335/0.6/0.867로 바꿨다. `ready`는 진행도 0.2 이상일 때 true다. 프레임은 소개 위로 보이지 않게 겹쳐 올라오고, 소개는 고정 100% 동안 0.35~0.95 구간에서 흐려진다.

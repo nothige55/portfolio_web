@@ -28,14 +28,14 @@ export function ProjectTitle({ eyebrow, name, lines }: { eyebrow: string; name: 
         .fromTo("[data-eyebrow] [data-rise]", { yPercent: 100 }, { yPercent: 0, duration: 0.3 }, 0)
         .fromTo("[data-name] [data-rise]", { yPercent: 110 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 0.15)
         .fromTo("[data-line]", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, stagger: 0.1 }, 0.5);
-      // 앞 30%는 머묾, 뒤 100%는 뒤따르는 데모와 겹치는 구간이다(데모 블록이 -mt-[100vh]로 올라온다). 겹침은 30/130 ≈ 0.23에서 시작한다.
+      // 고정 100% 전체가 뒤따르는 데모 블록(-mt-[100vh])과 겹친다. 데모가 보이지 않게 올라오는 동안 소개가 흐려져, 데모 고정이 시작될 때 사라진다.
       gsap
         .timeline({
           defaults: { ease: "none" },
-          scrollTrigger: { trigger: el, start: "top top", end: "+=130%", pin: true, scrub: 0.6, invalidateOnRefresh: true },
+          scrollTrigger: { trigger: el, start: "top top", end: "+=100%", pin: true, scrub: 0.6, invalidateOnRefresh: true },
         })
-        .to(group, { opacity: 0, scale: 0.96, duration: 0.45 }, 0.23)
-        .to({}, { duration: 0.32 }, 0.68);
+        .to(group, { opacity: 0, scale: 0.96, duration: 0.6 }, 0.35)
+        .to({}, { duration: 0.05 }, 0.95);
     }, el);
     document.fonts.ready.then(() => ScrollTrigger.refresh());
     return () => mm.revert();
