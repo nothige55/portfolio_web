@@ -20,14 +20,17 @@ export function ProjectTitle({ eyebrow, name, lines }: { eyebrow: string; name: 
       const group = el.querySelector<HTMLElement>("[data-group]");
       if (!group) return;
       // 등장은 고정 전, 화면에 들어오는 동안 끝낸다. 고정 뒤에 등장시키면 들어오는 동안 빈 화면이 한 장 생긴다.
-      gsap
+      const reveal = gsap
         .timeline({
           defaults: { ease: "none" },
           scrollTrigger: { trigger: el, start: "top 45%", end: "top top", scrub: 0.6, invalidateOnRefresh: true },
         })
         .fromTo("[data-eyebrow] [data-rise]", { yPercent: 100 }, { yPercent: 0, duration: 0.3 }, 0)
-        .fromTo("[data-name] [data-rise]", { yPercent: 110 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 0.15)
-        .fromTo("[data-line]", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, stagger: 0.1 }, 0.5);
+        .fromTo("[data-name] [data-rise]", { yPercent: 110 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 0.15);
+      // 줄마다 따로 건다. stagger로 묶으면 뒤 줄의 시작 상태가 미리 적용되지 않아 부제보다 먼저 보인다.
+      el.querySelectorAll("[data-line]").forEach((line, i) => {
+        reveal.fromTo(line, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3 }, 0.5 + i * 0.1);
+      });
       // 고정 100% 전체가 뒤따르는 데모 블록(-mt-[100vh])과 겹친다. 데모가 보이지 않게 올라오는 동안 소개가 흐려져, 데모 고정이 시작될 때 사라진다.
       gsap
         .timeline({
