@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { dragSteps, education, projects, stack, stateNotes, surgiNotes, surgiPairs, syncLinks, type Note } from "@/config/content";
+import { dragSteps, education, projects, stack, surgiNotes, surgiPairs, type Note } from "@/config/content";
 import { site } from "@/config/site";
 import { BreadcrumbDemo } from "@/features/dnd/breadcrumb/components/breadcrumb-demo";
 import { CopyLink } from "@/features/interaction-demos/components/copy-link";
@@ -21,8 +21,6 @@ const entries = [
   { id: "trego", path: [] },
   { id: "trego-drag", path: ["Trego"] },
   { id: "trego-nav", path: ["Trego"] },
-  { id: "trego-state", path: ["Trego"] },
-  { id: "trego-sync", path: ["Trego"] },
   { id: "surgiauth", path: [] },
   { id: "contact", path: [] },
 ] as const;
@@ -33,10 +31,10 @@ function Stage({ children }: { children: React.ReactNode }) {
 }
 
 // 무대 아래에 실제 구현에서 나온 수치를 붙인다. 값이 없으면 그리지 않는다.
-function Notes({ items, className = "mt-8 sm:grid-cols-3" }: { items: readonly Note[]; className?: string }) {
+function Notes({ items }: { items: readonly Note[] }) {
   if (!items.length) return null;
   return (
-    <dl className={`grid gap-6 ${className}`}>
+    <dl className="mt-8 grid gap-6 sm:grid-cols-3">
       {items.map((n) => (
         <div key={n.value}>
           <dt className="text-lg font-semibold tabular-nums">{n.value}</dt>
@@ -83,7 +81,7 @@ export default function V4Page() {
           />
           <p className="mt-6 text-center">
             <Link href="/trego" className={`${link} inline-flex items-center gap-1 text-sm`}>
-              버전별 과정 전체 보기
+              Trego에서 한 설계 보기
               <ArrowRight aria-hidden="true" className="size-3.5" />
             </Link>
           </p>
@@ -104,40 +102,6 @@ export default function V4Page() {
               </Stage>
             }
           />
-        </section>
-
-        <section id="trego-state">
-          <SplitReveal
-            textSide="right"
-            text={
-              <div className="mx-auto max-w-sm space-y-3">
-                <p className={label}>상태 설계</p>
-                <h3 className="text-2xl font-semibold tracking-tight">{trego.points[2].title}</h3>
-                <p className="leading-relaxed text-muted-foreground">{trego.points[2].body}</p>
-              </div>
-            }
-            demo={
-              <Stage>
-                <Notes items={stateNotes} className="grid-cols-1" />
-              </Stage>
-            }
-          />
-        </section>
-
-        <section id="trego-sync" className="mx-auto max-w-md space-y-3 py-20 text-center">
-          <p className={label}>실시간 협업 · 본 앱</p>
-          <h3 className="text-2xl font-semibold tracking-tight">{trego.points[3].title}</h3>
-          <p className="leading-relaxed text-muted-foreground">{trego.points[3].body}</p>
-          <p className="text-sm text-muted-foreground">
-            이 사이트에는 데모가 없고, 본 앱을 따로 공개해 뒀어요.
-          </p>
-          <p className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm">
-            {syncLinks.map((l) => (
-              <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className={link}>
-                {l.label}
-              </a>
-            ))}
-          </p>
         </section>
 
         <section id="surgiauth">

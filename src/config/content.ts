@@ -77,14 +77,14 @@ export const surgiNotes: readonly Note[] = [
   { value: "2장", label: "칸마다 채우는 수예요. 합쳐서 30장이에요." },
 ];
 
-// 홈 trego-state 구간 수치. 근거: stage-c/utils/build-planner-tree.ts, stage-c/dnd/planner-drop-rules.ts
+// /trego 상태 설계 절 수치. 근거: stage-c/utils/build-planner-tree.ts, stage-c/dnd/planner-drop-rules.ts
 export const stateNotes: readonly Note[] = [
   { value: "3개", label: "원본 배열 하나에서 entityMap, childrenMap, flattenedItems를 파생해요." },
   { value: "(앞 + 뒤) ÷ 2", label: "두 이웃 사이에 놓으면 위치를 중간값으로 정해서 다른 행의 위치를 안 바꿔요." },
   { value: "0.1", label: "이웃이 한쪽뿐이거나 없을 때 쓰는 간격(POSITION_STEP)이에요." },
 ];
 
-// 홈 trego-sync 구간의 본 앱 근거 링크. 이 저장소에는 데모가 없고 trego-web-portfolio에 있다.
+// /trego 실시간 협업 절의 본 앱 근거 링크. 이 저장소에는 데모가 없고 trego-web-portfolio에 있다.
 export const syncLinks = [
   { label: "백엔드 없이 동작하는 /demo", href: "https://trego-web-portfolio.vercel.app/demo" },
   { label: "코드 보기", href: "https://github.com/nothige55/trego-web-portfolio" },
@@ -102,7 +102,7 @@ export const surgiPairs = [
   },
 ] as const;
 
-// 드래그 변천 요약. 상세와 커밋은 features/dnd/config/chapters.ts에 있다.
+// 홈 드래그 데모의 변천 요약. 글 상세와 커밋은 features/dnd/config/chapters.ts에 있다.
 export const dragSteps = [
   {
     id: "a",
