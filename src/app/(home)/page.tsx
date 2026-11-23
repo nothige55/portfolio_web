@@ -7,6 +7,8 @@ import { CopyLink } from "@/features/interaction-demos/components/copy-link";
 import { CoverageGrid } from "@/features/interaction-demos/components/coverage-grid";
 import { DemoSlot } from "@/features/dnd/components/demo-slot";
 import { DragStory } from "@/features/interaction-demos/components/drag-story";
+import { ExpandStage } from "@/features/interaction-demos/components/expand-stage";
+import { ScrollReveal } from "@/features/interaction-demos/components/scroll-reveal";
 import { SplitReveal } from "@/features/interaction-demos/components/split-reveal";
 import { PathBar } from "@/features/variant-story/components/path-bar";
 import { ScrollCue } from "@/features/variant-story/components/scroll-cue";
@@ -125,23 +127,27 @@ export default function V4Page() {
               </Stage>
             }
           />
-          <div className="pb-20">
+          <ScrollReveal className="pb-12">
             <Notes items={surgiNotes} />
-          </div>
+          </ScrollReveal>
         </section>
 
-        <section id="contact" className="space-y-6 py-14 text-center">
-          <h2 className={big}>연락처</h2>
-          <div className="space-y-1 text-lg">
-            {site.email && <CopyLink text={site.email} />}
-            <p>
-              <a href={site.github} target="_blank" rel="noopener noreferrer" className={link}>
-                GitHub
-              </a>
-            </p>
-          </div>
-          <p className={label}>{stack.join(" · ")}</p>
-          <p className="text-sm text-muted-foreground">{education}</p>
+        <section id="contact" className="py-14">
+          <ExpandStage className="rounded-[20px] bg-stage px-6 py-20 sm:py-28">
+            <ScrollReveal className="space-y-6 text-center">
+              <h2 className={big}>연락처</h2>
+              <div className="space-y-1 text-lg">
+                {site.email && <CopyLink text={site.email} />}
+                <p>
+                  <a href={site.github} target="_blank" rel="noopener noreferrer" className={link}>
+                    GitHub
+                  </a>
+                </p>
+              </div>
+              <p className={label}>{stack.join(" · ")}</p>
+              <p className="text-sm text-muted-foreground">{education}</p>
+            </ScrollReveal>
+          </ExpandStage>
         </section>
       </div>
     </div>
