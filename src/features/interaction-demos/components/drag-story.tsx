@@ -92,7 +92,15 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
       };
     });
     // 웹폰트가 늦게 오면 위쪽 높이가 바뀌어 pin 시작 위치가 어긋나므로 다시 계산한다.
-    document.fonts.ready.then(() => ScrollTrigger.refresh());
+    document.fonts.ready.then(() => {
+      ScrollTrigger.refresh();
+      // 해시 링크(/trego의 /#trego-drag)는 pin 여백이 생기기 전 위치에 멈춰 조립 전 빈 무대 앞에 선다. 조립이 끝난 첫 단계로 보낸다.
+      const st = trigger.current;
+      const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (st && target && frame.current && target.contains(frame.current)) {
+        window.scrollTo({ top: st.start + (st.end - st.start) * CENTERS[0] });
+      }
+    });
     return () => mm.revert();
   }, []);
 
