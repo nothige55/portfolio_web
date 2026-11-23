@@ -212,3 +212,26 @@
     width: 100%;
   }
 }
+
+/* 전역 숨김의 예외: breadcrumb 데모처럼 스크롤 위치를 봐야 하는 곳에만 트랙 없는 얇은 손잡이를 보인다.
+   Chrome은 scrollbar-width가 기본값(auto)일 때만 ::-webkit-scrollbar를 따르므로 auto로 되돌린다. */
+.thin-scrollbar {
+  scrollbar-width: auto;
+}
+.thin-scrollbar::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+}
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--muted-foreground) 45%, transparent);
+}
+@supports not selector(::-webkit-scrollbar) {
+  .thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--muted-foreground) 45%, transparent) transparent;
+  }
+}
