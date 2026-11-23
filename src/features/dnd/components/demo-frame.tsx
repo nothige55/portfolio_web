@@ -25,7 +25,7 @@ export function DemoFrame({
             </Button>
           </div>
           <div className="rounded-lg border bg-card py-2">{children}</div>
-          <p className="text-xs text-muted-foreground">마우스로 체험하는 데모예요. 데스크톱에서 보세요.</p>
+          <p className="text-xs text-muted-foreground">마우스로 체험하는 데모입니다. 데스크톱에서 보세요.</p>
         </div>
         {aside && <div className="w-full max-w-md pt-10 max-md:mx-auto">{aside}</div>}
       </div>

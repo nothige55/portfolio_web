@@ -12,7 +12,7 @@ export function CopyLink({ text }: { text: string }) {
     >
       {copied ? "Copied" : text}
       <span aria-live="polite" className="sr-only">
-        {copied ? "복사했어요" : ""}
+        {copied ? "복사했습니다" : ""}
       </span>
     </button>
   );

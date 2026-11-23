@@ -10,11 +10,11 @@
 ### 홈 — `/`
 
 - 경로 바: 스크롤하면 위쪽 경로 바가 지금 어느 구간인지 따라와요. 현재 위치는 빼고 상위 위치만 보여 줘요.
-- 드래그 스토리: `/dnd`의 세 단계 데모(a/b/c)를 스크롤하며 그대로 체험할 수 있어요.
+- 드래그 스토리: 드래그 세 단계 데모(a/b/c)를 스크롤하며 그대로 체험할 수 있어요.
 - Breadcrumb 데모: Trego 원본 breadcrumb 로직을 이식했어요. 스크롤 기준 행 판정, 조상 경로, 구간 끝 경계 라벨만 가져왔고, breadcrumb은 자리를 차지하지 않고 행 위에 겹쳐 떠요.
 - SurgiAuth 수집 격자: roll·pitch 두 축 5×3 칸에 손 각도 샘플이 채워지는 과정을 보여 줘요.
 
-### `/dnd` — 드래그 하나를 세 번 다시 만들었어요
+### 홈 드래그 스토리 — 드래그 하나를 세 번 다시 만들었어요
 
 모든 버전이 같은 과제를 풀어요. **8/14의 동문시장을 8/12의 공항과 이호테우 사이로 옮기는 일**이에요. 같은 동작인데 사용자가 느끼는 것이 어떻게 달라졌는지 비교해 보세요.
 
@@ -33,6 +33,10 @@
 
 > 검색창 연동은 챕터 c의 후속 작업이에요. 지금 데모에는 펼침 상태와 지도 연동이 있고, 검색창 연동은 아직 없어요.
 
+### `/trego` — Trego에서 한 설계
+
+Trego에서 한 일을 글로 정리한 페이지예요. 드래그는 단계별 「구현 / 한계」로, 탐색·상태·실시간 협업은 「문제 / 대안 / 설계 / 과정 / 한계」로 적었어요. 데모는 홈에 있고, 오른쪽 목차(1280px 이상)로 절 사이를 이동해요.
+
 ### `/about`
 
 소개 페이지예요. (관심사·이력·스택은 채우는 중이에요.)
@@ -43,7 +47,7 @@
 
 - 2025.05 ~ 2026.02, 4인 팀에서 프론트엔드 설계·구현을 주도했어요.
 - 여행 일정을 폴더 → 날짜 → 일정 트리로 다루고, 친구와 같은 일정을 동시에 편집하는 웹 에디터예요.
-- 이 사이트의 `/dnd`와 홈 breadcrumb, 지도 연동은 Trego 원본 코드를 이식한 거예요.
+- 이 사이트의 홈 드래그 데모와 breadcrumb, 지도 연동은 Trego 원본 코드를 이식한 거예요.
 - 프론트 위주로 다시 정리한 공개 리포: https://github.com/nothige55/trego-web-portfolio
 
 ### SurgiAuth — 수술실 비접촉 제스처 인증
@@ -91,32 +95,33 @@ NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=pk.… npm run dev
 ```
 src/app/(home)/page.tsx          # 홈 (/)
 src/app/(site)/about/page.tsx    # /about
-src/app/(site)/dnd/page.tsx      # /dnd — 챕터 a/b/c를 순서대로 보여 줘요
+src/app/(site)/trego/page.tsx    # /trego — Trego 경험 글과 목차
 src/config/
-  content.ts                     # 홈에 쓰는 프로젝트 소개·드래그 요약 문구
+  content.ts                     # 홈·/trego에 쓰는 프로젝트 소개와 본문 문구
   site.ts                        # 이름, 한 줄 소개, 연락처
   env.ts                         # 환경변수 (Mapbox 토큰)
 src/features/dnd/
-  config/chapters.ts             # 챕터 a/b/c의 제목·느낌·이유·관련 커밋
+  config/chapters.ts             # /trego 드래그 단계별 구현·한계
   stage-a/ stage-b/ stage-c/     # 세 단계 데모
   v3/ v4/ v5/ v6/                # 버전별 구현
   breadcrumb/ map/               # breadcrumb, 지도 연동
   shared/ data/ components/      # 공용 행 치수, 데모 시드, 공용 컴포넌트
 src/features/profile/            # /about 소개
 src/features/interaction-demos/  # 홈용 데모 (드래그 스토리, SurgiAuth 격자 등)
-src/features/variant-story/      # 홈 경로 바
+src/features/variant-story/      # 상단 경로 바, 홈 스크롤 유도, /trego 목차
+src/hooks/use-active-section.ts  # 경로 바와 목차가 같이 쓰는 현재 구간 판정
 ```
 
 신경 쓴 점은 커밋 메시지와 코드 주석에 남겨 두는 것을 원칙으로 해요.
 
-- **Trego 코드 재사용:** `/dnd`의 V1~V3, V4, V5~V6, breadcrumb, Mapbox 지도는 Trego 원본(또는 trego-web-portfolio)에서 이식했어요. 원본과 달라진 곳은 코드에 `"수정:"` 주석으로 표시했어요. 기획이 아닌 구현 한계만 고쳤어요.
+- **Trego 코드 재사용:** 홈 드래그 데모의 V1~V3, V4, V5~V6, breadcrumb, Mapbox 지도는 Trego 원본(또는 trego-web-portfolio)에서 이식했어요. 원본과 달라진 곳은 코드에 `"수정:"` 주석으로 표시했어요. 기획이 아닌 구현 한계만 고쳤어요.
 - **같은 치수, 같은 판정:** 세 데모의 행 높이 30px, 계층당 들여쓰기 30px, 펼침 칸 20px을 `shared/row-metrics`에 모아 같은 값을 읽어요. 30px은 원본 Trego 행 높이와 같아요.
 - **폴백을 기본으로:** 지도 토큰이 없어도 SVG 지도로 체험이 끊기지 않게 했어요. 빈·접힌 폴더처럼 “놓을 수 없는 상태”는 알림을 보내지 않고 조용히 처리해요.
 - **테스트:** 드롭 규칙(`calcNewPosition`), 드래그 미리보기 데이터, breadcrumb의 조상 경로·경계 라벨 규칙, 지도 모델, SurgiAuth 손 각도 판정을 `node:test`로 확인해요.
 
 ## 앞으로 넣을 것
 
-- [ ] `/dnd` 상세 내용 다듬기 — 지금 챕터 설명(`src/features/dnd/config/chapters.ts`)은 Trego 작업 기록을 정리한 초안 상태예요.
+- [ ] `/trego` 본문의 `확인 필요` 항목 채우기 — 팀 인원, 재귀 렌더링을 버린 이유(`src/config/content.ts`)
 - [ ] 챕터 c의 검색창 연동
 - [ ] Vercel 배포 후 라이브 URL 연결
 - [ ] SurgiAuth 공개 방식 결정 후 링크·상세 추가

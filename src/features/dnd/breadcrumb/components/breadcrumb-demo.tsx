@@ -45,7 +45,7 @@ export function BreadcrumbDemo() {
   return (
     <div className="mx-auto w-full max-w-80 space-y-3">
       <div className="relative h-64 w-full overflow-hidden rounded-lg border bg-card text-sm">
-        <div ref={scrollContainerRef} className="h-full overflow-y-auto pb-5" onScroll={updateTopItem}>
+        <div ref={scrollContainerRef} className="thin-scrollbar h-full overflow-y-auto pb-5" onScroll={updateTopItem}>
           {/* 자리를 차지하지 않고(marginBottom 음수) 행 위에 겹쳐 뜸. 그래서 비어 있을 때 빈 띠를 둘 필요가 없고 목록도 안 흔들림 */}
           {ancestors.length > 0 ? (
             <nav
@@ -103,7 +103,7 @@ export function BreadcrumbDemo() {
         </div>
       </div>
       <p className="text-xs text-muted-foreground">
-        스크롤하면 화면 위로 사라진 라벨의 조상 경로가 그 자리를 이어받아요.
+        스크롤하면 화면 위로 사라진 라벨의 조상 경로가 그 자리를 이어받습니다.
       </p>
     </div>
   );

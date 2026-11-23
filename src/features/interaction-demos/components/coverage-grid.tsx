@@ -93,16 +93,16 @@ export function CoverageGrid() {
   const here = (counts[verdict.key] ?? 0) >= PER_CELL;
   const message =
     total >= TOTAL
-      ? "30장을 다 모았어요"
+      ? "30장을 모두 모았습니다"
       : !engaged
         ? "손을 기울여 보세요"
         : lost
-          ? "인식기가 먼저 걸러요. open palm 판정이 풀리는 각도라 담지 않아요"
+          ? "인식기가 먼저 거릅니다. open palm 판정이 풀리는 각도라 수집하지 않습니다"
           : here
-            ? "이 칸은 찼어요. 다른 각도로 옮겨 보세요"
+            ? "이 칸은 찼습니다. 다른 각도로 옮겨 보세요"
             : verdict.kind === "edge"
-              ? "격자 밖이라 가장자리 칸에 담겨요"
-              : "머물면 한 장씩 담겨요";
+              ? "격자 밖이라 가장자리 칸에 담깁니다"
+              : "머물면 한 장씩 담깁니다";
 
   function onKeyDown(e: React.KeyboardEvent) {
     const step: Record<string, [number, number]> = {
@@ -120,13 +120,13 @@ export function CoverageGrid() {
   return (
     <div className="space-y-4">
       <p className="text-center text-sm text-muted-foreground">
-        격자 위에서 스크롤하세요. 좌우는 roll, 위아래는 pitch예요.
+        격자 위에서 스크롤하세요. 좌우는 roll, 위아래는 pitch입니다.
       </p>
       <div
         ref={stage}
         tabIndex={0}
         role="group"
-        aria-label="손 기울기. 방향키로 조절해요"
+        aria-label="손 기울기. 방향키로 조절합니다"
         className="rounded-lg px-10 py-9 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         onPointerMove={(e) => {
           if (e.movementX || e.movementY) wheelOn.current = true;

@@ -132,9 +132,18 @@
   }
   html {
     @apply font-sans;
+    /* 고정 상단 막대(h-11) 아래로 앵커 이동이 멈추게 한다. */
+    scroll-padding-top: 3rem;
+  }
+  /* 스크롤바를 전부 숨긴다. 스크롤은 그대로 되고, 페이지 길이에 따라 가운데 정렬 폭이 달라지지 않는다. */
+  * {
+    scrollbar-width: none;
+  }
+  *::-webkit-scrollbar {
+    display: none;
   }
 }
-/* 홈 전용 토큰. :root를 바꾸면 /dnd, /about이 달라지므로 클래스 아래에 둔다. 밝은 테마 고정. */
+/* 홈 전용 토큰. :root를 바꾸면 /trego, /about이 달라지므로 클래스 아래에 둔다. 밝은 테마 고정. */
 .home {
   --background: #ffffff;
   --foreground: #191f28;
@@ -201,5 +210,28 @@
 
   to {
     width: 100%;
+  }
+}
+
+/* 전역 숨김의 예외: breadcrumb 데모처럼 스크롤 위치를 봐야 하는 곳에만 트랙 없는 얇은 손잡이를 보인다.
+   Chrome은 scrollbar-width가 기본값(auto)일 때만 ::-webkit-scrollbar를 따르므로 auto로 되돌린다. */
+.thin-scrollbar {
+  scrollbar-width: auto;
+}
+.thin-scrollbar::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+}
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--muted-foreground) 45%, transparent);
+}
+@supports not selector(::-webkit-scrollbar) {
+  .thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--muted-foreground) 45%, transparent) transparent;
   }
 }

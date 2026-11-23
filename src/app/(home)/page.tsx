@@ -9,6 +9,7 @@ import { DemoSlot } from "@/features/dnd/components/demo-slot";
 import { DragStory } from "@/features/interaction-demos/components/drag-story";
 import { SplitReveal } from "@/features/interaction-demos/components/split-reveal";
 import { PathBar } from "@/features/variant-story/components/path-bar";
+import { ScrollCue } from "@/features/variant-story/components/scroll-cue";
 
 const [trego, surgi] = projects;
 const big = "text-[clamp(2rem,5.5vw,4.5rem)] font-bold leading-[1.1] tracking-[-0.035em]";
@@ -49,6 +50,7 @@ export default function V4Page() {
   return (
     <div className="home min-h-screen bg-background pb-32 pt-11 text-foreground">
       <PathBar name={site.name} entries={entries} />
+      <ScrollCue />
 
       <div className="mx-auto max-w-[1100px] px-4">
         <section id="intro" className="flex min-h-[80vh] flex-col items-center justify-center py-20 text-center">
@@ -57,11 +59,11 @@ export default function V4Page() {
             <br />
             만드는 프론트엔드
             <br />
-            개발자예요.
+            개발자입니다.
           </h1>
           <p className="mx-auto mt-8 max-w-md leading-relaxed text-muted-foreground">
-            아래로 스크롤해 보세요. 위쪽 경로 바가 지금 어디인지 따라와요. 현재 위치는 빼고
-            상위 위치만 보여 줘요. Trego에서 만든 규칙이에요.
+            아래로 스크롤하면 위쪽 경로 바가 현재 위치를 따라갑니다. 현재 위치는 빼고 상위 위치만
+            보여 줍니다. Trego에서 만든 규칙입니다.
           </p>
         </section>
 
@@ -80,8 +82,8 @@ export default function V4Page() {
             demos={{ a: <DemoSlot id="a" bare />, b: <DemoSlot id="b" bare />, c: <DemoSlot id="c" bare /> }}
           />
           <p className="mt-6 text-center">
-            <Link href="/dnd" className={`${link} inline-flex items-center gap-1 text-sm`}>
-              버전별 과정 전체 보기
+            <Link href="/trego" className={`${link} inline-flex items-center gap-1 text-sm`}>
+              Trego에서 한 설계 보기
               <ArrowRight aria-hidden="true" className="size-3.5" />
             </Link>
           </p>
@@ -136,7 +138,7 @@ export default function V4Page() {
         </section>
 
         <section id="contact" className="space-y-6 py-28 text-center">
-          <h2 className={big}>이야기해요.</h2>
+          <h2 className={big}>연락처</h2>
           <div className="space-y-1 text-lg">
             {site.email && <CopyLink text={site.email} />}
             <p>

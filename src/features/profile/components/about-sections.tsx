@@ -1,9 +1,9 @@
 import { site } from "@/config/site";
 
 const sections = [
-  { title: "관심사", body: "인터랙션 디자인과 HCI에 관심이 있어요. 내용은 곧 채워 둘게요." },
-  { title: "이력", body: "이력은 곧 채워 둘게요." },
-  { title: "스택", body: "스택은 곧 채워 둘게요." },
+  { title: "관심사", body: "인터랙션 디자인과 HCI에 관심이 있습니다. 내용은 추후 추가합니다." },
+  { title: "이력", body: "이력은 추후 추가합니다." },
+  { title: "스택", body: "스택은 추후 추가합니다." },
 ];
 
 const linkClass =

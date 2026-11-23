@@ -91,7 +91,7 @@ export function RouteMap({ rows, dragPreview = null }: { rows: readonly RouteRow
         <PlannerMap accessToken={accessToken} tree={tree} dragFocusPathId={dragFocusPathId} />
       ) : (
         <div className="overflow-hidden rounded-lg border bg-sky-50">
-          <svg viewBox={`0 0 ${W} ${H}`} className="block w-full" role="img" aria-label="제주 북서쪽 지도. 날짜마다 색이 다른 선으로 장소가 이어져요">
+          <svg viewBox={`0 0 ${W} ${H}`} className="block w-full" role="img" aria-label="제주 북서쪽 지도. 날짜마다 색이 다른 선으로 장소가 이어집니다">
             {routes.map(({ day, stops }) => {
               const color = day.color ?? "#444";
               const points = stops.map((stop) => project(stop.latitude, stop.longitude));

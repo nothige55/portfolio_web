@@ -35,6 +35,9 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
   const [animated, setAnimated] = useState(false);
 
   useEffect(() => {
+    // 새로고침하면 브라우저가 pin 여백(450%)이 생기기 전의 짧은 페이지에서 스크롤을 복원해, 엉뚱한 단계(V5~V6)에 걸린다.
+    // 복원을 끄고 맨 위에서 시작한다. #trego-drag 같은 해시 이동은 영향받지 않는다.
+    ScrollTrigger.clearScrollMemory("manual");
     const mm = gsap.matchMedia();
     mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
       setAnimated(true);
@@ -137,7 +140,7 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
           <p className="text-lg font-semibold leading-snug tracking-tight">
             드래그 하나를
             <br />
-            세 번 다시 만들었어요
+            세 번 다시 만들었습니다
             <span className="mt-3 flex items-center justify-center gap-1 font-mono text-xs font-normal text-muted-foreground">
               내려 보세요
               <ArrowDown aria-hidden="true" className="size-3" />
