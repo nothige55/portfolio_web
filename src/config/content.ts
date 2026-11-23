@@ -66,9 +66,6 @@ export const stack = [
 
 export const education = "동양미래대학교 컴퓨터정보공학과 · 2027.02 졸업 예정";
 
-export const approach =
-  "요구사항에 없던 문제를 사용하면서 찾아내고, 흔한 해법이 왜 맞지 않는지 검토한 뒤 직접 설계합니다.";
-
 export type Note = { value: string; label: string };
 
 export const surgiNotes: readonly Note[] = [
