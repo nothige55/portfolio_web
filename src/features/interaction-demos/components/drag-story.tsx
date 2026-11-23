@@ -50,8 +50,19 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
           scrollTrigger: { trigger: frame.current, start: "top bottom", end: "top top", scrub: 0.6, invalidateOnRefresh: true },
         })
         .fromTo(stage.current, { scale: 0.72, y: 80, clipPath: "inset(0% 0% 0% 0% round 48px)" }, { scale: 1, y: 0, clipPath: "inset(0% 0% 0% 0% round 16px)", duration: 1, ease: "expo.out" }, 0)
-        .fromTo(content.current, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.35 }, 0.15)
-        .fromTo(footer.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.35 }, 0.3);
+        .fromTo(
+          content.current,
+          { "--asm-tree-x": "-160px", "--asm-tree-y": "0px", "--asm-tree-o": 0 },
+          { "--asm-tree-x": "0px", "--asm-tree-o": 1, duration: 0.45, ease: "power3.out" },
+          0.2,
+        )
+        .fromTo(
+          content.current,
+          { "--asm-map-x": "120px", "--asm-map-y": "60px", "--asm-map-s": 0.94, "--asm-map-o": 0 },
+          { "--asm-map-x": "0px", "--asm-map-y": "0px", "--asm-map-s": 1, "--asm-map-o": 1, duration: 0.45, ease: "power3.out" },
+          0.35,
+        )
+        .fromTo(footer.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.3 }, 0.6);
       const tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
@@ -148,6 +159,7 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
         className="relative flex h-full flex-col overflow-hidden rounded-2xl border bg-card lg:h-[calc(100vh-8rem)]"
         inert={!ready}
       >
+        {/* 등장 때 --asm-* 변수를 여기에 tween한다. 변수 이름은 dnd DemoFrame과 맞춘다 */}
         <div ref={content} className="min-h-0 flex-1 p-6 lg:p-8">
           <div ref={fit} className="h-full overflow-y-auto">
             <div key={current.id} ref={demo} style={{ zoom }}>
