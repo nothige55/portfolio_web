@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { ChapterSection } from "@/features/dnd/components/chapter-section";
 import { appOnly, chapters } from "@/features/dnd/config/chapters";
 
-export const metadata: Metadata = { title: "DnD" };
+export const metadata: Metadata = { title: "Trego" };
 
 export default function DndPage() {
   return (

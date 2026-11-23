@@ -134,7 +134,7 @@
     @apply font-sans;
   }
 }
-/* 홈 전용 토큰. :root를 바꾸면 /dnd, /about이 달라지므로 클래스 아래에 둔다. 밝은 테마 고정. */
+/* 홈 전용 토큰. :root를 바꾸면 /trego, /about이 달라지므로 클래스 아래에 둔다. 밝은 테마 고정. */
 .home {
   --background: #ffffff;
   --foreground: #191f28;

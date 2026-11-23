@@ -3,7 +3,7 @@ import { site } from "@/config/site";
 
 const links = [
   { href: "/", label: "홈" },
-  { href: "/dnd", label: "DnD" },
+  { href: "/trego", label: "Trego" },
   { href: "/about", label: "소개" },
 ];
 

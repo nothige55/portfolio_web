@@ -16,7 +16,7 @@ npm run lint    # ESLint
 - 홈 `trego-nav`: 깊은 트리에서 조상 경로가 이어받는 breadcrumb이에요.
 - 홈 `trego-state`: 트리 인덱스 3개와 이웃 사이 중간값으로 위치를 정하는 규칙이에요.
 - 홈 `trego-sync`: 실시간 협업은 본 앱 기능이라 이 사이트에는 데모가 없고, trego-web-portfolio 링크로 이어져요.
-- `/dnd`: 버전별 과정과 챕터별 「이 데모 안의 설계」, 맨 아래 「Trego 본 앱에서는」이 있어요.
+- `/trego`: 버전별 과정과 챕터별 「이 데모 안의 설계」, 맨 아래 「Trego 본 앱에서는」이 있어요.
 
 ## 담긴 프로젝트
 

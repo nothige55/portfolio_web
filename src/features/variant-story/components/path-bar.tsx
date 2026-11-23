@@ -38,7 +38,7 @@ export function PathBar({ name, entries }: { name: string; entries: readonly Ent
           </span>
         ))}
         <nav aria-label="주요 메뉴" className="ml-auto flex gap-4 text-muted-foreground">
-          <Link href="/dnd" className="hover:text-foreground">DnD</Link>
+          <Link href="/trego" className="hover:text-foreground">Trego</Link>
           <Link href="/about" className="hover:text-foreground">소개</Link>
         </nav>
       </div>
