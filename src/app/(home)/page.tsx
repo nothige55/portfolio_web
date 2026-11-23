@@ -76,7 +76,7 @@ export default function V4Page() {
             </p>
           </div>
         </section>
-        <section id="trego" className="space-y-4 py-20 text-center">
+        <section id="trego" className="space-y-4 pb-8 pt-14 text-center">
           <p className={label}>
             {trego.period} · {trego.role}
           </p>
@@ -156,12 +156,12 @@ export default function V4Page() {
               </Stage>
             }
           />
-          <div className="pb-28">
+          <div className="pb-20">
             <Notes items={surgiNotes} />
           </div>
         </section>
 
-        <section id="contact" className="space-y-6 py-28 text-center">
+        <section id="contact" className="space-y-6 py-14 text-center">
           <h2 className={big}>연락처</h2>
           <div className="space-y-1 text-lg">
             {site.email && <CopyLink text={site.email} />}
