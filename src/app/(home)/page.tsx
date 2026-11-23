@@ -10,21 +10,15 @@ import { DragStory } from "@/features/interaction-demos/components/drag-story";
 import { SplitReveal } from "@/features/interaction-demos/components/split-reveal";
 import { PathBar } from "@/features/variant-story/components/path-bar";
 import { ScrollCue } from "@/features/variant-story/components/scroll-cue";
+import { TypedText } from "@/features/variant-story/components/typed-text";
 
 const [trego, surgi] = projects;
 const big = "text-[clamp(2rem,5.5vw,4.5rem)] font-bold leading-[1.1] tracking-[-0.035em]";
+// 첫 화면 제목은 다른 구간 제목보다 크게 둔다.
+const hero = "text-[clamp(2rem,6vw,5rem)] font-bold leading-[1.1] tracking-[-0.035em]";
 const label = "font-mono text-xs text-muted-foreground";
 const link =
   "rounded-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
-
-const entries = [
-  { id: "intro", path: [] },
-  { id: "trego", path: [] },
-  { id: "trego-drag", path: ["Trego"] },
-  { id: "trego-nav", path: ["Trego"] },
-  { id: "surgiauth", path: [] },
-  { id: "contact", path: [] },
-] as const;
 
 // 구간마다 데모가 가장 큰 요소가 되도록 회색 무대 하나에 올린다.
 function Stage({ children }: { children: React.ReactNode }) {
@@ -49,25 +43,24 @@ function Notes({ items }: { items: readonly Note[] }) {
 export default function V4Page() {
   return (
     <div className="home min-h-screen bg-background pb-32 pt-11 text-foreground">
-      <PathBar name={site.name} entries={entries} />
+      <PathBar name={site.name} />
       <ScrollCue />
 
       <div className="mx-auto max-w-[1100px] px-4">
-        <section id="intro" className="flex min-h-[80vh] flex-col items-center justify-center py-20 text-center">
-          <h1 className={big}>
-            {site.name}은 인터랙션을
-            <br />
-            만드는 프론트엔드
-            <br />
-            개발자입니다.
-          </h1>
-          <p className="mx-auto mt-8 max-w-md leading-relaxed text-muted-foreground">
-            아래로 스크롤하면 위쪽 경로 바가 현재 위치를 따라갑니다. 현재 위치는 빼고 상위 위치만
-            보여 줍니다. Trego에서 만든 규칙입니다.
-          </p>
+        <section id="intro" className="flex min-h-[75vh] flex-col items-center justify-center py-20">
+          <div className="w-fit text-left">
+            <h1 className={hero}>
+              <TypedText
+                prefix="어떻게 "
+                words={["움직이는지", "반응하는지", "이어지는지"]}
+                suffix="궁금한 UI가 많습니다."
+              />
+            </h1>
+            <p className="mt-6 font-mono text-sm text-muted-foreground">{site.name} · Frontend Developer</p>
+          </div>
         </section>
 
-        <section id="trego" className="space-y-4 py-20 text-center">
+        <section id="trego" className="space-y-4 pb-8 pt-14 text-center">
           <p className={label}>
             {trego.period} · {trego.role}
           </p>
@@ -132,12 +125,12 @@ export default function V4Page() {
               </Stage>
             }
           />
-          <div className="pb-28">
+          <div className="pb-20">
             <Notes items={surgiNotes} />
           </div>
         </section>
 
-        <section id="contact" className="space-y-6 py-28 text-center">
+        <section id="contact" className="space-y-6 py-14 text-center">
           <h2 className={big}>연락처</h2>
           <div className="space-y-1 text-lg">
             {site.email && <CopyLink text={site.email} />}

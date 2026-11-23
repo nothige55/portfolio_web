@@ -17,6 +17,8 @@ const OPEN = "inset(0% 0% 0% 0% round 16px)";
 // 타임라인 진행도(0~1)에서 각 단계가 시작하는 지점.
 const STARTS = [0, 0.42, 0.65] as const;
 const CENTERS = [0.3, 0.53, 0.77] as const;
+// 경계 근처에서 위아래로 조금씩 흔들려도 단계가 뒤집히지 않게, 되돌아갈 때만 이만큼 더 지나야 바뀐다.
+const BACK_MARGIN = 0.02;
 
 // 애플 제품 페이지처럼 화면을 고정(pin)하고 스크롤 진행도에 애니메이션을 묶는다.
 // 작은 카드가 무대로 커지고, 단계가 바뀌고, 끝에서 다시 줄어든다. 크기는 clip-path로만 바꿔 내용이 다시 배치되지 않는다.
@@ -51,7 +53,11 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
           scrub: 0.6,
           onUpdate: (self) => {
             const p = self.progress;
-            setStepIndex(p >= STARTS[2] ? 2 : p >= STARTS[1] ? 1 : 0);
+            setStepIndex((i) => {
+              while (i < 2 && p >= STARTS[i + 1]) i++;
+              while (i > 0 && p < STARTS[i] - BACK_MARGIN) i--;
+              return i;
+            });
           },
         },
       });
@@ -157,11 +163,16 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
         </div>
 
         <div className="flex flex-col gap-3 border-t p-6 lg:flex-row lg:items-center lg:justify-between lg:px-12">
-          <div className="max-w-xl" aria-live="polite">
-            <p className="font-mono text-xs text-muted-foreground">
-              {current.versions} · {current.title}
-            </p>
-            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{current.body}</p>
+          {/* 모든 단계의 설명을 같은 칸에 겹쳐 두고 현재 것만 보인다. 가장 긴 설명 기준으로 푸터 높이가 고정돼 단계가 바뀌어도 칩과 데모가 움직이지 않는다. */}
+          <div className="grid max-w-xl" aria-live="polite">
+            {steps.map((s, i) => (
+              <div key={s.id} className={`col-start-1 row-start-1 ${i === stepIndex ? "" : "invisible"}`}>
+                <p className="font-mono text-xs text-muted-foreground">
+                  {s.versions} · {s.title}
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
+              </div>
+            ))}
           </div>
           <div className="flex gap-2" role="group" aria-label="드래그 변천 단계">
             {steps.map((s, i) => (

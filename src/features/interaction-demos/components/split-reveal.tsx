@@ -35,7 +35,7 @@ export function SplitReveal({
         scrollTrigger: {
           trigger: frame.current,
           start: "top top",
-          end: "+=120%",
+          end: "+=80%",
           pin: true,
           scrub: 0.6,
           invalidateOnRefresh: true,
@@ -44,7 +44,7 @@ export function SplitReveal({
       });
       // 글은 처음에 화면 가운데에 있다가 자기 열 가운데로 간다. 열 사이 간격(gap-10)의 절반만큼 보정한다.
       tl.fromTo(textEl.current, { x: () => dir * ((grid.current?.offsetWidth ?? 0) / 4 + 10) }, { x: 0, ease: "power2.inOut", duration: 0.55 }, 0)
-        .fromTo(demoEl.current, { opacity: 0, scale: 0.92, x: dir * 64 }, { opacity: 1, scale: 1, x: 0, ease: "power2.out", duration: 0.45 }, 0.45);
+        .fromTo(demoEl.current, { opacity: 0, scale: 0.92, x: dir * 64 }, { opacity: 1, scale: 1, x: 0, ease: "power2.out", duration: 0.5 }, 0.3);
       return () => setReady(true);
     });
     document.fonts.ready.then(() => ScrollTrigger.refresh());
