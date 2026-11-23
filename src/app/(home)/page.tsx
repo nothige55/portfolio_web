@@ -7,6 +7,9 @@ import { CopyLink } from "@/features/interaction-demos/components/copy-link";
 import { CoverageGrid } from "@/features/interaction-demos/components/coverage-grid";
 import { DemoSlot } from "@/features/dnd/components/demo-slot";
 import { DragStory } from "@/features/interaction-demos/components/drag-story";
+import { ExpandStage } from "@/features/interaction-demos/components/expand-stage";
+import { ProjectTitle } from "@/features/interaction-demos/components/project-title";
+import { ScrollReveal } from "@/features/interaction-demos/components/scroll-reveal";
 import { SplitReveal } from "@/features/interaction-demos/components/split-reveal";
 import { PathBar } from "@/features/variant-story/components/path-bar";
 import { ScrollCue } from "@/features/variant-story/components/scroll-cue";
@@ -60,26 +63,15 @@ export default function V4Page() {
           </div>
         </section>
 
-        <section id="trego" className="space-y-4 pb-8 pt-14 text-center">
-          <p className={label}>
-            {trego.period} · {trego.role}
-          </p>
-          <h2 className={big}>{trego.name}</h2>
-          <p className="text-xl font-medium">{trego.kicker}</p>
-          <p className="mx-auto max-w-lg leading-relaxed text-muted-foreground">{trego.summary}</p>
+        <section id="trego">
+          <ProjectTitle eyebrow={`${trego.period} · ${trego.role}`} name={trego.name} lines={[trego.kicker, trego.summary]} />
         </section>
 
-        <section id="trego-drag">
+        <section id="trego-drag" className="relative z-10 lg:motion-safe:-mt-[100vh]">
           <DragStory
             steps={dragSteps}
             demos={{ a: <DemoSlot id="a" bare />, b: <DemoSlot id="b" bare />, c: <DemoSlot id="c" bare /> }}
           />
-          <p className="mt-6 text-center">
-            <Link href="/trego" className={`${link} inline-flex items-center gap-1 text-sm`}>
-              Trego에서 한 설계 보기
-              <ArrowRight aria-hidden="true" className="size-3.5" />
-            </Link>
-          </p>
         </section>
 
         <section id="trego-nav">
@@ -97,51 +89,57 @@ export default function V4Page() {
               </Stage>
             }
           />
+          <p className="pb-16 pt-6 text-center">
+            <Link href="/trego" className={`${link} inline-flex items-center gap-1 text-sm`}>
+              Trego 설계 전체 보기
+              <ArrowRight aria-hidden="true" className="size-3.5" />
+            </Link>
+          </p>
         </section>
 
         <section id="surgiauth">
-          <SplitReveal
-            textSide="right"
-            text={
-              <div className="mx-auto max-w-md space-y-8">
-                <div className="space-y-3">
-                  <p className={label}>
-                    {surgi.period} · {surgi.role}
-                  </p>
-                  <h2 className={big}>{surgi.name}</h2>
-                  <p className="text-xl font-medium">{surgi.kicker}</p>
+          <ProjectTitle eyebrow={`${surgi.period} · ${surgi.role}`} name={surgi.name} lines={[surgi.kicker, surgi.summary]} />
+          <div className="relative z-10 lg:motion-safe:-mt-[100vh]">
+            <SplitReveal
+              textSide="right"
+              text={
+                <div className="mx-auto max-w-md space-y-8">
+                  {surgiPairs.map((p) => (
+                    <div key={p.decision} className="space-y-2">
+                      <p className="text-sm leading-relaxed text-muted-foreground">{p.problem}</p>
+                      <p className="font-medium leading-relaxed">{p.decision}</p>
+                    </div>
+                  ))}
                 </div>
-                {surgiPairs.map((p) => (
-                  <div key={p.decision} className="space-y-2">
-                    <p className="text-sm leading-relaxed text-muted-foreground">{p.problem}</p>
-                    <p className="font-medium leading-relaxed">{p.decision}</p>
-                  </div>
-                ))}
-              </div>
-            }
-            demo={
-              <Stage>
-                <CoverageGrid />
-              </Stage>
-            }
-          />
-          <div className="pb-20">
-            <Notes items={surgiNotes} />
+              }
+              demo={
+                <Stage>
+                  <CoverageGrid />
+                </Stage>
+              }
+            />
           </div>
+          <ScrollReveal className="pb-12">
+            <Notes items={surgiNotes} />
+          </ScrollReveal>
         </section>
 
-        <section id="contact" className="space-y-6 py-14 text-center">
-          <h2 className={big}>연락처</h2>
-          <div className="space-y-1 text-lg">
-            {site.email && <CopyLink text={site.email} />}
-            <p>
-              <a href={site.github} target="_blank" rel="noopener noreferrer" className={link}>
-                GitHub
-              </a>
-            </p>
-          </div>
-          <p className={label}>{stack.join(" · ")}</p>
-          <p className="text-sm text-muted-foreground">{education}</p>
+        <section id="contact" className="py-14">
+          <ExpandStage className="rounded-[20px] bg-stage px-6 py-20 sm:py-28">
+            <ScrollReveal className="space-y-6 text-center">
+              <h2 className={big}>연락처</h2>
+              <div className="space-y-1 text-lg">
+                {site.email && <CopyLink text={site.email} />}
+                <p>
+                  <a href={site.github} target="_blank" rel="noopener noreferrer" className={link}>
+                    GitHub
+                  </a>
+                </p>
+              </div>
+              <p className={label}>{stack.join(" · ")}</p>
+              <p className="text-sm text-muted-foreground">{education}</p>
+            </ScrollReveal>
+          </ExpandStage>
         </section>
       </div>
     </div>

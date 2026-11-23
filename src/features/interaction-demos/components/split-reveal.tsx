@@ -35,7 +35,7 @@ export function SplitReveal({
         scrollTrigger: {
           trigger: frame.current,
           start: "top top",
-          end: "+=80%",
+          end: "+=60%",
           pin: true,
           scrub: 0.6,
           invalidateOnRefresh: true,
