@@ -14,6 +14,7 @@ import { ChapterSection } from "@/features/dnd/components/chapter-section";
 import { chapters, dragProblems } from "@/features/dnd/config/chapters";
 import { site } from "@/config/site";
 import { PathBar } from "@/features/variant-story/components/path-bar";
+import { TocRail, type TocItem } from "@/features/variant-story/components/toc-rail";
 
 export const metadata: Metadata = { title: "Trego" };
 
@@ -23,17 +24,20 @@ const link =
 const section = "mx-auto max-w-[680px] space-y-4 py-12 leading-relaxed";
 const label = "block text-sm text-muted-foreground";
 
-// 홈과 같은 상단 경로 막대. 드래그 단계 안에서는 "드래그 앤 드롭"이 조상으로 붙는다.
+// 상단 경로 막대와 오른쪽 목차가 같이 쓰는 구간 목록. 드래그 단계 안에서는 "드래그 앤 드롭"이 조상으로 붙는다.
+const toc: TocItem[] = [
+  { id: "drag-intro", label: "계층 트리 드래그 앤 드롭", depth: 0 },
+  ...chapters.map((c) => ({ id: `chapter-${c.id}`, label: c.title, depth: 1 as const })),
+  { id: "nav", label: trego.points[0].title, depth: 0 },
+  { id: "state", label: trego.points[2].title, depth: 0 },
+  { id: "sync", label: trego.points[3].title, depth: 0 },
+  { id: "role", label: "역할", depth: 0 },
+];
 const entries = [
   { id: "top", path: [] },
-  { id: "drag-intro", path: ["Trego"] },
-  ...chapters.map((c) => ({
-    id: `chapter-${c.id}`,
-    path: ["Trego", "드래그 앤 드롭"],
-  })),
-  ...["nav", "state", "sync", "role"].map((id) => ({
-    id,
-    path: ["Trego"],
+  ...toc.map((t) => ({
+    id: t.id,
+    path: t.depth ? ["Trego", "드래그 앤 드롭"] : ["Trego"],
   })),
 ];
 
@@ -95,6 +99,7 @@ export default function TregoPage() {
   return (
     <div className="mx-auto max-w-[1100px] px-4 pb-16">
       <PathBar name={site.name} entries={entries} />
+      <TocRail items={toc} />
       <div id="top" className="mx-auto max-w-[680px] space-y-4 py-16">
         {/* 홈 Trego 구간과 같은 순서·스타일: 기간·역할 → 이름 → 한 줄 소개 → 요약 */}
         <p className="font-mono text-xs text-muted-foreground">

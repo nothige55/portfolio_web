@@ -1,27 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useActiveSection } from "@/hooks/use-active-section";
 
 type Entry = { id: string; path: readonly string[] };
 
 // Trego의 breadcrumb 규칙을 페이지 자체에 쓴다: 현재 위치는 빼고 조상만 보여 준다. 모든 페이지의 상단 막대다.
 export function PathBar({ name, entries = [] }: { name: string; entries?: readonly Entry[] }) {
-  const [active, setActive] = useState(entries[0]?.id);
-
-  useEffect(() => {
-    const io = new IntersectionObserver(
-      (list) => {
-        for (const e of list) if (e.isIntersecting) setActive(e.target.id);
-      },
-      { rootMargin: "-20% 0px -70% 0px" },
-    );
-    entries.forEach((en) => {
-      const el = document.getElementById(en.id);
-      if (el) io.observe(el);
-    });
-    return () => io.disconnect();
-  }, [entries]);
+  const active = useActiveSection(entries.map((e) => e.id));
 
   const path = entries.find((e) => e.id === active)?.path ?? [];
   return (
