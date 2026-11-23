@@ -5,35 +5,25 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
   return (
     <section id={`chapter-${chapter.id}`} className="scroll-mt-8 space-y-6 py-12">
       <div className="mx-auto max-w-[680px] space-y-3">
-        <Badge variant="secondary">{chapter.versions}</Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary">{chapter.versions}</Badge>
+          <span className="text-sm tabular-nums text-muted-foreground">{chapter.period}</span>
+        </div>
         <h3 className="font-heading text-xl font-bold">{chapter.title}</h3>
       </div>
       <div className="mx-auto max-w-[680px] space-y-4 leading-relaxed">
+        <div>
+          <span className="block text-sm text-muted-foreground">구현</span>
+          <ul className="mt-1 list-disc space-y-1 pl-5">
+            {chapter.did.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+        </div>
         <p>
-          <span className="block text-sm text-muted-foreground">사용자가 느끼는 것</span>
-          {chapter.feel}
+          <span className="block text-sm text-muted-foreground">한계</span>
+          {chapter.limit}
         </p>
-        <p>
-          <span className="block text-sm text-muted-foreground">바뀐 이유</span>
-          {chapter.reason}
-        </p>
-        {chapter.design && (
-          <div>
-            <span className="block text-sm text-muted-foreground">Trego에서의 설계</span>
-            <ul className="mt-1 list-disc space-y-1 pl-5">
-              {chapter.design.map((line) => (
-                <li key={line}>{line}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-        <ul className="flex flex-wrap gap-2" aria-label="관련 커밋">
-          {chapter.commits.map((hash) => (
-            <li key={hash}>
-              <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{hash}</code>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   );
