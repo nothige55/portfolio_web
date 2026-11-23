@@ -103,7 +103,7 @@ export function BreadcrumbDemo() {
         </div>
       </div>
       <p className="text-xs text-muted-foreground">
-        스크롤하면 화면 위로 사라진 라벨의 조상 경로가 그 자리를 이어받아요.
+        스크롤하면 화면 위로 사라진 라벨의 조상 경로가 그 자리를 이어받습니다.
       </p>
     </div>
   );

@@ -137,7 +137,7 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
           <p className="text-lg font-semibold leading-snug tracking-tight">
             드래그 하나를
             <br />
-            세 번 다시 만들었어요
+            세 번 다시 만들었습니다
             <span className="mt-3 flex items-center justify-center gap-1 font-mono text-xs font-normal text-muted-foreground">
               내려 보세요
               <ArrowDown aria-hidden="true" className="size-3" />
