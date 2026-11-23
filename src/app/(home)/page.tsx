@@ -72,12 +72,6 @@ export default function V4Page() {
             steps={dragSteps}
             demos={{ a: <DemoSlot id="a" bare />, b: <DemoSlot id="b" bare />, c: <DemoSlot id="c" bare /> }}
           />
-          <p className="mt-6 text-center">
-            <Link href="/trego" className={`${link} inline-flex items-center gap-1 text-sm`}>
-              Trego에서 한 설계 보기
-              <ArrowRight aria-hidden="true" className="size-3.5" />
-            </Link>
-          </p>
         </section>
 
         <section id="trego-nav">
@@ -95,6 +89,12 @@ export default function V4Page() {
               </Stage>
             }
           />
+          <p className="pb-16 pt-6 text-center">
+            <Link href="/trego" className={`${link} inline-flex items-center gap-1 text-sm`}>
+              Trego 설계 전체 보기
+              <ArrowRight aria-hidden="true" className="size-3.5" />
+            </Link>
+          </p>
         </section>
 
         <section id="surgiauth">
