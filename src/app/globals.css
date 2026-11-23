@@ -133,6 +133,13 @@
   html {
     @apply font-sans;
   }
+  /* 스크롤바를 전부 숨긴다. 스크롤은 그대로 되고, 페이지 길이에 따라 가운데 정렬 폭이 달라지지 않는다. */
+  * {
+    scrollbar-width: none;
+  }
+  *::-webkit-scrollbar {
+    display: none;
+  }
 }
 /* 홈 전용 토큰. :root를 바꾸면 /trego, /about이 달라지므로 클래스 아래에 둔다. 밝은 테마 고정. */
 .home {
