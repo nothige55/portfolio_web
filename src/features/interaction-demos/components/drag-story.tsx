@@ -34,7 +34,6 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
   const [zoom, setZoom] = useState(1);
 
   const [stepIndex, setStepIndex] = useState(0);
-  const stepRef = useRef(0);
   const [animated, setAnimated] = useState(false);
 
   useEffect(() => {
@@ -54,12 +53,11 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
           scrub: 0.6,
           onUpdate: (self) => {
             const p = self.progress;
-            let i = stepRef.current;
-            while (i < 2 && p >= STARTS[i + 1]) i++;
-            while (i > 0 && p < STARTS[i] - BACK_MARGIN) i--;
-            if (i === stepRef.current) return;
-            stepRef.current = i;
-            setStepIndex(i);
+            setStepIndex((i) => {
+              while (i < 2 && p >= STARTS[i + 1]) i++;
+              while (i > 0 && p < STARTS[i] - BACK_MARGIN) i--;
+              return i;
+            });
           },
         },
       });
@@ -128,7 +126,6 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
     if (animated && st) {
       window.scrollTo({ top: st.start + (st.end - st.start) * CENTERS[i], behavior: "smooth" });
     } else {
-      stepRef.current = i;
       setStepIndex(i);
     }
   }
