@@ -103,13 +103,11 @@ export function DragStory({
             {
               "--asm-map-x": "120px",
               "--asm-map-y": "60px",
-              "--asm-map-s": 0.94,
               "--asm-map-o": 0,
             },
             {
               "--asm-map-x": "0px",
               "--asm-map-y": "0px",
-              "--asm-map-s": 1,
               "--asm-map-o": 1,
               duration: 0.08,
               ease: "power3.out",

@@ -68,7 +68,7 @@ export default function V4Page() {
           <section id="trego-drag" className="relative z-10 lg:motion-safe:-mt-[100vh]">
             <DragStory
               steps={dragSteps}
-              demos={{ a: <DemoSlot id="a" fill />, b: <DemoSlot id="b" fill />, c: <DemoSlot id="c" fill /> }}
+              demos={{ a: <DemoSlot id="a" />, b: <DemoSlot id="b" />, c: <DemoSlot id="c" /> }}
             />
           </section>
 

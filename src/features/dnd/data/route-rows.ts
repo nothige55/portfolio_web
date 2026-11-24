@@ -19,10 +19,6 @@ export type DemoProps = {
   // 트리가 바뀔 때마다 현재 구조를 알려 준다(지도를 같은 순서로 그리려고)
   onRowsChange?: (rows: readonly RouteRow[]) => void;
   aside?: React.ReactNode;
-  // 바깥 카드가 이미 있으면 데모 자체의 테두리를 뺀다
-  bare?: boolean;
-  // 홈의 앱 창 안을 꽉 채우는 배치: 왼쪽 사이드바 + 남는 자리 전부 지도
-  fill?: boolean;
 };
 
 export const seedRows: readonly RouteRow[] = jejuSeed.map(({ pathId, parentPathId, position }) => ({
