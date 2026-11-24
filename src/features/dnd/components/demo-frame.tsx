@@ -34,7 +34,8 @@ export function DemoFrame({
           </div>
           <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto py-2">{children}</div>
         </div>
-        <div className="relative h-80 min-w-0 [opacity:var(--asm-map-o,1)] [scale:var(--asm-map-s,1)] [translate:var(--asm-map-x,0px)_var(--asm-map-y,0px)] lg:h-auto lg:flex-1">
+        {/* scale은 빼고 이동·투명도로만 등장시킨다. Mapbox는 getBoundingClientRect로 크기를 재며 transform만 보정하고 CSS scale은 보정하지 않아, 0.94배일 때 만들어진 지도가 그 크기로 굳는다 */}
+        <div className="relative h-80 min-w-0 [opacity:var(--asm-map-o,1)] [translate:var(--asm-map-x,0px)_var(--asm-map-y,0px)] lg:h-auto lg:flex-1">
           {aside}
         </div>
       </div>
