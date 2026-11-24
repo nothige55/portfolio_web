@@ -162,12 +162,33 @@
   --stage: #f2f3f5;
   --project: #0d99ff;
   --project-ink: #0070c9;
+  --project-soft: #f0f7ff;
+  --surgi-soft: #edf8f6;
+}
+
+/* 프로젝트 구간을 화면 폭 전체의 옅은 색 띠로 깐다. 가운데 정렬 틀은 그대로 두고 여백만 바깥으로 넓힌다.
+   transform을 쓰면 안의 GSAP pin(position: fixed)이 틀 기준으로 붙어 어긋나므로 margin/padding으로만 넓힌다.
+   띠 위에서는 회색 무대가 탁해 보여 흰색으로 바꾼다.
+   경계에서 색이 끊기지 않게 위아래 --band-fade만큼 앞뒤 구간 색(--band-from/--band-to, 기본은 흰 바탕)에서 번져 든다. */
+.project-band {
+  --band-fade: 40vh;
+  margin-inline: calc(50% - 50vw);
+  padding-inline: calc(50vw - 50%);
+  background: linear-gradient(
+    to bottom,
+    var(--band-from, var(--background)),
+    var(--project-soft) var(--band-fade),
+    var(--project-soft) calc(100% - var(--band-fade)),
+    var(--band-to, var(--background))
+  );
+  --stage: #ffffff;
 }
 
 /* SurgiAuth: 수술복·의료 장비의 청록. #0d9488은 큰 글씨·면(대비 3.7), 작은 글씨는 #087f5b(5:1). */
 .project-surgi {
   --project: #0d9488;
   --project-ink: #087f5b;
+  --project-soft: var(--surgi-soft);
   --primary: #0d9488;
   --ring: #0d9488;
 }

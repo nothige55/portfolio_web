@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useMemo } from "react";
 
 import { env } from "@/config/env";
+import { cn } from "@/lib/utils";
 import { jejuSeed } from "@/features/dnd/data/jeju-seed";
 import type { DragPreview, RouteRow } from "@/features/dnd/data/route-rows";
 import { withDragPreview } from "@/features/dnd/data/with-drag-preview";
@@ -13,7 +14,7 @@ import { buildPlannerTree } from "@/features/dnd/stage-c/utils/build-planner-tre
 // Mapbox 토큰이 있으면 원본 Trego 지도(dnd/map)를 쓴다. mapbox-gl은 브라우저 전용이고 무거워서 따로 불러온다
 const PlannerMap = dynamic(() => import("@/features/dnd/map/planner-map").then((m) => m.PlannerMap), {
   ssr: false,
-  loading: () => <div className="h-[360px] rounded-lg border bg-[#eef1f3]" />,
+  loading: () => <div className="h-full min-h-[360px] rounded-lg border bg-[#eef1f3]" />,
 });
 
 // 트리의 현재 구조(rows)를 시드 노드에 덮어써 원본과 같은 PlannerTree로 만든다
@@ -72,7 +73,15 @@ function routeOf(rows: readonly RouteRow[], dayPathId: string) {
     });
 }
 
-export function RouteMap({ rows, dragPreview = null }: { rows: readonly RouteRow[]; dragPreview?: DragPreview | null }) {
+export function RouteMap({
+  rows,
+  dragPreview = null,
+  fill,
+}: {
+  rows: readonly RouteRow[];
+  dragPreview?: DragPreview | null;
+  fill?: boolean;
+}) {
   const previewRows = useMemo(() => withDragPreview(rows, dragPreview), [rows, dragPreview]);
   // 드래그 중 카메라가 볼 컨테이너: 놓일 자리의 부모, 자리가 없으면 원래 부모
   const dragFocusPathId = dragPreview
@@ -86,12 +95,12 @@ export function RouteMap({ rows, dragPreview = null }: { rows: readonly RouteRow
   const tree = useMemo(() => toPlannerTree(previewRows), [previewRows]);
 
   return (
-    <div className="space-y-3">
+    <div className={fill ? "absolute inset-0" : "space-y-3"}>
       {accessToken ? (
-        <PlannerMap accessToken={accessToken} tree={tree} dragFocusPathId={dragFocusPathId} />
+        <PlannerMap accessToken={accessToken} tree={tree} dragFocusPathId={dragFocusPathId} fill={fill} />
       ) : (
-        <div className="overflow-hidden rounded-lg border bg-sky-50">
-          <svg viewBox={`0 0 ${W} ${H}`} className="block w-full" role="img" aria-label="제주 북서쪽 지도. 날짜마다 색이 다른 선으로 장소가 이어집니다">
+        <div className={fill ? "h-full overflow-hidden bg-sky-50" : "overflow-hidden rounded-lg border bg-sky-50"}>
+          <svg viewBox={`0 0 ${W} ${H}`} className={fill ? "block h-full w-full" : "block w-full"} role="img" aria-label="제주 북서쪽 지도. 날짜마다 색이 다른 선으로 장소가 이어집니다">
             {routes.map(({ day, stops }) => {
               const color = day.color ?? "#444";
               const points = stops.map((stop) => project(stop.latitude, stop.longitude));
@@ -121,7 +130,14 @@ export function RouteMap({ rows, dragPreview = null }: { rows: readonly RouteRow
           </svg>
         </div>
       )}
-      <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground" aria-label="날짜별 색">
+      <ul
+        className={cn(
+          "flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground",
+          // 채움 모드에서는 지도 왼쪽 위에 얹는다
+          fill && "absolute top-3 left-3 rounded-lg bg-card/90 px-3 py-2 ring-1 ring-black/5",
+        )}
+        aria-label="날짜별 색"
+      >
         {days.map((day) => (
           <li key={day.pathId} className="flex items-center gap-1.5">
             <span aria-hidden className="size-2 rounded-full" style={{ background: day.color ?? undefined }} />

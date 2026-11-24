@@ -44,7 +44,7 @@ export function BreadcrumbDemo() {
 
   return (
     <div className="mx-auto w-full max-w-80 space-y-3">
-      <div className="relative h-64 w-full overflow-hidden rounded-lg border bg-card text-sm">
+      <div className="relative h-64 w-full overflow-hidden rounded-lg border bg-card text-sm shadow-[0_24px_60px_-28px_color-mix(in_srgb,var(--project)_50%,transparent)]">
         <div ref={scrollContainerRef} className="thin-scrollbar h-full overflow-y-auto pb-5" onScroll={updateTopItem}>
           {/* 자리를 차지하지 않고(marginBottom 음수) 행 위에 겹쳐 뜸. 그래서 비어 있을 때 빈 띠를 둘 필요가 없고 목록도 안 흔들림 */}
           {ancestors.length > 0 ? (

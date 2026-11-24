@@ -13,7 +13,7 @@ export function PathBar({ name, entries = [] }: { name: string; entries?: readon
 
   const path = entries.find((e) => e.id === active)?.path ?? [];
   return (
-    <div className="fixed inset-x-0 top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
+    <div className="fixed inset-x-0 top-0 z-30 backdrop-blur-md [mask-image:linear-gradient(to_bottom,black_70%,transparent)]">
       <div className="mx-auto flex h-11 max-w-[1100px] items-center gap-2 px-4 font-mono text-xs">
         <Link href="/" className="font-semibold">
           {name}

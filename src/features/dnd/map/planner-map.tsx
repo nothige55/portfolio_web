@@ -9,6 +9,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { MapPinned, Scan } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { usePlannerMapInstance } from "@/features/dnd/map/use-planner-map-instance";
 import type { PlannerTree } from "@/features/dnd/stage-c/types/planner-node";
 
@@ -18,16 +19,18 @@ export function PlannerMap({
   accessToken,
   tree,
   dragFocusPathId = null,
+  fill,
 }: {
   readonly accessToken: string;
   readonly tree: PlannerTree;
   readonly dragFocusPathId?: string | null;
+  readonly fill?: boolean;
 }) {
   const { mapContainerRef, mapLoadState, resetCamera, retry } = usePlannerMapInstance(accessToken, tree, dragFocusPathId);
 
   return (
     // 수정: 원본은 화면을 채우는 flex-1 영역이다. 데모는 트리 옆 카드라 높이를 정해 둔다
-    <section aria-label="지도 영역" className="relative h-[360px] min-w-0 overflow-hidden rounded-lg border bg-[#eef1f3]">
+    <section aria-label="지도 영역" className={cn("relative min-w-0 overflow-hidden bg-[#eef1f3]", fill ? "h-full" : "h-[360px] rounded-lg border")}>
       <div className="absolute inset-0">
         <div ref={mapContainerRef} data-testid="planner-map-canvas" className="h-full w-full" />
       </div>

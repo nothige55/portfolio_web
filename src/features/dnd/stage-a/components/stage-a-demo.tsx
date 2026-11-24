@@ -17,7 +17,7 @@ import { SortableContainer } from "@/features/dnd/stage-a/components/sortable-co
 
 const initialItems = () => withHierarchy(toLegacyItems(jejuSeed));
 
-export function StageADemo({ onRowsChange, aside, bare }: DemoProps) {
+export function StageADemo({ onRowsChange, aside, bare, fill }: DemoProps) {
   const [items, setItems] = useState(initialItems);
   // 처음으로를 누르면 행마다 가진 펼침 상태까지 새로 시작하도록 key를 바꾼다
   const [version, setVersion] = useState(0);
@@ -30,6 +30,7 @@ export function StageADemo({ onRowsChange, aside, bare }: DemoProps) {
     <DemoFrame
       aside={aside}
       bare={bare}
+      fill={fill}
       onReset={() => {
         setItems(initialItems());
         setVersion((value) => value + 1);

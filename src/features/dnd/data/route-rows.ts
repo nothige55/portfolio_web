@@ -21,6 +21,8 @@ export type DemoProps = {
   aside?: React.ReactNode;
   // 바깥 카드가 이미 있으면 데모 자체의 테두리를 뺀다
   bare?: boolean;
+  // 홈의 앱 창 안을 꽉 채우는 배치: 왼쪽 사이드바 + 남는 자리 전부 지도
+  fill?: boolean;
 };
 
 export const seedRows: readonly RouteRow[] = jejuSeed.map(({ pathId, parentPathId, position }) => ({

@@ -24,11 +24,6 @@ const label = "font-mono text-xs text-project-ink";
 const link =
   "rounded-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
-// 구간마다 데모가 가장 큰 요소가 되도록 회색 무대 하나에 올린다.
-function Stage({ children }: { children: React.ReactNode }) {
-  return <div className="rounded-[20px] bg-stage p-6 sm:p-8">{children}</div>;
-}
-
 // 무대 아래에 실제 구현에서 나온 수치를 붙인다. 값이 없으면 그리지 않는다.
 function Notes({ items }: { items: readonly Note[] }) {
   if (!items.length) return null;
@@ -65,66 +60,66 @@ export default function V4Page() {
           </div>
         </section>
 
-        <section id="trego">
-          <ProjectTitle eyebrow={`${trego.period} · ${trego.role}`} name={trego.name} lines={[trego.kicker, trego.summary]} />
-        </section>
+        <div className="project-band [--band-to:var(--surgi-soft)]">
+          <section id="trego">
+            <ProjectTitle eyebrow={`${trego.period} · ${trego.role}`} name={trego.name} lines={[trego.kicker, trego.summary]} />
+          </section>
 
-        <section id="trego-drag" className="relative z-10 lg:motion-safe:-mt-[100vh]">
-          <DragStory
-            steps={dragSteps}
-            demos={{ a: <DemoSlot id="a" bare />, b: <DemoSlot id="b" bare />, c: <DemoSlot id="c" bare /> }}
-          />
-        </section>
+          <section id="trego-drag" className="relative z-10 lg:motion-safe:-mt-[100vh]">
+            <DragStory
+              steps={dragSteps}
+              demos={{ a: <DemoSlot id="a" fill />, b: <DemoSlot id="b" fill />, c: <DemoSlot id="c" fill /> }}
+            />
+          </section>
 
-        <section id="trego-nav">
-          <SplitReveal
-            text={
-              <div className="mx-auto max-w-sm space-y-3">
-                <p className={label}>탐색</p>
-                <h3 className="text-2xl font-semibold tracking-tight">{trego.points[0].title}</h3>
-                <p className="leading-relaxed text-muted-foreground">{trego.points[0].body}</p>
-              </div>
-            }
-            demo={
-              <Stage>
-                <BreadcrumbDemo />
-              </Stage>
-            }
-          />
-          <p className="pb-16 pt-6 text-center">
-            <Link href="/trego" className={`${link} inline-flex items-center gap-1 text-sm font-medium text-project-ink`}>
-              Trego 설계 전체 보기
-              <ArrowRight aria-hidden="true" className="size-3.5" />
-            </Link>
-          </p>
-        </section>
-
-        <section id="surgiauth" className="project-surgi">
-          <ProjectTitle eyebrow={`${surgi.period} · ${surgi.role}`} name={surgi.name} lines={[surgi.kicker, surgi.summary]} />
-          <div className="relative z-10 lg:motion-safe:-mt-[100vh]">
+          <section id="trego-nav">
             <SplitReveal
-              textSide="right"
               text={
-                <div className="mx-auto max-w-md space-y-8">
-                  {surgiPairs.map((p) => (
-                    <div key={p.decision} className="space-y-2 border-l-2 border-project pl-4">
-                      <p className="text-sm leading-relaxed text-muted-foreground">{p.problem}</p>
-                      <p className="font-medium leading-relaxed">{p.decision}</p>
-                    </div>
-                  ))}
+                <div className="mx-auto max-w-sm space-y-3">
+                  <p className={label}>탐색</p>
+                  <h3 className="text-2xl font-semibold tracking-tight">{trego.points[0].title}</h3>
+                  <p className="leading-relaxed text-muted-foreground">{trego.points[0].body}</p>
                 </div>
               }
               demo={
-                <Stage>
-                  <CoverageGrid />
-                </Stage>
+                <BreadcrumbDemo />
               }
             />
-          </div>
-          <ScrollReveal className="pb-12">
-            <Notes items={surgiNotes} />
-          </ScrollReveal>
-        </section>
+            <p className="pb-16 pt-6 text-center">
+              <Link href="/trego" className={`${link} inline-flex items-center gap-1 text-sm font-medium text-project-ink`}>
+                Trego 설계 전체 보기
+                <ArrowRight aria-hidden="true" className="size-3.5" />
+              </Link>
+            </p>
+          </section>
+        </div>
+
+        <div className="project-band project-surgi [--band-from:var(--surgi-soft)]">
+          <section id="surgiauth">
+            <ProjectTitle eyebrow={`${surgi.period} · ${surgi.role}`} name={surgi.name} lines={[surgi.kicker, surgi.summary]} />
+            <div className="relative z-10 lg:motion-safe:-mt-[100vh]">
+              <SplitReveal
+                textSide="right"
+                text={
+                  <div className="mx-auto max-w-md space-y-8">
+                    {surgiPairs.map((p) => (
+                      <div key={p.decision} className="space-y-2 border-l-2 border-project pl-4">
+                        <p className="text-sm leading-relaxed text-muted-foreground">{p.problem}</p>
+                        <p className="font-medium leading-relaxed">{p.decision}</p>
+                      </div>
+                    ))}
+                  </div>
+                }
+                demo={
+                  <CoverageGrid />
+                }
+              />
+            </div>
+            <ScrollReveal className="pb-12">
+              <Notes items={surgiNotes} />
+            </ScrollReveal>
+          </section>
+        </div>
 
         <section id="about" className="py-14">
           <ExpandStage className="rounded-[20px] bg-brand-soft px-6 py-20 sm:px-12 sm:py-28">

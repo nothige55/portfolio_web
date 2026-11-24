@@ -4,9 +4,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
-// 이보다 작으면 글이 읽히지 않고, V1~V3의 가로 깊이 판정(30px 기준)이 눈에 보이는 들여쓰기와 어긋난다. 모자란 높이는 스크롤로 둔다
-const MIN_ZOOM = 0.8;
-
 gsap.registerPlugin(ScrollTrigger);
 
 type Step = {
@@ -40,9 +37,6 @@ export function DragStory({
   const footer = useRef<HTMLDivElement>(null);
   const content = useRef<HTMLDivElement>(null);
   const trigger = useRef<ScrollTrigger | null>(null);
-  const fit = useRef<HTMLDivElement>(null);
-  const demo = useRef<HTMLDivElement>(null);
-  const [zoom, setZoom] = useState(1);
 
   const [stepIndex, setStepIndex] = useState(0);
   const [animated, setAnimated] = useState(false);
@@ -151,50 +145,6 @@ export function DragStory({
     return () => mm.revert();
   }, []);
 
-  // 데모 높이는 고정이라(트리 행 수) 화면이 낮으면 안에서 스크롤이 생긴다. 스크롤 대신 들어갈 만큼 줄인다.
-  // 드래그 중에는 자리 확보로 높이가 바뀌므로 배율을 고정해 두고, 놓은 뒤에 다시 맞춘다.
-  useEffect(() => {
-    const box = fit.current;
-    const inner = demo.current;
-    if (!box || !inner || !animated) {
-      setZoom(1);
-      return;
-    }
-    // 단계가 바뀌어도 화면에 걸린 배율에서 이어서 계산한다
-    let current = parseFloat(inner.style.zoom) || 1;
-    let dragging = false;
-    const apply = () => {
-      // 무대에 scale이 걸린 동안(등장) 재면 배율이 틀어지므로 고정 중에만 맞춘다
-      if (!ready || dragging) return;
-      // 줄인 상태의 rect는 화면 기준이라 배율로 나눠 원래 높이를 구한다
-      const natural = inner.getBoundingClientRect().height / current;
-      const next = Math.min(1, Math.max(MIN_ZOOM, box.clientHeight / natural));
-      if (Math.abs(next - current) < 0.01) return;
-      current = next;
-      setZoom(next);
-    };
-    const down = () => {
-      dragging = true;
-    };
-    const up = () => {
-      dragging = false;
-      apply();
-    };
-    const observer = new ResizeObserver(apply);
-    observer.observe(box);
-    observer.observe(inner);
-    box.addEventListener("pointerdown", down);
-    window.addEventListener("pointerup", up);
-    window.addEventListener("pointercancel", up);
-    apply();
-    return () => {
-      observer.disconnect();
-      box.removeEventListener("pointerdown", down);
-      window.removeEventListener("pointerup", up);
-      window.removeEventListener("pointercancel", up);
-    };
-  }, [animated, stepIndex, ready]);
-
   function go(i: number) {
     const st = trigger.current;
     if (animated && st) {
@@ -213,54 +163,61 @@ export function DragStory({
     <div ref={frame} className="lg:h-screen lg:pt-24">
       <div
         ref={stage}
-        className="relative flex h-full flex-col overflow-hidden rounded-2xl border bg-card lg:h-[calc(100vh-8rem)]"
+        className="relative flex h-full flex-col overflow-hidden rounded-2xl bg-card ring-1 ring-black/5 shadow-[0_40px_100px_-40px_color-mix(in_srgb,var(--project)_55%,transparent)] lg:h-[calc(100vh-8rem)]"
         inert={!ready}
       >
-        {/* 등장 때 --asm-* 변수를 여기에 tween한다. 변수 이름은 dnd DemoFrame과 맞춘다 */}
-        <div ref={content} className="min-h-0 flex-1 p-6 lg:p-8">
-          <div ref={fit} className="h-full overflow-y-auto">
-            <div key={current.id} ref={demo} style={{ zoom }}>
-              {demos[current.id]}
-            </div>
+        {/* 앱 창처럼 보이게 하는 장식용 제목 막대 */}
+        <div aria-hidden="true" className="relative flex h-9 shrink-0 items-center border-b border-border/60 bg-muted/40 px-4">
+          <div className="flex gap-1.5">
+            <span className="size-2.5 rounded-full bg-foreground/15" />
+            <span className="size-2.5 rounded-full bg-foreground/15" />
+            <span className="size-2.5 rounded-full bg-foreground/15" />
           </div>
+          <span className="absolute inset-x-0 text-center text-xs text-muted-foreground">Trego — 제주도 여행</span>
         </div>
-
-        <div
-          ref={footer}
-          className="flex flex-col gap-3 border-t p-6 lg:flex-row lg:items-center lg:justify-between lg:px-12"
-        >
-          {/* 모든 단계의 설명을 같은 칸에 겹쳐 두고 현재 것만 보인다. 가장 긴 설명 기준으로 푸터 높이가 고정돼 단계가 바뀌어도 칩과 데모가 움직이지 않는다. */}
-          <div className="grid max-w-xl" aria-live="polite">
-            {steps.map((s, i) => (
-              <div
-                key={s.id}
-                className={`col-start-1 row-start-1 ${i === stepIndex ? "" : "invisible"}`}
-              >
-                <p className="font-mono text-xs text-muted-foreground">
-                  {s.versions} · {s.title}
-                </p>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                  {s.body}
-                </p>
-              </div>
-            ))}
+        {/* 등장 때 --asm-* 변수를 여기에 tween한다. 변수 이름은 dnd DemoFrame과 맞춘다. 사이드바·지도가 창 가장자리에 닿도록 패딩이 없고, 푸터 카드는 지도 오른쪽 아래에 얹는다 */}
+        <div ref={content} className="relative flex min-h-0 flex-1 flex-col">
+          <div key={current.id} className="flex min-h-0 flex-1 flex-col">
+            {demos[current.id]}
           </div>
+
           <div
-            className="flex gap-2"
-            role="group"
-            aria-label="드래그 변천 단계"
+            ref={footer}
+            className="flex flex-col gap-3 border-t bg-card p-4 lg:absolute lg:right-4 lg:bottom-4 lg:w-[360px] lg:rounded-xl lg:border-t-0 lg:bg-card/95 lg:shadow-lg lg:ring-1 lg:ring-black/5 lg:backdrop-blur"
           >
-            {steps.map((s, i) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => go(i)}
-                aria-pressed={i === stepIndex}
-                className="rounded-full border px-3 py-1 font-mono text-xs transition-colors hover:border-brand hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:font-semibold aria-pressed:text-white aria-pressed:hover:border-brand-hover aria-pressed:hover:bg-brand-hover"
-              >
-                {s.versions}
-              </button>
-            ))}
+            {/* 모든 단계의 설명을 같은 칸에 겹쳐 두고 현재 것만 보인다. 가장 긴 설명 기준으로 푸터 높이가 고정돼 단계가 바뀌어도 칩과 데모가 움직이지 않는다. */}
+            <div className="grid" aria-live="polite">
+              {steps.map((s, i) => (
+                <div
+                  key={s.id}
+                  className={`col-start-1 row-start-1 ${i === stepIndex ? "" : "invisible"}`}
+                >
+                  <p className="font-mono text-xs text-muted-foreground">
+                    {s.versions} · {s.title}
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    {s.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div
+              className="flex gap-2"
+              role="group"
+              aria-label="드래그 변천 단계"
+            >
+              {steps.map((s, i) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => go(i)}
+                  aria-pressed={i === stepIndex}
+                  className="rounded-full border px-3 py-1 font-mono text-xs transition-colors hover:border-brand hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:font-semibold aria-pressed:text-white aria-pressed:hover:border-brand-hover aria-pressed:hover:bg-brand-hover"
+                >
+                  {s.versions}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

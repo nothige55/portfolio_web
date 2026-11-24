@@ -139,7 +139,7 @@ export function CoverageGrid() {
         <div className="relative mx-auto w-full max-w-[520px]">
           <div
             ref={gridEl}
-            className="grid grid-cols-5 grid-rows-3 border border-foreground/25 bg-card"
+            className="grid grid-cols-5 grid-rows-3 border border-foreground/25 bg-card shadow-[0_24px_60px_-28px_color-mix(in_srgb,var(--project)_50%,transparent)]"
             aria-label={`수집 격자 ${ROLL_COLS}×${PITCH_ROWS}`}
           >
             {Array.from({ length: ROLL_COLS * PITCH_ROWS }, (_, i) => {
