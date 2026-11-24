@@ -7,7 +7,7 @@ import type { DemoProps } from "@/features/dnd/data/route-rows";
 import { PlannerSchedulePanel } from "@/features/dnd/stage-c/components/planner-schedule-panel";
 import { usePlannerViewStore } from "@/features/dnd/stage-c/stores/planner-view-store";
 
-export function StageCDemo({ onRowsChange, onDragPreview, aside, bare }: DemoProps) {
+export function StageCDemo({ onRowsChange, onDragPreview, aside }: DemoProps) {
   const flattenedItems = usePlannerViewStore((state) => state.tree.flattenedItems);
   const reset = usePlannerViewStore((state) => state.reset);
   // store는 모듈에 하나라서 페이지를 떠나도 남는다. V1~V4처럼 돌아오면 처음 상태이도록 떠날 때 비운다
@@ -23,7 +23,7 @@ export function StageCDemo({ onRowsChange, onDragPreview, aside, bare }: DemoPro
   }, [flattenedItems]);
 
   return (
-    <DemoFrame onReset={reset} aside={aside} bare={bare}>
+    <DemoFrame onReset={reset} aside={aside}>
       <PlannerSchedulePanel dayNumberByPathId={dayNumberByPathId} onDragPreview={onDragPreview} />
     </DemoFrame>
   );

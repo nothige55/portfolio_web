@@ -48,7 +48,7 @@ function buildVisibleItems(
   return result;
 }
 
-export function StageBDemo({ onRowsChange, aside, bare }: DemoProps) {
+export function StageBDemo({ onRowsChange, aside }: DemoProps) {
   const [items, setItems] = useState(initialItems);
   const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(initialExpanded);
   const [isSnapped, setIsSnapped] = useState<Snap>(false);
@@ -70,7 +70,6 @@ export function StageBDemo({ onRowsChange, aside, bare }: DemoProps) {
   return (
     <DemoFrame
       aside={aside}
-      bare={bare}
       onReset={() => {
         setItems(initialItems());
         setExpandedIds(initialExpanded());

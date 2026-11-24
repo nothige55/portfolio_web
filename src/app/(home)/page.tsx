@@ -11,6 +11,7 @@ import { ExpandStage } from "@/features/interaction-demos/components/expand-stag
 import { ProjectTitle } from "@/features/interaction-demos/components/project-title";
 import { ScrollReveal } from "@/features/interaction-demos/components/scroll-reveal";
 import { SplitReveal } from "@/features/interaction-demos/components/split-reveal";
+import { HashScroll } from "@/features/variant-story/components/hash-scroll";
 import { PathBar } from "@/features/variant-story/components/path-bar";
 import { ScrollCue } from "@/features/variant-story/components/scroll-cue";
 import { TypedText } from "@/features/variant-story/components/typed-text";
@@ -19,14 +20,9 @@ const [trego, surgi] = projects;
 const big = "text-[clamp(2rem,5.5vw,4.5rem)] font-bold leading-[1.1] tracking-[-0.035em]";
 // 첫 화면 제목은 다른 구간 제목보다 크게 둔다.
 const hero = "text-[clamp(2rem,6vw,5rem)] font-bold leading-[1.1] tracking-[-0.035em]";
-const label = "font-mono text-xs text-muted-foreground";
+const label = "font-mono text-xs text-project-ink";
 const link =
   "rounded-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
-
-// 구간마다 데모가 가장 큰 요소가 되도록 회색 무대 하나에 올린다.
-function Stage({ children }: { children: React.ReactNode }) {
-  return <div className="rounded-[20px] bg-stage p-6 sm:p-8">{children}</div>;
-}
 
 // 무대 아래에 실제 구현에서 나온 수치를 붙인다. 값이 없으면 그리지 않는다.
 function Notes({ items }: { items: readonly Note[] }) {
@@ -35,7 +31,7 @@ function Notes({ items }: { items: readonly Note[] }) {
     <dl className="mt-8 grid gap-6 sm:grid-cols-3">
       {items.map((n) => (
         <div key={n.value}>
-          <dt className="text-lg font-semibold tabular-nums">{n.value}</dt>
+          <dt className="text-2xl font-bold tabular-nums text-project-ink">{n.value}</dt>
           <dd className="mt-1 text-sm leading-relaxed text-muted-foreground">{n.label}</dd>
         </div>
       ))}
@@ -48,6 +44,7 @@ export default function V4Page() {
     <div className="home min-h-screen bg-background pb-32 pt-11 text-foreground">
       <PathBar name={site.name} />
       <ScrollCue />
+      <HashScroll />
 
       <div className="mx-auto max-w-[1100px] px-4">
         <section id="intro" className="flex min-h-[75vh] flex-col items-center justify-center py-20">
@@ -63,81 +60,106 @@ export default function V4Page() {
           </div>
         </section>
 
-        <section id="trego">
-          <ProjectTitle eyebrow={`${trego.period} · ${trego.role}`} name={trego.name} lines={[trego.kicker, trego.summary]} />
-        </section>
+        <div className="project-band [--band-to:var(--surgi-soft)]">
+          <section id="trego">
+            <ProjectTitle eyebrow={`${trego.period} · ${trego.role}`} name={trego.name} lines={[trego.kicker, trego.summary]} />
+          </section>
 
-        <section id="trego-drag" className="relative z-10 lg:motion-safe:-mt-[100vh]">
-          <DragStory
-            steps={dragSteps}
-            demos={{ a: <DemoSlot id="a" bare />, b: <DemoSlot id="b" bare />, c: <DemoSlot id="c" bare /> }}
-          />
-        </section>
+          <section id="trego-drag" className="relative z-10 lg:motion-safe:-mt-[100vh]">
+            <DragStory
+              steps={dragSteps}
+              demos={{ a: <DemoSlot id="a" />, b: <DemoSlot id="b" />, c: <DemoSlot id="c" /> }}
+            />
+          </section>
 
-        <section id="trego-nav">
-          <SplitReveal
-            text={
-              <div className="mx-auto max-w-sm space-y-3">
-                <p className={label}>탐색</p>
-                <h3 className="text-2xl font-semibold tracking-tight">{trego.points[0].title}</h3>
-                <p className="leading-relaxed text-muted-foreground">{trego.points[0].body}</p>
-              </div>
-            }
-            demo={
-              <Stage>
-                <BreadcrumbDemo />
-              </Stage>
-            }
-          />
-          <p className="pb-16 pt-6 text-center">
-            <Link href="/trego" className={`${link} inline-flex items-center gap-1 text-sm`}>
-              Trego 설계 전체 보기
-              <ArrowRight aria-hidden="true" className="size-3.5" />
-            </Link>
-          </p>
-        </section>
-
-        <section id="surgiauth">
-          <ProjectTitle eyebrow={`${surgi.period} · ${surgi.role}`} name={surgi.name} lines={[surgi.kicker, surgi.summary]} />
-          <div className="relative z-10 lg:motion-safe:-mt-[100vh]">
+          <section id="trego-nav">
             <SplitReveal
-              textSide="right"
               text={
-                <div className="mx-auto max-w-md space-y-8">
-                  {surgiPairs.map((p) => (
-                    <div key={p.decision} className="space-y-2">
-                      <p className="text-sm leading-relaxed text-muted-foreground">{p.problem}</p>
-                      <p className="font-medium leading-relaxed">{p.decision}</p>
-                    </div>
-                  ))}
+                <div className="mx-auto max-w-sm space-y-3">
+                  <p className={label}>탐색</p>
+                  <h3 className="text-2xl font-semibold tracking-tight">{trego.points[0].title}</h3>
+                  <p className="leading-relaxed text-muted-foreground">{trego.points[0].body}</p>
                 </div>
               }
               demo={
-                <Stage>
-                  <CoverageGrid />
-                </Stage>
+                <BreadcrumbDemo />
               }
             />
-          </div>
-          <ScrollReveal className="pb-12">
-            <Notes items={surgiNotes} />
-          </ScrollReveal>
-        </section>
+            <p className="pb-16 pt-6 text-center">
+              <Link href="/trego" className={`${link} inline-flex items-center gap-1 text-sm font-medium text-project-ink`}>
+                Trego 설계 전체 보기
+                <ArrowRight aria-hidden="true" className="size-3.5" />
+              </Link>
+            </p>
+          </section>
+        </div>
 
-        <section id="contact" className="py-14">
-          <ExpandStage className="rounded-[20px] bg-stage px-6 py-20 sm:py-28">
-            <ScrollReveal className="space-y-6 text-center">
-              <h2 className={big}>연락처</h2>
-              <div className="space-y-1 text-lg">
-                {site.email && <CopyLink text={site.email} />}
-                <p>
-                  <a href={site.github} target="_blank" rel="noopener noreferrer" className={link}>
-                    GitHub
-                  </a>
-                </p>
+        <div className="project-band project-surgi [--band-from:var(--surgi-soft)]">
+          <section id="surgiauth">
+            <ProjectTitle eyebrow={`${surgi.period} · ${surgi.role}`} name={surgi.name} lines={[surgi.kicker, surgi.summary]} />
+            <div className="relative z-10 lg:motion-safe:-mt-[100vh]">
+              <SplitReveal
+                textSide="right"
+                text={
+                  <div className="mx-auto max-w-md space-y-8">
+                    {surgiPairs.map((p) => (
+                      <div key={p.decision} className="space-y-2 border-l-2 border-project pl-4">
+                        <p className="text-sm leading-relaxed text-muted-foreground">{p.problem}</p>
+                        <p className="font-medium leading-relaxed">{p.decision}</p>
+                      </div>
+                    ))}
+                  </div>
+                }
+                demo={
+                  <CoverageGrid />
+                }
+              />
+            </div>
+            <ScrollReveal className="pb-12">
+              <Notes items={surgiNotes} />
+            </ScrollReveal>
+          </section>
+        </div>
+
+        <section id="about" className="py-14">
+          <ExpandStage className="rounded-[20px] bg-brand-soft px-6 py-20 sm:px-12 sm:py-28">
+            <ScrollReveal className="mx-auto max-w-3xl space-y-12">
+              <div className="space-y-6">
+                <p className={label}>소개</p>
+                <h2 className={big}>
+                  {site.name}
+                  <span className="text-brand">.</span>
+                </h2>
+                <p className="text-xl font-medium sm:text-2xl">{site.tagline}</p>
+                <p className="leading-relaxed text-muted-foreground">인터랙션 디자인과 HCI에 관심이 있습니다.</p>
               </div>
-              <p className={label}>{stack.join(" · ")}</p>
-              <p className="text-sm text-muted-foreground">{education}</p>
+              <dl className="grid gap-8 sm:grid-cols-3">
+                <div className="space-y-3">
+                  <dt className={label}>스택</dt>
+                  <dd className="flex flex-wrap gap-1.5">
+                    {stack.map((s) => (
+                      <span key={s} className="rounded-full bg-background px-2.5 py-1 text-xs font-medium text-brand-ink">
+                        {s}
+                      </span>
+                    ))}
+                  </dd>
+                </div>
+                <div className="space-y-3">
+                  <dt className={label}>학력</dt>
+                  <dd className="text-sm leading-relaxed">{education}</dd>
+                </div>
+                <div className="space-y-3">
+                  <dt className={label}>연락처</dt>
+                  <dd className="space-y-1">
+                    {site.email && <CopyLink text={site.email} />}
+                    <p>
+                      <a href={site.github} target="_blank" rel="noopener noreferrer" className={link}>
+                        GitHub
+                      </a>
+                    </p>
+                  </dd>
+                </div>
+              </dl>
             </ScrollReveal>
           </ExpandStage>
         </section>

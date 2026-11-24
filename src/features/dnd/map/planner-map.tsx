@@ -26,8 +26,8 @@ export function PlannerMap({
   const { mapContainerRef, mapLoadState, resetCamera, retry } = usePlannerMapInstance(accessToken, tree, dragFocusPathId);
 
   return (
-    // 수정: 원본은 화면을 채우는 flex-1 영역이다. 데모는 트리 옆 카드라 높이를 정해 둔다
-    <section aria-label="지도 영역" className="relative h-[360px] min-w-0 overflow-hidden rounded-lg border bg-[#eef1f3]">
+    // 원본처럼 남는 자리를 채운다(홈 앱 창의 지도 칸)
+    <section aria-label="지도 영역" className="relative h-full min-w-0 overflow-hidden bg-[#eef1f3]">
       <div className="absolute inset-0">
         <div ref={mapContainerRef} data-testid="planner-map-canvas" className="h-full w-full" />
       </div>

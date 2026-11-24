@@ -47,14 +47,14 @@ export function ProjectTitle({ eyebrow, name, lines }: { eyebrow: string; name: 
   return (
     <div ref={frame} className="relative flex flex-col items-center justify-center py-24 text-center lg:h-screen lg:py-0">
       <div data-group className="flex flex-col items-center">
-        <p data-eyebrow className="block overflow-hidden pb-[0.08em] font-mono text-sm text-muted-foreground sm:text-base">
+        <p data-eyebrow className="block overflow-hidden pb-[0.08em] font-mono text-sm text-project-ink sm:text-base">
           <span data-rise className="block">
             {eyebrow}
           </span>
         </p>
         <h2
           data-name
-          className="mt-4 block overflow-hidden pb-[0.08em] text-[clamp(3rem,11vw,9rem)] font-bold leading-[1.05] tracking-[-0.045em]"
+          className="mt-4 block overflow-hidden pb-[0.08em] text-[clamp(3rem,11vw,9rem)] font-bold leading-[1.05] tracking-[-0.045em] text-project"
         >
           <span data-rise className="block">
             {name}

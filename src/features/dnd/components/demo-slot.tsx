@@ -25,7 +25,7 @@ const demos = {
 } satisfies Record<Chapter["id"], unknown>;
 
 // 트리 옆에 지도를 두고, 트리가 바뀌면 같은 순서로 지도를 다시 그린다
-export function DemoSlot({ id, bare }: { id: Chapter["id"]; bare?: boolean }) {
+export function DemoSlot({ id }: { id: Chapter["id"] }) {
   const Demo = demos[id];
   const [rows, setRows] = useState<readonly RouteRow[]>(seedRows);
   const [dragPreview, setDragPreview] = useState<DragPreview | null>(null);
@@ -34,7 +34,6 @@ export function DemoSlot({ id, bare }: { id: Chapter["id"]; bare?: boolean }) {
       onRowsChange={setRows}
       onDragPreview={setDragPreview}
       aside={<RouteMap rows={rows} dragPreview={dragPreview} />}
-      bare={bare}
     />
   );
 }
