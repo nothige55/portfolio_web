@@ -10,6 +10,12 @@
   /* Trego DnD 데모가 원본 색을 그대로 쓰도록 둔 토큰 */
   --color-brand: #0d99ff;
   --color-brand-hover: #0b87e6;
+  /* #0d99ff는 흰 배경 대비가 3:1이라 작은 글씨·링크에는 같은 색상의 진한 값(5:1)을 쓴다. */
+  --color-brand-ink: #0070c9;
+  --color-brand-soft: #eaf5ff;
+  /* 홈에서 프로젝트 구간마다 바뀌는 색. 기본은 Trego 파랑, .project-surgi에서 청록으로 바뀐다. */
+  --color-project: var(--project);
+  --color-project-ink: var(--project-ink);
   --color-foreground: var(--foreground);
   --font-sans: "Pretendard Variable", system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -59,7 +65,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.55 0.2 260);
+  --primary: #0070c9;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -70,7 +76,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.55 0.2 260);
+  --ring: #0d99ff;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -95,7 +101,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.72 0.15 255);
+  --primary: #0d99ff;
   --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -106,7 +112,7 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.72 0.15 255);
+  --ring: #0d99ff;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -143,7 +149,7 @@
     display: none;
   }
 }
-/* 홈 전용 토큰. :root를 바꾸면 /trego, /about이 달라지므로 클래스 아래에 둔다. 밝은 테마 고정. */
+/* 홈 전용 토큰. :root를 바꾸면 /trego가 달라지므로 클래스 아래에 둔다. 밝은 테마 고정. */
 .home {
   --background: #ffffff;
   --foreground: #191f28;
@@ -151,9 +157,19 @@
   --muted: #f2f3f5;
   --muted-foreground: #6b7684;
   --border: #e5e8eb;
-  --primary: oklch(0.55 0.2 260);
-  --ring: oklch(0.55 0.2 260);
+  --primary: #0d99ff;
+  --ring: #0d99ff;
   --stage: #f2f3f5;
+  --project: #0d99ff;
+  --project-ink: #0070c9;
+}
+
+/* SurgiAuth: 수술복·의료 장비의 청록. #0d9488은 큰 글씨·면(대비 3.7), 작은 글씨는 #087f5b(5:1). */
+.project-surgi {
+  --project: #0d9488;
+  --project-ink: #087f5b;
+  --primary: #0d9488;
+  --ring: #0d9488;
 }
 
 /* Trego V5~V6: 빈 컨테이너에 자식으로 넣을 때 1초 동안 왼쪽부터 채움 (원본 index.css) */

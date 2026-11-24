@@ -18,7 +18,7 @@ export function ScrollCue() {
   return (
     <div
       aria-hidden
-      className={`pointer-events-none fixed inset-x-0 bottom-0 z-20 flex h-44 items-end justify-center bg-gradient-to-t from-background from-30% to-transparent pb-10 text-muted-foreground transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
+      className={`pointer-events-none fixed inset-x-0 bottom-0 z-20 flex h-44 items-end justify-center bg-gradient-to-t from-background from-30% to-transparent pb-10 text-brand transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
     >
       <ArrowDown className="size-9 motion-safe:animate-bounce" />
     </div>

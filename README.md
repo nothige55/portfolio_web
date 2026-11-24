@@ -40,9 +40,9 @@ Trego 소개가 제자리에서 사라지고 나면, 화면이 고정된 채 그
 
 Trego에서 한 일을 글로 정리한 페이지예요. 드래그는 단계별 「구현 / 한계」로, 탐색·상태·실시간 협업은 「문제 / 대안 / 설계 / 과정 / 한계」로 적었어요. 데모는 홈에 있고, 오른쪽 목차(1280px 이상)로 절 사이를 이동해요. 위쪽 경로 바는 스크롤하면 지금 어느 구간인지 따라오고, 현재 위치는 빼고 상위 위치만 보여 줘요.
 
-### `/about`
+### 소개 (홈 맨 아래)
 
-소개 페이지예요. (관심사·이력·스택은 채우는 중이에요.)
+이름, 한 줄 소개, 스택, 학력, 연락처를 홈 마지막 구간에 모았어요. 예전 `/about` 주소는 이 구간(`/#about`)으로 넘어가요.
 
 ## 담긴 프로젝트
 
@@ -97,7 +97,6 @@ NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=pk.… npm run dev
 
 ```
 src/app/(home)/page.tsx          # 홈 (/)
-src/app/(site)/about/page.tsx    # /about
 src/app/(site)/trego/page.tsx    # /trego — Trego 경험 글과 목차
 src/config/
   content.ts                     # 홈·/trego에 쓰는 프로젝트 소개와 본문 문구
@@ -109,7 +108,6 @@ src/features/dnd/
   v3/ v4/ v5/ v6/                # 버전별 구현
   breadcrumb/ map/               # breadcrumb, 지도 연동
   shared/ data/ components/      # 공용 행 치수, 데모 시드, 공용 컴포넌트
-src/features/profile/            # /about 소개
 src/features/interaction-demos/  # 홈용 데모 (드래그 스토리, SurgiAuth 격자 등)
 src/features/variant-story/      # 상단 경로 바, 홈 타이핑 제목·스크롤 유도, /trego 목차
 src/hooks/use-active-section.ts  # 경로 바와 목차가 같이 쓰는 현재 구간 판정
@@ -128,4 +126,4 @@ src/hooks/use-active-section.ts  # 경로 바와 목차가 같이 쓰는 현재 
 - [ ] 챕터 c의 검색창 연동
 - [ ] Vercel 배포 후 라이브 URL 연결
 - [ ] SurgiAuth 공개 방식 결정 후 링크·상세 추가
-- [ ] `/about` 내용 채우기
+- [ ] 홈 소개 구간 내용 채우기

@@ -9,7 +9,12 @@ const MIN_ZOOM = 0.8;
 
 gsap.registerPlugin(ScrollTrigger);
 
-type Step = { id: "a" | "b" | "c"; versions: string; title: string; body: string };
+type Step = {
+  id: "a" | "b" | "c";
+  versions: string;
+  title: string;
+  body: string;
+};
 
 // 고정 진행도 0~ASSEMBLED는 무대 조립 구간이고, 나머지를 세 단계가 고르게 나눈다.
 const ASSEMBLED = 0.2;
@@ -23,7 +28,13 @@ const BACK_MARGIN = 0.02;
 // 프레임은 보이지 않은 채 소개 위로 겹쳐 올라오고, 고정이 시작되면 그 자리에서 무대 → 트리 → 지도 → 하단 줄 순으로 조립된다.
 // 조립 뒤 고정 중에 단계가 바뀌고, 고정이 풀리면 그대로 위로 스크롤돼 나간다.
 // 데모는 features 경계 때문에 바깥(app)에서 만들어 넘겨받는다. 현재 단계의 것만 그린다.
-export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Record<Step["id"], ReactNode> }) {
+export function DragStory({
+  steps,
+  demos,
+}: {
+  steps: readonly Step[];
+  demos: Record<Step["id"], ReactNode>;
+}) {
   const frame = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const footer = useRef<HTMLDivElement>(null);
@@ -43,60 +54,96 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
     // 복원을 끄고 맨 위에서 시작한다. #trego-drag 같은 해시 이동은 영향받지 않는다.
     ScrollTrigger.clearScrollMemory("manual");
     const mm = gsap.matchMedia();
-    mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
-      setAnimated(true);
-      setReady(false);
-      const tl = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          trigger: frame.current,
-          start: "top top",
-          end: "+=380%",
-          pin: true,
-          scrub: 0.6,
-          invalidateOnRefresh: true,
-          onToggle: (self) => setReady(self.progress >= ASSEMBLED),
-          onUpdate: (self) => {
-            const p = self.progress;
-            setReady(p >= ASSEMBLED);
-            setStepIndex((i) => {
-              while (i < 2 && p >= STARTS[i + 1]) i++;
-              while (i > 0 && p < STARTS[i] - BACK_MARGIN) i--;
-              return i;
-            });
+    mm.add(
+      "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
+      () => {
+        setAnimated(true);
+        setReady(false);
+        const tl = gsap.timeline({
+          defaults: { ease: "none" },
+          scrollTrigger: {
+            trigger: frame.current,
+            start: "top top",
+            end: "+=380%",
+            pin: true,
+            scrub: 0.6,
+            invalidateOnRefresh: true,
+            onToggle: (self) => setReady(self.progress >= ASSEMBLED),
+            onUpdate: (self) => {
+              const p = self.progress;
+              setReady(p >= ASSEMBLED);
+              setStepIndex((i) => {
+                while (i < 2 && p >= STARTS[i + 1]) i++;
+                while (i > 0 && p < STARTS[i] - BACK_MARGIN) i--;
+                return i;
+              });
+            },
           },
-        },
-      });
-      trigger.current = tl.scrollTrigger ?? null;
-      // 조립: 고정된 자리에서 화면 전체가 한 번에 짜인다. 고정 전에는 from 값(opacity 0)이라 프레임이 보이지 않는다.
-      // content의 --asm-* 변수 이름은 dnd DemoFrame과 맞춘다.
-      tl.fromTo(stage.current, { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.09, ease: "power2.out" }, 0)
-        .fromTo(
-          content.current,
-          { "--asm-tree-x": "-160px", "--asm-tree-y": "0px", "--asm-tree-o": 0 },
-          { "--asm-tree-x": "0px", "--asm-tree-o": 1, duration: 0.08, ease: "power3.out" },
-          0.04,
+        });
+        trigger.current = tl.scrollTrigger ?? null;
+        // 조립: 고정된 자리에서 화면 전체가 한 번에 짜인다. 고정 전에는 from 값(opacity 0)이라 프레임이 보이지 않는다.
+        // content의 --asm-* 변수 이름은 dnd DemoFrame과 맞춘다.
+        tl.fromTo(
+          stage.current,
+          { opacity: 0, scale: 0.92 },
+          { opacity: 1, scale: 1, duration: 0.09, ease: "power2.out" },
+          0,
         )
-        .fromTo(
-          content.current,
-          { "--asm-map-x": "120px", "--asm-map-y": "60px", "--asm-map-s": 0.94, "--asm-map-o": 0 },
-          { "--asm-map-x": "0px", "--asm-map-y": "0px", "--asm-map-s": 1, "--asm-map-o": 1, duration: 0.08, ease: "power3.out" },
-          0.08,
-        )
-        .fromTo(footer.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.06 }, 0.13)
-        .to({}, { duration: 1 - 0.19 }, 0.19);
-      return () => {
-        trigger.current = null;
-        setAnimated(false);
-        setReady(true);
-      };
-    });
+          .fromTo(
+            content.current,
+            {
+              "--asm-tree-x": "-160px",
+              "--asm-tree-y": "0px",
+              "--asm-tree-o": 0,
+            },
+            {
+              "--asm-tree-x": "0px",
+              "--asm-tree-o": 1,
+              duration: 0.08,
+              ease: "power3.out",
+            },
+            0.04,
+          )
+          .fromTo(
+            content.current,
+            {
+              "--asm-map-x": "120px",
+              "--asm-map-y": "60px",
+              "--asm-map-s": 0.94,
+              "--asm-map-o": 0,
+            },
+            {
+              "--asm-map-x": "0px",
+              "--asm-map-y": "0px",
+              "--asm-map-s": 1,
+              "--asm-map-o": 1,
+              duration: 0.08,
+              ease: "power3.out",
+            },
+            0.08,
+          )
+          .fromTo(
+            footer.current,
+            { opacity: 0, y: 40 },
+            { opacity: 1, y: 0, duration: 0.06 },
+            0.13,
+          )
+          .to({}, { duration: 1 - 0.19 }, 0.19);
+        return () => {
+          trigger.current = null;
+          setAnimated(false);
+          setReady(true);
+        };
+      },
+    );
     // 웹폰트가 늦게 오면 위쪽 높이가 바뀌어 pin 시작 위치가 어긋나므로 다시 계산한다.
     document.fonts.ready.then(() => {
       ScrollTrigger.refresh();
       // 해시 링크(/trego의 /#trego-drag)는 pin 여백이 생기기 전 위치에 멈춰 조립 전 빈 무대 앞에 선다. 조립이 끝난 첫 단계로 보낸다.
       const st = trigger.current;
-      const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      const target =
+        location.hash &&
+        document.getElementById(decodeURIComponent(location.hash.slice(1)));
       if (st && target && frame.current && target.contains(frame.current)) {
         window.scrollTo({ top: st.start + (st.end - st.start) * CENTERS[0] });
       }
@@ -151,7 +198,10 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
   function go(i: number) {
     const st = trigger.current;
     if (animated && st) {
-      window.scrollTo({ top: st.start + (st.end - st.start) * CENTERS[i], behavior: "smooth" });
+      window.scrollTo({
+        top: st.start + (st.end - st.start) * CENTERS[i],
+        behavior: "smooth",
+      });
     } else {
       setStepIndex(i);
     }
@@ -175,26 +225,38 @@ export function DragStory({ steps, demos }: { steps: readonly Step[]; demos: Rec
           </div>
         </div>
 
-        <div ref={footer} className="flex flex-col gap-3 border-t p-6 lg:flex-row lg:items-center lg:justify-between lg:px-12">
+        <div
+          ref={footer}
+          className="flex flex-col gap-3 border-t p-6 lg:flex-row lg:items-center lg:justify-between lg:px-12"
+        >
           {/* 모든 단계의 설명을 같은 칸에 겹쳐 두고 현재 것만 보인다. 가장 긴 설명 기준으로 푸터 높이가 고정돼 단계가 바뀌어도 칩과 데모가 움직이지 않는다. */}
           <div className="grid max-w-xl" aria-live="polite">
             {steps.map((s, i) => (
-              <div key={s.id} className={`col-start-1 row-start-1 ${i === stepIndex ? "" : "invisible"}`}>
+              <div
+                key={s.id}
+                className={`col-start-1 row-start-1 ${i === stepIndex ? "" : "invisible"}`}
+              >
                 <p className="font-mono text-xs text-muted-foreground">
                   {s.versions} · {s.title}
                 </p>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                  {s.body}
+                </p>
               </div>
             ))}
           </div>
-          <div className="flex gap-2" role="group" aria-label="드래그 변천 단계">
+          <div
+            className="flex gap-2"
+            role="group"
+            aria-label="드래그 변천 단계"
+          >
             {steps.map((s, i) => (
               <button
                 key={s.id}
                 type="button"
                 onClick={() => go(i)}
                 aria-pressed={i === stepIndex}
-                className="rounded-full border px-3 py-1 font-mono text-xs transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-pressed:bg-foreground aria-pressed:text-background"
+                className="rounded-full border px-3 py-1 font-mono text-xs transition-colors hover:border-brand hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:font-semibold aria-pressed:text-white aria-pressed:hover:border-brand-hover aria-pressed:hover:bg-brand-hover"
               >
                 {s.versions}
               </button>

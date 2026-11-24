@@ -78,8 +78,10 @@ export function TypedText({
         </span>
         <span className="absolute inset-0 text-left">
           {prefix}
-          {steps[s][n]}
-          {caret}
+          <span className="text-brand">
+            {steps[s][n]}
+            {caret}
+          </span>
           <br />
           {suffix}
         </span>

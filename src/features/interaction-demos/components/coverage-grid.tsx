@@ -191,7 +191,7 @@ export function CoverageGrid() {
       </div>
 
       <div className="flex items-center justify-between gap-3 text-sm" aria-live="polite">
-        <span className={total >= TOTAL ? "font-medium text-primary" : "text-muted-foreground"}>{message}</span>
+        <span className={total >= TOTAL ? "font-medium text-project-ink" : "text-muted-foreground"}>{message}</span>
         <button
           type="button"
           onClick={() => setCounts({})}
