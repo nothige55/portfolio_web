@@ -1,10 +1,11 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { dragSteps, education, projects, stack, surgiNotes, surgiPairs, type Note } from "@/config/content";
 import { site } from "@/config/site";
 import { BreadcrumbDemo } from "@/features/dnd/breadcrumb/components/breadcrumb-demo";
 import { CopyLink } from "@/features/interaction-demos/components/copy-link";
 import { CoverageGrid } from "@/features/interaction-demos/components/coverage-grid";
+import { SharedRouteMapProvider } from "@/features/dnd/components/shared-route-map";
 import { DemoSlot } from "@/features/dnd/components/demo-slot";
 import { DragStory } from "@/features/interaction-demos/components/drag-story";
 import { ExpandStage } from "@/features/interaction-demos/components/expand-stage";
@@ -41,7 +42,7 @@ function Notes({ items }: { items: readonly Note[] }) {
 
 export default function V4Page() {
   return (
-    <div className="home min-h-screen bg-background pb-32 pt-11 text-foreground">
+    <div className="home min-h-screen bg-background pb-16 pt-11 text-foreground">
       <PathBar name={site.name} />
       <ScrollCue />
       <HashScroll />
@@ -57,6 +58,29 @@ export default function V4Page() {
               />
             </h1>
             <p className="mt-6 font-mono text-sm text-muted-foreground">{site.name} · Frontend Developer</p>
+            <div className="mt-8 space-y-4">
+              <p className="text-lg font-medium sm:text-xl">{site.tagline}</p>
+              <p className="text-muted-foreground">{education} · 인터랙션 디자인과 HCI에 관심이 있습니다</p>
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                {[
+                  { href: "#trego", name: trego.name },
+                  { href: "#surgiauth", name: surgi.name },
+                ].map((p) => (
+                  <a
+                    key={p.href}
+                    href={p.href}
+                    className="inline-flex items-center gap-1 rounded-full border px-3 py-1 transition-colors hover:border-brand hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {p.name}
+                    <ArrowDown aria-hidden="true" className="size-3.5" />
+                  </a>
+                ))}
+                <a href={site.github} target="_blank" rel="noopener noreferrer" className={`${link} px-1`}>
+                  GitHub
+                </a>
+                {site.email && <CopyLink text={site.email} />}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -66,10 +90,12 @@ export default function V4Page() {
           </section>
 
           <section id="trego-drag" className="relative z-10 lg:motion-safe:-mt-[100vh]">
-            <DragStory
-              steps={dragSteps}
-              demos={{ a: <DemoSlot id="a" />, b: <DemoSlot id="b" />, c: <DemoSlot id="c" /> }}
-            />
+            <SharedRouteMapProvider>
+              <DragStory
+                steps={dragSteps}
+                demos={{ a: <DemoSlot id="a" />, b: <DemoSlot id="b" />, c: <DemoSlot id="c" /> }}
+              />
+            </SharedRouteMapProvider>
           </section>
 
           <section id="trego-nav">
@@ -123,7 +149,7 @@ export default function V4Page() {
           </section>
         </div>
 
-        <section id="about" className="py-14">
+        <section id="about" className="pt-14">
           <ExpandStage className="rounded-[20px] bg-brand-soft px-6 py-20 sm:px-12 sm:py-28">
             <ScrollReveal className="mx-auto max-w-3xl space-y-12">
               <div className="space-y-6">
