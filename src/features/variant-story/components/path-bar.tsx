@@ -40,7 +40,7 @@ export function PathBar({ name, entries = [] }: { name: string; entries?: readon
               document.getElementById("about")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
             }}
           >
-            소개
+            연락하기
           </Link>
         </nav>
       </div>

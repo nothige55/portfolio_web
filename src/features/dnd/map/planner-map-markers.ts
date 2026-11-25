@@ -50,6 +50,30 @@ function updateMarker(renderedMarker: RenderedMarker, markerModel: PlannerMapMar
   renderedMarker.pin.style.transform = isEmphasized ? "scale(1.35)" : "scale(1)";
 }
 
+// 추가: 가까운 장소(공항·이호테우·동문시장)는 전체 일정 줌에서 라벨이 겹친다.
+// 강조된 마커를 먼저, 나머지는 순서대로 두고, 앞서 둔 라벨·핀과 겹치는 라벨만 숨긴다. 핀은 항상 보인다.
+export function hideOverlappingLabels(renderedMarkers: Map<string, RenderedMarker>): void {
+  // 드래그 중 투명하게 빠진 마커는 자리를 차지하지 않는다
+  const markers = [...renderedMarkers.values()]
+    .filter(({ element }) => element.style.opacity !== "0")
+    .sort(
+    (a, b) => Number(b.element.style.zIndex || 0) - Number(a.element.style.zIndex || 0),
+  );
+  const pins = markers.map(({ pin }) => pin.getBoundingClientRect());
+  const placed: DOMRect[] = [];
+  const overlaps = (a: DOMRect, b: DOMRect) =>
+    a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+
+  markers.forEach(({ label }, i) => {
+    const rect = label.getBoundingClientRect();
+    const hidden =
+      placed.some((other) => overlaps(rect, other)) ||
+      pins.some((pin, j) => j !== i && overlaps(rect, pin));
+    label.style.visibility = hidden ? "hidden" : "";
+    if (!hidden) placed.push(rect);
+  });
+}
+
 // 마커 엘리먼트는 canvas container의 자식이라 마커 위 포인터 이동도 지도까지 전달됨
 // 마커 아래에 경로선이 깔려 있으면 지도가 그 선을 hover로 잡아 마커 hover를 덮어쓰므로,
 // 마커를 가리키는 동안에는 경로선 hover를 건너뛰도록 현재 hover 중인 마커를 함께 추적
@@ -125,4 +149,5 @@ export function syncMarkers({
 
     updateMarker(renderedMarker, markerModel);
   });
+  hideOverlappingLabels(renderedMarkers);
 }

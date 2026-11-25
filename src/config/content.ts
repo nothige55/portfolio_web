@@ -6,6 +6,8 @@ export const projects = [
     kicker: "실시간 협업 여행 일정 에디터",
     period: "2025.05 – 2026.02",
     role: "4인 · 프론트엔드 설계·구현 주도",
+    // 홈 표지에 쓰는 이 프로젝트의 스택. 근거: dnd 데모가 옮겨 온 원본 코드(dnd-kit, zustand store, mapbox 지도)
+    stack: ["React", "TypeScript", "dnd-kit", "Zustand", "Mapbox GL"],
     summary:
       "여행 일정을 폴더 → 날짜 → 일정 트리로 다루고, 친구와 같은 일정을 동시에 편집하는 웹 에디터입니다.",
     points: [
@@ -33,6 +35,7 @@ export const projects = [
     kicker: "수술실 비접촉 제스처 인증",
     period: "2026.04 – 현재",
     role: "4인 · 프론트엔드(손 추적·인증 화면)",
+    stack: ["MediaPipe", "Electron"],
     summary:
       "장갑을 낀 손으로 화면을 만질 수 없는 수술실에서, 카메라로 손 동작을 읽어 인증하는 졸업작품입니다.",
     points: [
