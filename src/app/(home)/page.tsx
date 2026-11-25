@@ -47,7 +47,7 @@ export default function V4Page() {
       <HashScroll />
 
       <div className="mx-auto max-w-[1100px] px-4">
-        <section id="intro" className="flex min-h-[75vh] flex-col items-center justify-center py-20">
+        <section id="intro" className="flex min-h-[calc(100svh-2.75rem)] flex-col items-center justify-center py-20">
           <div className="w-fit text-left">
             <h1 className={hero}>
               <TypedText
@@ -62,7 +62,7 @@ export default function V4Page() {
 
         <div className="project-band [--band-to:var(--surgi-soft)]">
           <section id="trego">
-            <ProjectTitle eyebrow={`${trego.period} · ${trego.role}`} name={trego.name} lines={[trego.kicker, trego.summary]} />
+            <ProjectTitle name={trego.name} lines={[trego.kicker, trego.summary]} meta={trego} />
           </section>
 
           <section id="trego-drag" className="relative z-10 lg:motion-safe:-mt-[100vh]">
@@ -97,7 +97,7 @@ export default function V4Page() {
 
         <div className="project-band project-surgi [--band-from:var(--surgi-soft)]">
           <section id="surgiauth">
-            <ProjectTitle eyebrow={`${surgi.period} · ${surgi.role}`} name={surgi.name} lines={[surgi.kicker, surgi.summary]} />
+            <ProjectTitle name={surgi.name} lines={[surgi.kicker, surgi.summary]} meta={surgi} />
             <div className="relative z-10 lg:motion-safe:-mt-[100vh]">
               <SplitReveal
                 textSide="right"
