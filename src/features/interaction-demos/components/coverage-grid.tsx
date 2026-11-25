@@ -1,6 +1,9 @@
 "use client";
 
+import { Mouse } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
+import { DemoHint } from "@/components/ui/demo-hint";
 import {
   handPosition,
   judge,
@@ -159,6 +162,14 @@ export function CoverageGrid() {
               );
             })}
           </div>
+
+          {/* 손 아이콘을 가리지 않게 가운데보다 아래에 둔다 */}
+          <DemoHint
+            text="휠을 굴려 손을 기울여 보세요"
+            icon={<Mouse />}
+            visible={!engaged}
+            className="absolute left-1/2 top-[70%] z-10 -translate-x-1/2 whitespace-nowrap"
+          />
 
           <div
             className="absolute -translate-x-1/2 -translate-y-1/2"
