@@ -5,6 +5,7 @@ import { site } from "@/config/site";
 import { BreadcrumbDemo } from "@/features/dnd/breadcrumb/components/breadcrumb-demo";
 import { CopyLink } from "@/features/interaction-demos/components/copy-link";
 import { CoverageGrid } from "@/features/interaction-demos/components/coverage-grid";
+import { SharedRouteMapProvider } from "@/features/dnd/components/shared-route-map";
 import { DemoSlot } from "@/features/dnd/components/demo-slot";
 import { DragStory } from "@/features/interaction-demos/components/drag-story";
 import { ExpandStage } from "@/features/interaction-demos/components/expand-stage";
@@ -66,10 +67,12 @@ export default function V4Page() {
           </section>
 
           <section id="trego-drag" className="relative z-10 lg:motion-safe:-mt-[100vh]">
-            <DragStory
-              steps={dragSteps}
-              demos={{ a: <DemoSlot id="a" />, b: <DemoSlot id="b" />, c: <DemoSlot id="c" /> }}
-            />
+            <SharedRouteMapProvider>
+              <DragStory
+                steps={dragSteps}
+                demos={{ a: <DemoSlot id="a" />, b: <DemoSlot id="b" />, c: <DemoSlot id="c" /> }}
+              />
+            </SharedRouteMapProvider>
           </section>
 
           <section id="trego-nav">

@@ -1,11 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect } from "react";
 
 import type { Chapter } from "../config/chapters";
-import { type DragPreview, type RouteRow, seedRows } from "../data/route-rows";
-import { RouteMap } from "./route-map";
+import { SharedMapSlot, useSharedRouteMap } from "./shared-route-map";
 
 // 불러오는 동안 데모 높이(데스크톱 실측 572/572/772px)보다 조금 작게 자리를 잡아 글이 밀리는 폭을 줄인다
 // 단계마다 dnd 코드가 따로라서 단계별 청크로 나눠 브라우저에서만 불러온다(dnd-kit은 SSR이 필요 없음)
@@ -24,16 +23,13 @@ const demos = {
   }),
 } satisfies Record<Chapter["id"], unknown>;
 
-// 트리 옆에 지도를 두고, 트리가 바뀌면 같은 순서로 지도를 다시 그린다
+// 트리 옆 지도 칸에 공유 지도를 붙이고, 트리가 바뀌면 같은 순서로 지도를 다시 그린다
 export function DemoSlot({ id }: { id: Chapter["id"] }) {
   const Demo = demos[id];
-  const [rows, setRows] = useState<readonly RouteRow[]>(seedRows);
-  const [dragPreview, setDragPreview] = useState<DragPreview | null>(null);
-  return (
-    <Demo
-      onRowsChange={setRows}
-      onDragPreview={setDragPreview}
-      aside={<RouteMap rows={rows} dragPreview={dragPreview} />}
-    />
-  );
+  const shared = useSharedRouteMap();
+  if (!shared) throw new Error("DemoSlot은 SharedRouteMapProvider 안에서만 쓴다");
+  const { setRows, setDragPreview } = shared;
+  // 이전 단계에서 드래그하다 끊긴 미리보기가 새 단계 지도에 남지 않게 지운다
+  useEffect(() => setDragPreview(null), [setDragPreview]);
+  return <Demo onRowsChange={setRows} onDragPreview={setDragPreview} aside={<SharedMapSlot />} />;
 }
