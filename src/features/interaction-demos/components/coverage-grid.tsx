@@ -136,7 +136,7 @@ export function CoverageGrid() {
         onBlur={() => (wheelOn.current = false)}
         onKeyDown={onKeyDown}
       >
-        <div className="relative mx-auto w-full max-w-[520px]">
+        <div className="relative mx-auto w-full max-w-[640px]">
           <div
             ref={gridEl}
             className="grid grid-cols-5 grid-rows-3 border border-foreground/25 bg-card shadow-[0_24px_60px_-28px_color-mix(in_srgb,var(--project)_50%,transparent)]"
@@ -150,7 +150,7 @@ export function CoverageGrid() {
               return (
                 <div
                   key={k}
-                  className={`flex h-14 items-end justify-center gap-1 border border-foreground/10 pb-2 motion-safe:transition-colors sm:h-20 ${n >= PER_CELL ? "bg-primary/15" : ""} ${current ? "ring-2 ring-inset ring-primary" : ""}`}
+                  className={`flex h-14 items-end justify-center gap-1 border border-foreground/10 pb-2 motion-safe:transition-colors sm:h-20 lg:h-28 ${n >= PER_CELL ? "bg-primary/15" : ""} ${current ? "ring-2 ring-inset ring-primary" : ""}`}
                 >
                   {Array.from({ length: PER_CELL }, (_, d) => (
                     <span key={d} className={`size-1.5 rounded-full ${d < n ? "bg-primary" : "bg-foreground/15"}`} />
@@ -165,7 +165,7 @@ export function CoverageGrid() {
             style={{ left: `${pos.x * 100}%`, top: `${pos.y * 100}%` }}
           >
             <div
-              className="w-11 cursor-grab touch-none select-none active:cursor-grabbing sm:w-14"
+              className="w-11 cursor-grab touch-none select-none active:cursor-grabbing sm:w-14 lg:w-16"
               style={{
                 transform: `perspective(260px) rotateX(${angle.pitch}deg) rotateZ(${angle.roll}deg)`,
                 opacity: lost ? 0.35 : 1,

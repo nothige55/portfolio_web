@@ -96,7 +96,8 @@ export function DragStory({
               duration: 0.08,
               ease: "power3.out",
             },
-            0.04,
+            // 무대와 같이 시작한다. 늦게 들어오면 조립 첫 장면이 빈 흰 창으로 보인다.
+            0,
           )
           .fromTo(
             content.current,

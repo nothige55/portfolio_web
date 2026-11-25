@@ -14,6 +14,7 @@ import {
 } from "@/features/dnd/map/planner-map-camera";
 import {
   type PlannerMapHandlers,
+  hideOverlappingLabels,
   type RenderedMarker,
   syncMarkers,
 } from "@/features/dnd/map/planner-map-markers";
@@ -182,6 +183,9 @@ export function usePlannerMapInstance(
 
     map.on("load", handleLoad);
     map.on("error", handleError);
+    // 확대·이동하면 라벨 간격이 바뀌므로 겹침을 다시 판정한다
+    const handleMove = () => hideOverlappingLabels(renderedMarkers);
+    map.on("move", handleMove);
 
     const resizeObserver =
       typeof ResizeObserver === "undefined"

@@ -20,7 +20,7 @@ const [trego, surgi] = projects;
 const big = "text-[clamp(2rem,5.5vw,4.5rem)] font-bold leading-[1.1] tracking-[-0.035em]";
 // 첫 화면 제목은 다른 구간 제목보다 크게 둔다.
 const hero = "text-[clamp(2rem,6vw,5rem)] font-bold leading-[1.1] tracking-[-0.035em]";
-const label = "font-mono text-xs text-project-ink";
+const label = "font-mono text-sm text-project-ink";
 const link =
   "rounded-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
@@ -31,8 +31,8 @@ function Notes({ items }: { items: readonly Note[] }) {
     <dl className="mt-8 grid gap-6 sm:grid-cols-3">
       {items.map((n) => (
         <div key={n.value}>
-          <dt className="text-2xl font-bold tabular-nums text-project-ink">{n.value}</dt>
-          <dd className="mt-1 text-sm leading-relaxed text-muted-foreground">{n.label}</dd>
+          <dt className="text-3xl font-bold tabular-nums text-project-ink">{n.value}</dt>
+          <dd className="mt-2 leading-relaxed text-muted-foreground">{n.label}</dd>
         </div>
       ))}
     </dl>
@@ -74,23 +74,24 @@ export default function V4Page() {
 
           <section id="trego-nav">
             <SplitReveal
+              wideDemo={false}
               text={
-                <div className="mx-auto max-w-sm space-y-3">
+                <div className="space-y-5">
                   <p className={label}>탐색</p>
-                  <h3 className="text-2xl font-semibold tracking-tight">{trego.points[0].title}</h3>
-                  <p className="leading-relaxed text-muted-foreground">{trego.points[0].body}</p>
+                  <h3 className="text-[clamp(1.75rem,3vw,2.5rem)] font-bold leading-tight tracking-[-0.03em]">{trego.points[0].title}</h3>
+                  <p className="text-lg leading-relaxed text-muted-foreground">{trego.points[0].body}</p>
+                  <p className="pt-2">
+                    <Link href="/trego" className={`${link} inline-flex items-center gap-1 font-medium text-project-ink`}>
+                      Trego 설계 전체 보기
+                      <ArrowRight aria-hidden="true" className="size-4" />
+                    </Link>
+                  </p>
                 </div>
               }
               demo={
                 <BreadcrumbDemo />
               }
             />
-            <p className="pb-16 pt-6 text-center">
-              <Link href="/trego" className={`${link} inline-flex items-center gap-1 text-sm font-medium text-project-ink`}>
-                Trego 설계 전체 보기
-                <ArrowRight aria-hidden="true" className="size-3.5" />
-              </Link>
-            </p>
           </section>
         </div>
 
@@ -100,12 +101,13 @@ export default function V4Page() {
             <div className="relative z-10 lg:motion-safe:-mt-[100vh]">
               <SplitReveal
                 textSide="right"
+                revealStart="top 45%"
                 text={
-                  <div className="mx-auto max-w-md space-y-8">
+                  <div className="space-y-10">
                     {surgiPairs.map((p) => (
-                      <div key={p.decision} className="space-y-2 border-l-2 border-project pl-4">
-                        <p className="text-sm leading-relaxed text-muted-foreground">{p.problem}</p>
-                        <p className="font-medium leading-relaxed">{p.decision}</p>
+                      <div key={p.decision} className="space-y-3 border-l-2 border-project pl-5">
+                        <p className="leading-relaxed text-muted-foreground">{p.problem}</p>
+                        <p className="text-xl font-semibold leading-snug tracking-[-0.02em]">{p.decision}</p>
                       </div>
                     ))}
                   </div>

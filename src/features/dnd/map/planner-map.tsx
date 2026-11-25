@@ -33,7 +33,8 @@ export function PlannerMap({
       </div>
       {mapLoadState === "loading" ? (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#eef1f3]/85 p-8">
-          <p role="status" className="text-sm font-medium text-muted-foreground">
+          {/* 단계를 바꾸면 지도가 새로 만들어진다. 보통 1초 안에 뜨므로 그동안은 문구 없이 바탕색만 둔다 */}
+          <p role="status" className="text-sm font-medium text-muted-foreground animate-in fade-in fill-mode-backwards delay-1000">
             지도를 불러오는 중입니다
           </p>
         </div>
