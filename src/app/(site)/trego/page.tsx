@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { Separator } from "@/components/ui/separator";
 import {
   projects,
@@ -8,13 +7,16 @@ import {
   syncLinks,
   tregoStories,
   tregoTeam,
-  type Story,
 } from "@/config/content";
 import { ChapterSection } from "@/features/dnd/components/chapter-section";
 import { chapters, dragProblems } from "@/features/dnd/config/chapters";
 import { site } from "@/config/site";
+import { StorySection } from "@/features/variant-story/components/story-section";
 import { PathBar } from "@/features/variant-story/components/path-bar";
-import { TocRail, type TocItem } from "@/features/variant-story/components/toc-rail";
+import {
+  TocRail,
+  type TocItem,
+} from "@/features/variant-story/components/toc-rail";
 
 export const metadata: Metadata = { title: "Trego" };
 
@@ -22,12 +24,15 @@ const [trego] = projects;
 const link =
   "rounded-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 const section = "mx-auto max-w-[680px] space-y-4 py-12 leading-relaxed";
-const label = "block text-sm text-muted-foreground";
 
 // 상단 경로 막대와 오른쪽 목차가 같이 쓰는 구간 목록. 드래그 단계 안에서는 "드래그 앤 드롭"이 조상으로 붙는다.
 const toc: TocItem[] = [
   { id: "drag-intro", label: "계층 트리 드래그 앤 드롭", depth: 0 },
-  ...chapters.map((c) => ({ id: `chapter-${c.id}`, label: c.title, depth: 1 as const })),
+  ...chapters.map((c) => ({
+    id: `chapter-${c.id}`,
+    label: c.title,
+    depth: 1 as const,
+  })),
   { id: "nav", label: trego.points[0].title, depth: 0 },
   { id: "state", label: trego.points[2].title, depth: 0 },
   { id: "sync", label: trego.points[3].title, depth: 0 },
@@ -40,60 +45,6 @@ const entries = [
     path: t.depth ? ["Trego", "드래그 앤 드롭"] : ["Trego"],
   })),
 ];
-
-function StorySection({
-  id,
-  title,
-  story,
-  children,
-}: {
-  id: string;
-  title: string;
-  story: Story;
-  children?: ReactNode;
-}) {
-  return (
-    <section id={id} className={`scroll-mt-8 ${section}`}>
-      <h2 className="font-heading text-2xl font-bold">{title}</h2>
-      <p>
-        <span className={label}>문제</span>
-        {story.problem}
-      </p>
-      <div>
-        <span className={label}>대안</span>
-        <ul className="mt-1 list-disc space-y-1 pl-5">
-          {story.rejected.map((r) => (
-            <li key={r.option}>
-              <span className="font-medium">{r.option}</span>: {r.reason}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <span className={label}>설계</span>
-        <ul className="mt-1 list-disc space-y-1 pl-5">
-          {story.design.map((line) => (
-            <li key={line}>{line}</li>
-          ))}
-        </ul>
-      </div>
-      {children}
-      {story.process && (
-        <p>
-          <span className={label}>과정</span>
-          {story.process}
-        </p>
-      )}
-      {story.note && (
-        <p className="text-sm text-muted-foreground">{story.note}</p>
-      )}
-      <p>
-        <span className={label}>한계</span>
-        {story.limit}
-      </p>
-    </section>
-  );
-}
 
 export default function TregoPage() {
   return (
