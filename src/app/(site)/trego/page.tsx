@@ -61,8 +61,10 @@ export default function TregoPage() {
         </h1>
         <p className="text-xl font-medium">{trego.kicker}</p>
         <p className="leading-relaxed text-muted-foreground">
-          {trego.summary} 원본(trego-frontend)과 이를 TypeScript로 다시 구현한
-          버전(trego-web-portfolio)에서 한 작업을 정리했습니다.
+          {trego.summary}
+          <br />
+          일부는 원본을 TypeScript로 다시 만든 버전(재구현 버전)에서 한
+          작업이며, 본문에 따로 표시했습니다.
         </p>
       </div>
 
@@ -72,7 +74,7 @@ export default function TregoPage() {
           className="mx-auto max-w-[680px] space-y-4 leading-relaxed"
         >
           <h2 className="font-heading text-2xl font-bold">
-            계층 트리 드래그 앤 드롭
+            계층형 트리 드래그 앤 드롭
           </h2>
           <p>
             일정 트리의 드래그 앤 드롭은 평면 목록의 순서 변경과 세 가지가
@@ -85,8 +87,8 @@ export default function TregoPage() {
           </ul>
           <p>
             목표는 드롭하기 전에 결과를 예측할 수 있게 하는 것이었습니다. 드롭
-            판정 방식을 10번 가까이 바꿨고, 크게 세 단계로 나뉩니다. 단계별
-            동작은{" "}
+            판정 방식과 동작 방식을 10번 가까이 바꿨고, 크게 세 단계로
+            나누었습니다. 단계별 동작은{" "}
             <Link href="/#trego-drag" className={link}>
               홈 데모
             </Link>
