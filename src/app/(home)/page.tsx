@@ -7,11 +7,10 @@ import {
   interest,
   projects,
   stack,
-  surgiNotes,
   surgiPairs,
-  type Note,
 } from "@/config/content";
 import { site } from "@/config/site";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { BreadcrumbDemo } from "@/features/dnd/breadcrumb/components/breadcrumb-demo";
 import { CopyLink } from "@/features/interaction-demos/components/copy-link";
 import { CoverageGrid } from "@/features/interaction-demos/components/coverage-grid";
@@ -35,21 +34,6 @@ const label = "font-mono text-sm text-project-ink";
 const link =
   "rounded-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
-// 무대 아래에 실제 구현에서 나온 수치를 붙인다. 값이 없으면 그리지 않는다.
-function Notes({ items }: { items: readonly Note[] }) {
-  if (!items.length) return null;
-  return (
-    <dl className="mt-8 grid gap-6 sm:grid-cols-3">
-      {items.map((n) => (
-        <div key={n.value}>
-          <dt className="text-3xl font-bold tabular-nums text-project-ink">{n.value}</dt>
-          <dd className="mt-2 leading-relaxed text-muted-foreground">{n.label}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
 export default function V4Page() {
   return (
     <div className="home min-h-screen bg-background pb-16 pt-11 text-foreground pinned:pb-8">
@@ -71,24 +55,40 @@ export default function V4Page() {
             <div className="mt-8 space-y-4">
               <p className="text-lg font-medium sm:text-xl">{site.tagline}</p>
               <p className="text-muted-foreground">{education}</p>
-              <div className="flex flex-wrap items-center gap-2 text-sm">
+              {/* 프로젝트 버튼과 연락처를 줄로 나눠 버튼이 이 구간의 주 행동으로 읽히게 한다. */}
+              <div className="flex flex-wrap items-center gap-2 pt-2 text-sm">
+                {/* 알약+파스텔은 뱃지로 읽혀서, 흰 면·그림자의 둥근 사각형에 프로젝트 색은 점으로만 둔다. project-surgi는 변수만 청록으로 바꾼다. */}
                 {[
-                  { href: "#trego", name: trego.name },
-                  { href: "#surgiauth", name: surgi.name },
+                  { href: "#trego", project: trego, theme: "" },
+                  { href: "#surgiauth", project: surgi, theme: "project-surgi" },
                 ].map((p) => (
-                  <a
-                    key={p.href}
-                    href={p.href}
-                    className="inline-flex items-center gap-1 rounded-full border px-3 py-1 transition-colors hover:border-brand hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    {p.name}
-                    <ArrowDown aria-hidden="true" className="size-3.5" />
-                  </a>
+                  <Tooltip key={p.href}>
+                    <TooltipTrigger
+                      render={<a href={p.href} />}
+                      delay={150}
+                      className={`${p.theme} group inline-flex items-center gap-2 rounded-lg border bg-card px-3.5 py-2 font-medium shadow-sm transition-colors hover:border-project hover:bg-[var(--project-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
+                    >
+                      <span aria-hidden="true" className="size-2 rounded-full bg-project" />
+                      {p.project.name}
+                      <ArrowDown
+                        aria-hidden="true"
+                        className="size-3.5 text-muted-foreground transition-transform group-hover:translate-y-0.5 group-hover:text-project-ink motion-reduce:transition-none"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent side="top">{p.project.kicker}</TooltipContent>
+                  </Tooltip>
                 ))}
-                <a href={site.github} target="_blank" rel="noopener noreferrer" className={`${link} px-1`}>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <a href={site.github} target="_blank" rel="noopener noreferrer" className={link}>
                   GitHub
                 </a>
-                {site.email && <CopyLink text={site.email} />}
+                {site.email && (
+                  <>
+                    <span aria-hidden="true" className="text-muted-foreground">·</span>
+                    <CopyLink text={site.email} />
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -96,7 +96,7 @@ export default function V4Page() {
 
         <div className="project-band [--band-to:var(--surgi-soft)]">
           <section id="trego">
-            <ProjectTitle name={trego.name} lines={[trego.kicker, trego.summary]} meta={trego} />
+            <ProjectTitle name={trego.name} lines={[trego.kicker, trego.summary]} meta={trego} href="/trego" />
           </section>
 
           <section id="trego-drag" className="relative z-10 lg:motion-safe:-mt-[100vh]">
@@ -133,7 +133,7 @@ export default function V4Page() {
 
         <div className="project-band project-surgi [--band-from:var(--surgi-soft)]">
           <section id="surgiauth">
-            <ProjectTitle name={surgi.name} lines={[surgi.kicker, surgi.summary]} meta={surgi} />
+            <ProjectTitle name={surgi.name} lines={[surgi.kicker, surgi.summary]} meta={surgi} href="/surgiauth" />
             <div className="relative z-10 lg:motion-safe:-mt-[100vh]">
               <SplitReveal
                 textSide="right"
@@ -153,9 +153,6 @@ export default function V4Page() {
                 }
               />
             </div>
-            <ScrollReveal className="pb-12">
-              <Notes items={surgiNotes} />
-            </ScrollReveal>
           </section>
         </div>
 

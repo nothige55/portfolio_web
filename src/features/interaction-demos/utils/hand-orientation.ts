@@ -37,10 +37,21 @@ export function handPosition({ roll, pitch }: Angle) {
   };
 }
 
+// 같은 칸에 연달아 담지 못하게 막을지. 다른 칸이 모두 찼으면 막지 않는다. 안 그러면 마지막 칸이 영원히 안 찬다.
+export function blocksRepeat(counts: Record<string, number>, key: string, lastCaptured: string | null) {
+  if (key !== lastCaptured) return false;
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  return TOTAL - total > PER_CELL - (counts[key] ?? 0);
+}
+
 // 각도를 더하고 손이 움직이는 범위(SHOW_*)로 자른다. 더 못 가면 null이라, 호출한 쪽이 페이지 스크롤로 넘길 수 있다.
 export function tiltAngle(prev: Angle, dRoll: number, dPitch: number): Angle | null {
+  // 격자 밖 roll은 인식 한계(54°)까지 멀어서, 바깥으로 갈 때만 3배로 움직여 풀리는 구간이 금방 보이게 한다.
+  // 돌아올 때도 3배면 가장자리 칸을 건너뛴다.
+  const outward = Math.abs(prev.roll) >= ROLL_RANGE / 2 && Math.sign(dRoll) === Math.sign(prev.roll);
+  const rollRate = outward ? 3 : 1;
   const next = {
-    roll: clamp(prev.roll + dRoll, -SHOW_ROLL, SHOW_ROLL),
+    roll: clamp(prev.roll + dRoll * rollRate, -SHOW_ROLL, SHOW_ROLL),
     pitch: clamp(prev.pitch + dPitch, -SHOW_PITCH, SHOW_PITCH),
   };
   return next.roll === prev.roll && next.pitch === prev.pitch ? null : next;

@@ -5,7 +5,7 @@ import "./globals.css";
 import { site } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: { default: site.name, template: `%s · ${site.name}` },
+  title: { default: `${site.name} · 프론트엔드 개발자`, template: `%s · ${site.name}` },
   description: site.description,
 };
 

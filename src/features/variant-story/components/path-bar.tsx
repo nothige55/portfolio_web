@@ -15,7 +15,17 @@ export function PathBar({ name, entries = [] }: { name: string; entries?: readon
   return (
     <div className="fixed inset-x-0 top-0 z-30 backdrop-blur-md [mask-image:linear-gradient(to_bottom,black_70%,transparent)]">
       <div className="mx-auto flex h-11 max-w-[1100px] items-center gap-2 px-4 font-mono text-xs">
-        <Link href="/" className="font-semibold">
+        <Link
+          href="/"
+          className="font-semibold"
+          onClick={(e) => {
+            // 홈에서 같은 경로 링크는 아무 일도 안 일어나므로 맨 위로 스크롤한다.
+            if (!home || e.metaKey || e.ctrlKey || e.shiftKey) return;
+            e.preventDefault();
+            const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+            window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+          }}
+        >
           {name}
         </Link>
         {path.map((p) => (
@@ -35,7 +45,7 @@ export function PathBar({ name, entries = [] }: { name: string; entries?: readon
             className="hover:text-primary"
             onClick={(e) => {
               // 홈에서는 주소(해시)를 바꾸지 않고 스크롤만 한다. 다른 페이지는 링크 이동 후 HashScroll이 맞춘다.
-              if (!home) return;
+              if (!home || e.metaKey || e.ctrlKey || e.shiftKey) return;
               e.preventDefault();
               const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
               document.getElementById("about")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });

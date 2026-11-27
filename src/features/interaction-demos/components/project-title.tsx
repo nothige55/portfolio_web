@@ -2,6 +2,8 @@
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -16,10 +18,12 @@ export function ProjectTitle({
   name,
   lines,
   meta,
+  href,
 }: {
   name: string;
   lines: readonly string[];
   meta: Meta;
+  href: string;
 }) {
   // "4인 · 프론트엔드 …"를 팀과 역할 칸으로 나눈다.
   const [team, ...roleParts] = meta.role.split(" · ");
@@ -59,14 +63,26 @@ export function ProjectTitle({
   return (
     <div ref={frame} className="relative flex flex-col justify-center py-24 lg:h-screen lg:py-0">
       <div data-group>
-        <h2
-          data-name
-          className="block overflow-hidden pb-[0.08em] text-[clamp(3rem,11vw,9rem)] font-bold leading-[1.05] tracking-[-0.045em] text-project"
-        >
-          <span data-rise className="block">
-            {name}
-          </span>
-        </h2>
+        {/* 링크를 이름 줄에 둔다. 표지 아래쪽은 겹쳐 올라오는 데모가 먼저 덮어서, 고정 중에 링크만 사라져 보인다. */}
+        <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+          <h2
+            data-name
+            className="block overflow-hidden pb-[0.08em] text-[clamp(3rem,11vw,9rem)] font-bold leading-[1.05] tracking-[-0.045em] text-project"
+          >
+            <span data-rise className="block">
+              {name}
+            </span>
+          </h2>
+          <p data-line className="pb-[2.2em]">
+            <Link
+              href={href}
+              className="inline-flex items-center gap-1.5 rounded-full bg-project px-5 py-2.5 font-medium text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              {name} 자세히 보기
+              <ArrowRight aria-hidden="true" className="size-4" />
+            </Link>
+          </p>
+        </div>
         {lines.map((line, i) => (
           <p
             key={line}
