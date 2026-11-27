@@ -7,9 +7,7 @@ import {
   interest,
   projects,
   stack,
-  surgiNotes,
   surgiPairs,
-  type Note,
 } from "@/config/content";
 import { site } from "@/config/site";
 import { BreadcrumbDemo } from "@/features/dnd/breadcrumb/components/breadcrumb-demo";
@@ -34,21 +32,6 @@ const hero = "text-[clamp(2rem,6vw,5rem)] font-bold leading-[1.1] tracking-[-0.0
 const label = "font-mono text-sm text-project-ink";
 const link =
   "rounded-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
-
-// 무대 아래에 실제 구현에서 나온 수치를 붙인다. 값이 없으면 그리지 않는다.
-function Notes({ items }: { items: readonly Note[] }) {
-  if (!items.length) return null;
-  return (
-    <dl className="mt-8 grid gap-6 sm:grid-cols-3">
-      {items.map((n) => (
-        <div key={n.value}>
-          <dt className="text-3xl font-bold tabular-nums text-project-ink">{n.value}</dt>
-          <dd className="mt-2 leading-relaxed text-muted-foreground">{n.label}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
 
 export default function V4Page() {
   return (
@@ -153,9 +136,6 @@ export default function V4Page() {
                 }
               />
             </div>
-            <ScrollReveal className="pb-12">
-              <Notes items={surgiNotes} />
-            </ScrollReveal>
           </section>
         </div>
 

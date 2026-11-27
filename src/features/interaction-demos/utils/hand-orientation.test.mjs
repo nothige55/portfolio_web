@@ -32,6 +32,11 @@ test("tiltAngle: 한계(roll ±70°, pitch ±45°)에서 더 못 가면 null", (
   assert.equal(tiltAngle({ roll: 0, pitch: -45 }, 0, -3), null);
   assert.deepEqual(tiltAngle({ roll: 68, pitch: 0 }, 5, 0), { roll: 70, pitch: 0 });
 });
+test("tiltAngle: 격자 밖 roll은 3배로 움직이고 pitch는 그대로", () => {
+  assert.deepEqual(tiltAngle({ roll: 25, pitch: 0 }, 5, 5), { roll: 40, pitch: 5 });
+  assert.deepEqual(tiltAngle({ roll: -30, pitch: 0 }, 2, 0), { roll: -24, pitch: 0 });
+  assert.deepEqual(tiltAngle({ roll: 20, pitch: 0 }, 5, 0), { roll: 25, pitch: 0 });
+});
 test("tiltAngle: 한 축이 한계여도 다른 축은 움직인다", () => {
   assert.deepEqual(tiltAngle({ roll: 70, pitch: 0 }, 5, 10), { roll: 70, pitch: 10 });
 });
