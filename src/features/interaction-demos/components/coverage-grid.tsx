@@ -239,6 +239,7 @@ export function CoverageGrid() {
                   return (
                     <div
                       key={k}
+                      role="img"
                       aria-label={`${n} / ${PER_CELL}장`}
                       className={`h-9 rounded-lg motion-safe:transition-colors sm:h-12 sm:rounded-xl lg:h-14 ${n >= PER_CELL ? CELL_FULL : n === 1 ? CELL_ONE : CELL_EMPTY} ${current ? "ring-2 ring-project" : ""}`}
                     />
