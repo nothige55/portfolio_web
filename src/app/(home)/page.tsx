@@ -1,6 +1,16 @@
 import { ArrowDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { dragSteps, education, projects, stack, surgiNotes, surgiPairs, type Note } from "@/config/content";
+import {
+  collabTools,
+  dragSteps,
+  education,
+  interest,
+  projects,
+  stack,
+  surgiNotes,
+  surgiPairs,
+  type Note,
+} from "@/config/content";
 import { site } from "@/config/site";
 import { BreadcrumbDemo } from "@/features/dnd/breadcrumb/components/breadcrumb-demo";
 import { CopyLink } from "@/features/interaction-demos/components/copy-link";
@@ -60,7 +70,7 @@ export default function V4Page() {
             <p className="mt-6 font-mono text-sm text-muted-foreground">{site.name} · Frontend Developer</p>
             <div className="mt-8 space-y-4">
               <p className="text-lg font-medium sm:text-xl">{site.tagline}</p>
-              <p className="text-muted-foreground">{education} · 인터랙션 디자인과 HCI에 관심이 있습니다</p>
+              <p className="text-muted-foreground">{education}</p>
               <div className="flex flex-wrap items-center gap-2 text-sm">
                 {[
                   { href: "#trego", name: trego.name },
@@ -159,9 +169,9 @@ export default function V4Page() {
                   <span className="text-brand">.</span>
                 </h2>
                 <p className="text-xl font-medium sm:text-2xl">{site.tagline}</p>
-                <p className="leading-relaxed text-muted-foreground">인터랙션 디자인과 HCI에 관심이 있습니다.</p>
+                <p className="leading-relaxed text-muted-foreground">{interest}</p>
               </div>
-              <dl className="grid gap-8 sm:grid-cols-3">
+              <dl className="grid gap-8 sm:grid-cols-2">
                 <div className="space-y-3">
                   <dt className={label}>스택</dt>
                   <dd className="flex flex-wrap gap-1.5">
@@ -175,6 +185,10 @@ export default function V4Page() {
                 <div className="space-y-3">
                   <dt className={label}>학력</dt>
                   <dd className="text-sm leading-relaxed">{education}</dd>
+                </div>
+                <div className="space-y-3">
+                  <dt className={label}>협업</dt>
+                  <dd className="text-sm leading-relaxed">{collabTools}</dd>
                 </div>
                 <div className="space-y-3">
                   <dt className={label}>연락처</dt>

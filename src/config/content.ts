@@ -70,12 +70,16 @@ export const stack = [
   "Zustand",
   "Vite",
   "Tailwind CSS",
-  "dnd-kit",
-  "MediaPipe",
-  "Electron",
 ] as const;
 
-export const education = "동양미래대학교 컴퓨터정보공학과 · 2027.02 졸업 예정";
+// 소개 섹션. 근거: 제출한 포트폴리오 PDF 2쪽(관심과 강점)·3쪽(협업)을 한 문단으로 줄였다.
+export const collabTools =
+  "Jira · Confluence · Linear · Notion · Figma(UI 설계)";
+export const interest =
+  "사용자가 화면을 조작할 때 무슨 일이 일어날지 미리 알 수 있는 인터페이스를 만드는 데 관심이 많습니다. 매끄러운 반응은 그 아래의 상태 설계가 받쳐 줄 때 나온다고 생각해, 화면과 데이터가 어긋나지 않게 설계하는 일을 중요하게 여깁니다. 작게 만들어 직접 써 보며 다듬고, 이유를 설명할 수 있는 결정을 남기려고 합니다.";
+
+export const education =
+  "동양미래대학교 웹응용소프트웨어공학과 · 전문학사 2026.02 졸업 · 학사학위 전공심화과정 2027.02 졸업 예정";
 
 export type Note = { value: string; label: string };
 
