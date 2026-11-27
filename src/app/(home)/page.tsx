@@ -52,7 +52,7 @@ function Notes({ items }: { items: readonly Note[] }) {
 
 export default function V4Page() {
   return (
-    <div className="home min-h-screen bg-background pb-16 pt-11 text-foreground lg:motion-safe:pb-8">
+    <div className="home min-h-screen bg-background pb-16 pt-11 text-foreground pinned:pb-8">
       <PathBar name={site.name} />
       <ScrollCue />
       <HashScroll />
@@ -160,7 +160,7 @@ export default function V4Page() {
         </div>
 
         <section id="about" className="pt-14">
-          <ExpandStage className="rounded-[20px] bg-brand-soft px-6 py-20 sm:px-12 sm:py-28 lg:motion-safe:flex lg:motion-safe:min-h-[calc(100svh-2.75rem-4rem)] lg:motion-safe:items-center lg:motion-safe:py-12">
+          <ExpandStage className="rounded-[20px] bg-brand-soft px-6 py-20 sm:px-12 sm:py-28 pinned:flex pinned:min-h-[calc(100svh-2.75rem-4rem)] pinned:items-center pinned:py-12">
             <ScrollReveal className="mx-auto w-full max-w-3xl space-y-12">
               <div className="space-y-6">
                 <p className={label}>소개</p>

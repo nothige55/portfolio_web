@@ -3,6 +3,8 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (@media (prefers-color-scheme: dark));
+/* 홈 소개 카드를 끝에서 고정하는 화면. expand-stage.tsx의 PINNED 조건과 같아야 한다. */
+@custom-variant pinned (@media (min-width: 1024px) and (min-height: 760px) and (prefers-reduced-motion: no-preference));
 
 @theme inline {
   --color-background: var(--background);
