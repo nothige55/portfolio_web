@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { DemoHint } from "@/components/ui/demo-hint";
 import {
+  blocksRepeat,
   clamp,
   handPosition,
   judge,
@@ -105,8 +106,9 @@ export function CoverageGrid() {
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
 
   const pos = handPosition(angle);
-  const here = (counts[verdict.key] ?? 0) >= PER_CELL;
-  const justCaptured = verdict.key === lastCaptured;
+  const nHere = counts[verdict.key] ?? 0;
+  const here = nHere >= PER_CELL;
+  const justCaptured = blocksRepeat(counts, verdict.key, lastCaptured);
 
   // 한 칸에 머무르면 0.25초 뒤 한 장 담고, 다른 칸에 담기 전에는 같은 칸에 또 담지 않는다. 인식이 풀린 각도에서는 담지 않는다.
   useEffect(() => {
@@ -117,7 +119,8 @@ export function CoverageGrid() {
       setLastCaptured(key);
     }, 250);
     return () => clearTimeout(id);
-  }, [collecting, here, justCaptured, verdict.key]);
+    // nHere: 마지막 칸처럼 막히지 않은 채 같은 칸에 머물 때, 한 장 담은 뒤 다음 타이머를 다시 건다.
+  }, [collecting, here, justCaptured, verdict.key, nHere]);
 
   const message =
     total >= TOTAL
