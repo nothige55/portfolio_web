@@ -7,6 +7,17 @@ import { site } from "@/config/site";
 export const metadata: Metadata = {
   title: { default: `${site.name} · 프론트엔드 개발자`, template: `%s · ${site.name}` },
   description: site.description,
+  // 상대 경로 OG 이미지·URL을 절대 주소로 풀기 위해 필요하다
+  metadataBase: new URL("https://jinhashin.vercel.app"),
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName: site.name,
+    title: `${site.name} · 프론트엔드 개발자`,
+    description: site.description,
+    url: "/",
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

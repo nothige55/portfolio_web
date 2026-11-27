@@ -15,9 +15,15 @@ import { PathBar } from "@/features/variant-story/components/path-bar";
 import { StorySection } from "@/features/variant-story/components/story-section";
 import { TocRail, type TocItem } from "@/features/variant-story/components/toc-rail";
 
-export const metadata: Metadata = { title: "SurgiAuth" };
-
 const [, surgi] = projects;
+
+// 루트 openGraph를 그대로 물려받으면 상세 링크도 홈 제목·주소로 공유된다
+export const metadata: Metadata = {
+  title: "SurgiAuth",
+  description: surgi.kicker,
+  openGraph: { title: `SurgiAuth · ${site.name}`, description: surgi.kicker, url: "/surgiauth", images: "/opengraph-image" },
+};
+
 const section = "mx-auto max-w-[680px] space-y-4 py-12 leading-relaxed";
 
 // 상단 경로 막대와 오른쪽 목차가 같이 쓰는 구간 목록.

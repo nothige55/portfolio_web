@@ -18,9 +18,15 @@ import {
   type TocItem,
 } from "@/features/variant-story/components/toc-rail";
 
-export const metadata: Metadata = { title: "Trego" };
-
 const [trego] = projects;
+
+// 루트 openGraph를 그대로 물려받으면 상세 링크도 홈 제목·주소로 공유된다
+export const metadata: Metadata = {
+  title: "Trego",
+  description: trego.kicker,
+  openGraph: { title: `Trego · ${site.name}`, description: trego.kicker, url: "/trego", images: "/opengraph-image" },
+};
+
 const link =
   "rounded-sm underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 const section = "mx-auto max-w-[680px] space-y-4 py-12 leading-relaxed";
