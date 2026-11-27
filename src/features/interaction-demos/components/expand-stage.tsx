@@ -8,7 +8,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 // 둥근 무대가 clip-path로 전체 폭까지 펴진다. 좁은 화면과 움직임 줄이기에서는 평범한 카드다.
 // refreshPriority -1: 앞선 pin 구간의 여백이 먼저 계산된 뒤 시작 위치를 잡는다.
-// 페이지 맨 끝 구간이라 center center에는 스크롤이 닿지 않는다. 바닥이 화면 바닥에 올 때 다 펴지게 한다.
+// 화면에 들어오는 동안 펴지고(고정 위치에 닿기 전에 다 펴짐), 다 펴진 채 히어로·드래그 데모처럼 잠시 고정된 뒤 페이지가 끝난다.
+// 고정 위치는 상단 경로 막대(h-11 = 44px) 아래 32px. 카드 높이(page.tsx)와 페이지 아래 여백(pb-8)도 32px에 맞춰, 위아래 여백이 같다.
 export function ExpandStage({ children, className }: { children: React.ReactNode; className?: string }) {
   const root = useRef<HTMLDivElement>(null);
 
@@ -23,9 +24,10 @@ export function ExpandStage({ children, className }: { children: React.ReactNode
         {
           clipPath: "inset(0% 0% 0% 0% round 20px)",
           ease: "none",
-          scrollTrigger: { trigger: el, start: "top bottom", end: "bottom bottom", scrub: 0.6, refreshPriority: -1 },
+          scrollTrigger: { trigger: el, start: "top 85%", end: "top 35%", scrub: 0.6, refreshPriority: -1 },
         },
       );
+      ScrollTrigger.create({ trigger: el, start: "top 76px", end: "+=30%", pin: true, refreshPriority: -1 });
     });
     document.fonts.ready.then(() => ScrollTrigger.refresh());
     return () => mm.revert();
