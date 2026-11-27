@@ -63,7 +63,7 @@ export default function TregoPage() {
         <p className="leading-relaxed text-muted-foreground">
           {trego.summary}
           <br />
-          일부는 원본을 TypeScript로 다시 만든 버전(재구현 버전)에서 한
+          일부는 공개 저장소 버전에서 한
           작업이며, 본문에 따로 표시했습니다.
         </p>
       </div>
