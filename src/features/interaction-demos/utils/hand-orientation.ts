@@ -46,8 +46,10 @@ export function blocksRepeat(counts: Record<string, number>, key: string, lastCa
 
 // 각도를 더하고 손이 움직이는 범위(SHOW_*)로 자른다. 더 못 가면 null이라, 호출한 쪽이 페이지 스크롤로 넘길 수 있다.
 export function tiltAngle(prev: Angle, dRoll: number, dPitch: number): Angle | null {
-  // 격자 밖 roll은 인식 한계(54°)까지 멀어서, 3배로 움직여 풀리는 구간이 금방 보이게 한다.
-  const rollRate = Math.abs(prev.roll) >= ROLL_RANGE / 2 ? 3 : 1;
+  // 격자 밖 roll은 인식 한계(54°)까지 멀어서, 바깥으로 갈 때만 3배로 움직여 풀리는 구간이 금방 보이게 한다.
+  // 돌아올 때도 3배면 가장자리 칸을 건너뛴다.
+  const outward = Math.abs(prev.roll) >= ROLL_RANGE / 2 && Math.sign(dRoll) === Math.sign(prev.roll);
+  const rollRate = outward ? 3 : 1;
   const next = {
     roll: clamp(prev.roll + dRoll * rollRate, -SHOW_ROLL, SHOW_ROLL),
     pitch: clamp(prev.pitch + dPitch, -SHOW_PITCH, SHOW_PITCH),
