@@ -74,7 +74,7 @@ export function ProjectTitle({
             className={
               i === 0
                 ? "mt-6 text-2xl font-semibold tracking-[-0.02em] sm:text-3xl"
-                : "mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground"
+                : "mt-4 max-w-2xl whitespace-pre-line text-lg leading-relaxed text-muted-foreground"
             }
           >
             {line}

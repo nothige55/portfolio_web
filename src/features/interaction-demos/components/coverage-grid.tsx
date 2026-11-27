@@ -100,12 +100,12 @@ export function CoverageGrid() {
       : !engaged
         ? "손을 기울여 보세요"
         : lost
-          ? "인식기가 먼저 거릅니다. open palm 판정이 풀리는 각도라 수집하지 않습니다"
+          ? "너무 기울어 손바닥으로 인식되지 않는 각도라 모으지 않습니다"
           : here
             ? "이 칸은 찼습니다. 다른 각도로 옮겨 보세요"
             : verdict.kind === "edge"
-              ? "격자 밖이라 가장자리 칸에 담깁니다"
-              : "머물면 한 장씩 담깁니다";
+              ? "격자 범위를 넘어 가장 가까운 가장자리 칸에 담깁니다"
+              : "이 각도에 머물면 한 장씩 담깁니다";
 
   function onKeyDown(e: React.KeyboardEvent) {
     const step: Record<string, [number, number]> = {
@@ -123,7 +123,7 @@ export function CoverageGrid() {
   return (
     <div className="space-y-4">
       <p className="text-center text-sm text-muted-foreground">
-        격자 위에서 스크롤하세요. 좌우는 roll, 위아래는 pitch입니다.
+        격자 위에서 스크롤하면 손이 기울어집니다. 가로는 손을 좌우로 돌린 각도(roll), 세로는 손바닥을 위아래로 젖힌 각도(pitch)입니다.
       </p>
       <div
         ref={stage}
@@ -212,7 +212,7 @@ export function CoverageGrid() {
         </button>
       </div>
       <p className="font-mono text-xs tabular-nums text-muted-foreground">
-        roll {angle.roll.toFixed(0)}° · pitch {angle.pitch.toFixed(0)}° · {total} / {TOTAL}장
+        좌우 {angle.roll.toFixed(0)}° · 위아래 {angle.pitch.toFixed(0)}° · {total} / {TOTAL}장
       </p>
     </div>
   );

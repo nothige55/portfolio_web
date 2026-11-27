@@ -29,6 +29,7 @@ export function PathBar({ name, entries = [] }: { name: string; entries?: readon
         ))}
         <nav aria-label="주요 메뉴" className="ml-auto flex gap-4 text-muted-foreground">
           <Link href="/trego" className="hover:text-primary">Trego</Link>
+          <Link href="/surgiauth" className="hover:text-primary">SurgiAuth</Link>
           <Link
             href="/#about"
             className="hover:text-primary"
