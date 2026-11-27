@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Separator } from "@/components/ui/separator";
 import {
+  authFlow,
+  authFlowNote,
   projects,
   stableAuthNotes,
   surgiNotes,
@@ -20,6 +22,7 @@ const section = "mx-auto max-w-[680px] space-y-4 py-12 leading-relaxed";
 
 // 상단 경로 막대와 오른쪽 목차가 같이 쓰는 구간 목록.
 const toc: TocItem[] = [
+  { id: "flow", label: "인증 흐름", depth: 0 },
   { id: "tracking", label: "손 추적", depth: 0 },
   { id: "auth", label: "인증 확정", depth: 0 },
   { id: "gesture", label: "손 모양 수집", depth: 0 },
@@ -50,6 +53,22 @@ export default function SurgiAuthPage() {
         </p>
       </div>
 
+      <section id="flow" className={section}>
+        <h2 className="font-heading text-2xl font-bold">인증이 일어나는 순서</h2>
+        <ol className="space-y-3">
+          {authFlow.map((s, i) => (
+            <li key={s.title} className="grid grid-cols-[2rem_1fr] gap-2">
+              <span className="font-mono text-sm tabular-nums text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
+              <p>
+                <span className="font-medium">{s.title}</span> · <span className="text-muted-foreground">{s.body}</span>
+              </p>
+            </li>
+          ))}
+        </ol>
+        <p className="text-sm text-muted-foreground">{authFlowNote}</p>
+      </section>
+
+      <Separator />
       <StorySection id="tracking" title="손 추적" story={surgiStories.tracking} />
 
       <Separator />
@@ -90,8 +109,16 @@ export default function SurgiAuthPage() {
       <Separator />
       <section id="role" className={section}>
         <h2 className="font-heading text-2xl font-bold">역할</h2>
+        <dl className="space-y-4">
+          {[["역할", surgiTeam.role], ["기여", surgiTeam.contribution], ["결과", surgiTeam.result]].map(([k, v]) => (
+            <div key={k} className="grid gap-1 sm:grid-cols-[4rem_1fr]">
+              <dt className="font-medium">{k}</dt>
+              <dd className="text-muted-foreground">{v}</dd>
+            </div>
+          ))}
+        </dl>
         <ul className="list-disc space-y-2 pl-5">
-          {surgiTeam.map((line) => (
+          {surgiTeam.notes.map((line) => (
             <li key={line}>{line}</li>
           ))}
         </ul>

@@ -4,12 +4,12 @@ export const projects = [
     id: "trego",
     name: "Trego",
     kicker: "실시간 협업 여행 플래너",
-    period: "2025.05 – 2026.02",
+    period: "2025.05 – 2026.02 · 공개 저장소 버전 – 2026.09",
     role: "4인 · 프론트엔드 설계·구현 주도",
     // 홈 표지에 쓰는 이 프로젝트의 스택. 근거: dnd 데모가 옮겨 온 원본 코드(dnd-kit, zustand store, mapbox 지도)
     stack: ["React", "TypeScript", "dnd-kit", "Zustand", "Mapbox GL"],
     summary:
-      "일정 짜기, 동시 편집, 장소 검색, 지도, 채팅을 한 화면에 모은 여행 플래너입니다. 일정은 폴더 → 날짜 → 장소 트리로 다룹니다.",
+      "일정 짜기, 동시 편집, 장소 검색, 지도, 채팅을 한 화면에 모은 여행 플래너입니다.\n일정은 폴더 → 날짜 → 장소 트리로 다룹니다.",
     points: [
       {
         title: "스크롤해도 현재 위치를 알려 주는 경로 표시",
@@ -206,10 +206,17 @@ export const tregoStories = {
   },
 } satisfies Record<"nav" | "state" | "sync", Story>;
 
-export const tregoTeam = [
-  "4인 구성 중 프론트엔드를 혼자 담당했습니다. 일정 트리 편집기, 장소 검색·상세, 지도 마커·경로, 팀 채팅, 커서 공유, 인증, 공유·초대 화면을 구현했습니다.",
-  "협업 도구는 Jira와 Confluence를 사용했습니다.",
-] as const;
+// /trego 역할 절. 근거: 포트폴리오 PDF 4쪽(역할·기여·결과).
+export const tregoTeam = {
+  role: "4인 팀에서 프론트엔드를 혼자 맡았습니다. 이후 공개 저장소용으로 프론트엔드를 TypeScript로 다시 구축했습니다.",
+  contribution:
+    "일정 트리 편집기, 장소 검색·상세, 지도 마커·경로, 팀 채팅, 커서 공유, 인증, 공유·초대 화면을 구현했습니다.",
+  result:
+    "계층 트리 드래그 앤 드롭을 세 차례 크게 바꿨고, 일정·채팅·커서를 실시간으로 함께 편집할 수 있게 했습니다. 학과 내 전문학사 졸업작품 경진대회에서 최우수상을 받았습니다.",
+  notes: [
+    "공개 저장소 버전은 기능 단위로 코드를 묶는 Bulletproof React 구조로 시작했습니다. 기능끼리 서로를 참조하지 않고, 여러 기능을 엮는 코드는 한 계층에만 둡니다.",
+  ],
+} as const;
 
 // /surgiauth 인증 확정 절 아래 수치. 근거: surgiauth_frontend/src/features/ehr/hooks/use-stable-auth-verification.ts 주석, 커밋 797a1f9e.
 export const stableAuthNotes: readonly Note[] = [
@@ -330,6 +337,38 @@ export const surgiStories = {
   },
 } satisfies Record<"auth" | "tracking" | "gesture" | "device", Story>;
 
-export const surgiTeam = [
-  "4인 팀에서 프론트엔드 리드 및 손 추적과 인증 화면을 중심으로 맡았습니다.",
+// /surgiauth 역할 절. 근거: 포트폴리오 PDF 8쪽.
+export const surgiTeam = {
+  role: "4인 팀에서 프론트엔드 리드를 맡고, 손 추적과 인증 화면을 중심으로 구현했습니다.",
+  contribution:
+    "손 추적, 인증 확정, 손 모양 수집 화면, 분리 창, 기기 단위 잠금을 만들었습니다.",
+  result:
+    "학과 내 학사학위 전공심화과정 졸업작품 경진대회에서 최우수상을 받았습니다.",
+  notes: [
+    "Jira는 졸업작품 규모에 비해 설정과 관리가 무거워, 더 가벼운 Linear로 바꿔 협업했습니다.",
+    "기능 단위로 코드를 묶는 Bulletproof React 구조로 시작했습니다. 기능끼리 서로를 참조하지 않고, 여러 기능을 엮는 코드는 한 계층에만 둡니다.",
+  ],
+} as const;
+
+// /surgiauth 맨 위 인증 흐름. 근거: 포트폴리오 PDF 9쪽.
+export const authFlow = [
+  { title: "카메라", body: "단말 카메라가 프레임을 계속 받습니다." },
+  {
+    title: "손 추적",
+    body: "MediaPipe가 손 관절 좌표를 찾고, 따라갈 오른손 하나를 고릅니다.",
+  },
+  {
+    title: "서버 판정",
+    body: "손 좌표를 보내면 서버가 손 모양을 분류하고 등록된 사람인지 확인합니다.",
+  },
+  {
+    title: "3초 확정",
+    body: "같은 사람으로 3초 동안 끊김 없이 인식되면 인증을 확정합니다.",
+  },
+  {
+    title: "대체 경로",
+    body: "장갑 때문에 손바닥 인증이 계속 안 되면 '편다 → 쥔다 → 다시 편다' 동작 인증으로 바꿉니다.",
+  },
 ] as const;
+export const authFlowNote =
+  "인증 실패가 쌓이면 계정이 아니라 기기 단위로 잠급니다.";

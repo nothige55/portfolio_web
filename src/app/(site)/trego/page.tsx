@@ -60,7 +60,7 @@ export default function TregoPage() {
           {trego.name}
         </h1>
         <p className="text-xl font-medium">{trego.kicker}</p>
-        <p className="leading-relaxed text-muted-foreground">
+        <p className="whitespace-pre-line leading-relaxed text-muted-foreground">
           {trego.summary}
           <br />
           일부는 공개 저장소 버전에서 한
@@ -153,8 +153,16 @@ export default function TregoPage() {
       <Separator />
       <section id="role" className={section}>
         <h2 className="font-heading text-2xl font-bold">역할</h2>
+        <dl className="space-y-4">
+          {[["역할", tregoTeam.role], ["기여", tregoTeam.contribution], ["결과", tregoTeam.result]].map(([k, v]) => (
+            <div key={k} className="grid gap-1 sm:grid-cols-[4rem_1fr]">
+              <dt className="font-medium">{k}</dt>
+              <dd className="text-muted-foreground">{v}</dd>
+            </div>
+          ))}
+        </dl>
         <ul className="list-disc space-y-2 pl-5">
-          {tregoTeam.map((line) => (
+          {tregoTeam.notes.map((line) => (
             <li key={line}>{line}</li>
           ))}
         </ul>
