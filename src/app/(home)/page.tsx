@@ -96,7 +96,7 @@ export default function V4Page() {
 
         <div className="project-band [--band-to:var(--surgi-soft)]">
           <section id="trego">
-            <ProjectTitle name={trego.name} lines={[trego.kicker, trego.summary]} meta={trego} />
+            <ProjectTitle name={trego.name} lines={[trego.kicker, trego.summary]} meta={trego} href="/trego" />
           </section>
 
           <section id="trego-drag" className="relative z-10 lg:motion-safe:-mt-[100vh]">
@@ -133,7 +133,7 @@ export default function V4Page() {
 
         <div className="project-band project-surgi [--band-from:var(--surgi-soft)]">
           <section id="surgiauth">
-            <ProjectTitle name={surgi.name} lines={[surgi.kicker, surgi.summary]} meta={surgi} />
+            <ProjectTitle name={surgi.name} lines={[surgi.kicker, surgi.summary]} meta={surgi} href="/surgiauth" />
             <div className="relative z-10 lg:motion-safe:-mt-[100vh]">
               <SplitReveal
                 textSide="right"
