@@ -159,8 +159,10 @@ export function CoverageGrid() {
         </h3>
         <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
           실제 앱은 카메라로 손의 각도를 읽습니다. 여기서는 격자 위에서 휠을
-          굴리거나 손을 끌어 기울입니다. 같은 칸에는 연달아 담기지 않고, 좌우
-          54°·위아래 30°를 넘게 기울면 손바닥으로 인식되지 않아 담기지 않습니다.
+          굴리거나 손을 끌어 기울입니다. 같은 칸에는 연달아 담기지 않습니다.
+          격자는 좌우 ±25°·위아래 ±27°이고, 그보다 더 기울이면 가장자리 칸에
+          담기다가 좌우 54°·위아래 30°를 넘으면 손바닥 인식이 풀려 담기지
+          않습니다.
         </p>
       </div>
       <div className="rounded-2xl bg-card ring-1 ring-black/5 shadow-[0_40px_100px_-40px_color-mix(in_srgb,var(--project)_55%,transparent)]">
